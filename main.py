@@ -25,7 +25,8 @@ STYLES_FILE = BASE_DIR / "styles.css"
 SCRIPT_FILE = BASE_DIR / "app.js"
 DATASET_FILE = BASE_DIR / "sample_dataset.json"
 
-ADMIN_API_TOKEN = os.getenv("FLOWMED_ADMIN_TOKEN") or secrets.token_urlsafe(24)
+ADMIN_API_TOKEN = os.getenv("FLOWMED_ADMIN_TOKEN") or secrets.token_urlsafe(32)
+ENFORCE_AUTH = os.getenv("FLOWMED_ENFORCE_AUTH", "0") == "1"
 
 app = FastAPI(
     title="FlowMed Nexus 2.0 API",
@@ -55,11 +56,17 @@ RATE_BUCKET: dict[str, deque[float]] = {}
 RATE_LIMIT_WINDOW = 60.0
 RATE_LIMIT_MAX = 100
 MAX_BODY_BYTES = 32_768
-SAFE_ID_PATTERN = re.compile(r"^[a-z0-9-]{2,64}$")
+PROMPT_INJECTION_PATTERN = re.compile(r"(ignore previous instructions|system prompt|<script|javascript:|onerror=|onload=)", re.IGNORECASE)
+
+
+def sanitize_text(value: str, max_len: int = 200) -> str:
+    no_ctrl = re.sub(r"[\r\n\t\x00-\x1f\x7f<>\"'`;]", " ", str(value)).strip()
+    collapsed = re.sub(r"\s{2,}", " ", no_ctrl)
+    return html.escape(collapsed[:max_len], quote=True)
 
 
 @app.middleware("http")
-async def security_and_rate_limit_middleware(request: Request, call_next: Any) -> Response:
+async def owasp_security_middleware(request: Request, call_next: Any) -> Response:
     client_ip = request.client.host if request.client else "unknown"
     now = time.monotonic()
     history = RATE_BUCKET.setdefault(client_ip, deque())
@@ -72,6 +79,11 @@ async def security_and_rate_limit_middleware(request: Request, call_next: Any) -
     content_length = request.headers.get("content-length")
     if content_length and content_length.isdigit() and int(content_length) > MAX_BODY_BYTES:
         return JSONResponse(status_code=413, content={"detail": "Request payload exceeds 32KB limit."})
+
+    if request.method in {"POST", "PUT", "PATCH"} and content_length and int(content_length) > 0:
+        ctype = request.headers.get("content-type", "")
+        if "application/json" not in ctype.lower():
+            return JSONResponse(status_code=415, content={"detail": "Unsupported Media Type. Use application/json."})
 
     response = await call_next(request)
     response.headers["X-Content-Type-Options"] = "nosniff"
@@ -99,15 +111,19 @@ async def security_and_rate_limit_middleware(request: Request, call_next: Any) -
     return response
 
 
+@app.exception_handler(Exception)
+async def safe_global_exception_handler(request: Request, exc: Exception) -> JSONResponse:
+    return JSONResponse(status_code=500, content={"detail": "Internal processing error."})
+
+
 def verify_operator_token(x_operator_token: str | None = Header(default=None)) -> str:
+    if ENFORCE_AUTH and not x_operator_token:
+        log_audit("AUTH_MISSING_TOKEN", "Admin Endpoint", "unauthenticated")
+        raise HTTPException(status_code=401, detail="Operator token required.")
     if x_operator_token is not None and not secrets.compare_digest(x_operator_token, ADMIN_API_TOKEN):
+        log_audit("AUTH_INVALID_TOKEN", "Admin Endpoint", "unauthenticated")
         raise HTTPException(status_code=401, detail="Invalid operator credentials.")
     return "ops.admin@flowmed-nexus.demo"
-
-
-def sanitize_text(value: str, max_len: int = 200) -> str:
-    cleaned = re.sub(r"[<>\"'`;]", "", str(value)).strip()
-    return html.escape(cleaned[:max_len], quote=True)
 
 
 DEFAULT_WARDS: list[dict[str, Any]] = [
@@ -321,6 +337,8 @@ def reset_state(operator: str = Depends(verify_operator_token)) -> dict[str, Any
 
 @app.post("/api/copilot")
 def ai_copilot(payload: CopilotQuery) -> dict[str, Any]:
+    if PROMPT_INJECTION_PATTERN.search(payload.question):
+        raise HTTPException(status_code=400, detail="Unsafe prompt pattern rejected.")
     question = sanitize_text(payload.question, 500)
     lower = question.lower()
     metrics = compute_metrics()
