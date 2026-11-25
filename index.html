@@ -4,230 +4,96 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#065f46">
-<title>FlowMed Nexus 2.0 | Autonomous Hospital Operations & AI Command</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
-:root{
-  --green:#065f46;--green-mid:#059669;--lime:#bef264;--ink:#0f2922;--muted:#64748b;
-  --bg:#f3f7f5;--card:#ffffff;--line:#e2ebe6;--shadow:0 10px 30px rgba(6,95,70,0.06);
-  --amber:#d97706;--red:#dc2626;
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased}
-button,input,select{font:inherit}
-button{cursor:pointer;transition:all .16s ease}
-button:active{transform:scale(.98)}
-
-/* Sidebar */
-.sidebar{position:fixed;inset:0 auto 0 0;width:250px;background:#fff;border-right:1px solid var(--line);padding:22px 16px;display:flex;flex-direction:column;z-index:10}
-.brand{padding:2px 10px 20px;border-bottom:1px solid var(--line)}
-.brand-row{display:flex;align-items:center;gap:9px}
-.brand-logo{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#065f46,#10b981);color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px}
-.brand-name{font:800 20px 'Plus Jakarta Sans',sans-serif;color:var(--ink);letter-spacing:-.4px}
-.brand-name span{color:var(--green-mid)}
-.brand small{display:block;color:var(--muted);font-size:9px;font-weight:700;letter-spacing:1.4px;margin-top:6px}
-.nav-label{font-size:9px;font-weight:800;letter-spacing:1.5px;color:#94a3b8;margin:16px 10px 8px}
-.nav{display:grid;gap:4px}
-.nav button{border:0;background:transparent;color:#475569;text-align:left;padding:11px 12px;border-radius:11px;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:space-between}
-.nav button.active,.nav button:hover{background:#ecfdf5;color:var(--green)}
-.nav-left{display:flex;align-items:center;gap:9px}
-.nav-pill{font-size:9px;padding:2px 7px;border-radius:20px;background:#d1fae5;color:#065f46;font-weight:800}
-.secure-note{margin-top:auto;background:linear-gradient(145deg,#ecfdf5,#f0fdf4);border:1px solid #bbf7d0;border-radius:14px;padding:12px;font-size:10px;color:#166534;line-height:1.55}
-.secure-note b{display:block;font-size:11px;margin-bottom:2px}
-
-/* Main & Topbar */
-.main{margin-left:250px;padding:24px 30px;max-width:1680px}
-.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:22px}
-.eyebrow{font-size:10px;color:var(--green-mid);font-weight:800;letter-spacing:1.4px;display:flex;align-items:center;gap:6px}
-.topbar h1{font:800 24px 'Plus Jakarta Sans',sans-serif;margin:4px 0 0;letter-spacing:-.5px}
-.top-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.pill{font-size:10px;padding:8px 13px;border-radius:30px;background:#fff;border:1px solid var(--line);font-weight:700;color:#334155}
-.pill-live{background:#ecfdf5;border-color:#a7f3d0;color:#065f46;display:flex;align-items:center;gap:6px}
-.pulse{width:7px;height:7px;border-radius:50%;background:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.25)}
-
-/* Hero Banner */
-.page{display:none;animation:fadeIn .22s ease}.page.active{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-.hero{background:linear-gradient(120deg,#042f2e 0%,#065f46 55%,#059669 100%);color:#fff;border-radius:22px;padding:28px;display:flex;justify-content:space-between;align-items:center;gap:20px;position:relative;overflow:hidden}
-.hero::after{content:"";position:absolute;right:-40px;top:-40px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(190,242,100,.22),transparent 70%);pointer-events:none}
-.hero-badge{display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);padding:5px 10px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:.8px;margin-bottom:10px;color:#ecfdf5}
-.hero h2{font:800 24px 'Plus Jakarta Sans',sans-serif;margin:0;letter-spacing:-.4px}
-.hero p{font-size:12px;line-height:1.65;color:#d1fae5;max-width:620px;margin:8px 0 0}
-.hero-actions{display:flex;gap:9px;flex-wrap:wrap;z-index:1}
-.hero-cta{background:var(--lime);color:#052e16;border:0;border-radius:12px;padding:12px 16px;font-weight:800;font-size:11px;box-shadow:0 8px 20px rgba(0,0,0,.18)}
-.hero-ghost{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:12px 15px;font-weight:700;font-size:11px}
-
-/* Sections & Cards */
-.section-head{display:flex;justify-content:space-between;align-items:end;margin:24px 0 12px;gap:10px}
-.section-head h2{font:800 16px 'Plus Jakarta Sans',sans-serif;margin:0}
-.section-head p{font-size:11px;color:var(--muted);margin:4px 0 0}
-.hint{font-size:9px;font-weight:800;color:#64748b;background:#e2e8f0;padding:4px 8px;border-radius:6px;letter-spacing:.8px}
-.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--shadow);min-width:0}
-.stat-head,.metric{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.stat-icon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:16px}
-.mint{background:#dcfce7;color:#15803d}.lav{background:#ede9fe;color:#6d28d9}.yellow{background:#fef9c3;color:#a16207}.peach{background:#ffedd5;color:#c2410c}
-.stat-value,.bed-number{font:800 28px 'Plus Jakarta Sans',sans-serif;margin-top:12px;letter-spacing:-.5px}
-.stat-label{font-size:11px;color:var(--muted);margin-top:3px;font-weight:600}
-.stat-foot{font-size:10px;color:var(--green-mid);font-weight:800;margin-top:6px}
-.badge{font-size:9px;font-weight:800;padding:4px 9px;border-radius:30px;background:#ecfdf5;color:#065f46}
-.badge-warn{background:#fef3c7;color:#b45309}
-.badge-crit{background:#fee2e2;color:#b91c1c}
-
-/* AI Insight Strip */
-.ai-banner{margin-top:14px;background:linear-gradient(90deg,#f0fdf4,#ecfeff);border:1px solid #a7f3d0;border-radius:16px;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
-.ai-banner-text{font-size:11.5px;line-height:1.55;color:#0f2922}
-.ai-banner-text b{color:#065f46}
-
-/* Grids & Bars */
-.grid-two{display:grid;grid-template-columns:1.25fr .85fr;gap:14px;margin-top:14px}
-.panel-title{font:800 13.5px 'Plus Jakarta Sans',sans-serif;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
-.metric{padding:11px 0;border-bottom:1px solid #f1f5f9;font-size:11.5px}
-.metric:last-child{border:0}
-.bar{height:8px;background:#e2e8f0;border-radius:10px;margin-top:7px;overflow:hidden}
-.bar span{display:block;height:100%;background:linear-gradient(90deg,#059669,#84cc16);border-radius:10px;transition:width .3s ease}
-.bar span.warn{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
-.bar span.crit{background:linear-gradient(90deg,#dc2626,#f87171)}
-
-/* Controls & Beds */
-.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:13px 0}
-.field{background:#fff;border:1px solid var(--line);border-radius:11px;padding:10px 12px;font-size:11px;outline:none;color:var(--ink);min-width:0}
-.field:focus{border-color:var(--green-mid);box-shadow:0 0 0 3px rgba(5,150,105,.1)}
-.search{min-width:190px;flex:1}
-.btn{border:0;border-radius:10px;padding:9px 13px;font-size:10.5px;font-weight:800}
-.btn-primary{background:var(--green);color:#fff}
-.btn-primary:hover{background:#047857}
-.btn-soft{background:#ecfdf5;color:#065f46;border:1px solid #d1fae5}
-.btn-soft:hover{background:#d1fae5}
-.btn-danger{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca}
-.btn-xs{padding:6px 10px;font-size:10px;border-radius:8px}
-
-.bed-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
-.bed-card{display:flex;flex-direction:column;justify-content:space-between}
-.bed-top{display:flex;justify-content:space-between;align-items:center}
-.bed-card h3{font:800 13px 'Plus Jakarta Sans',sans-serif;margin:10px 0 0}
-.bed-card p{font-size:10.5px;color:var(--muted);margin:6px 0}
-.bed-controls{display:flex;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid #f1f5f9}
-.bed-controls button{flex:1}
-
-/* Tables & Forms */
-.table-wrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
-table{width:100%;border-collapse:collapse;min-width:540px}
-th,td{text-align:left;padding:12px 15px;border-bottom:1px solid #f1f5f9;font-size:11px}
-th{font-size:9.5px;color:#64748b;text-transform:uppercase;letter-spacing:.7px;background:#f8fafc}
-tr:last-child td{border:0}
-.status-dot{display:inline-block;padding:3px 8px;border-radius:20px;font-size:9.5px;font-weight:800;background:#ecfdf5;color:#065f46}
-
-/* AI Assistant Box */
-.chip-row{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}
-.chip{background:#f1f5f9;border:1px solid #e2e8f0;color:#334155;border-radius:20px;padding:7px 12px;font-size:10.5px;font-weight:700}
-.chip:hover{background:#ecfdf5;border-color:#a7f3d0;color:#065f46}
-.ai-reply-box{margin-top:12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:15px;font-size:11.5px;line-height:1.65;color:#1e293b}
-
-.auth-layout,.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.auth-form{display:grid;gap:10px;margin-top:12px}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.form-grid .wide{grid-column:1/-1}
-.message{font-size:10.5px;color:var(--green-mid);font-weight:700;margin-top:10px;line-height:1.5}
-.small{font-size:10.5px;color:var(--muted);line-height:1.6}
-.footer{text-align:center;color:#94a3b8;font-size:10px;margin-top:28px;padding-bottom:12px}
-
-@media(max-width:980px){
-  .sidebar{width:210px}.main{margin-left:210px;padding:20px}
-  .stats{grid-template-columns:repeat(2,1fr)}.bed-grid{grid-template-columns:repeat(2,1fr)}
-}
-@media(max-width:650px){
-  .sidebar{width:118px;padding:14px 7px}.brand{padding:2px 4px 14px}.brand-logo{width:24px;height:24px;font-size:12px}.brand-name{font-size:14px}.brand small{font-size:7px}
-  .nav-label{font-size:8px;margin:10px 4px 6px}.nav button{padding:9px 7px;font-size:9.5px}.nav-pill{display:none}.secure-note{font-size:8px;padding:8px}
-  .main{margin-left:118px;padding:14px 10px}.topbar{align-items:flex-start}.topbar h1{font-size:17px}.eyebrow{font-size:8px}.top-right{display:grid;justify-items:end}.pill{font-size:8.5px;padding:6px 9px}
-  .hero{display:block;padding:18px}.hero h2{font-size:18px}.hero p{font-size:10.5px}.hero-actions{margin-top:12px}.hero-cta,.hero-ghost{font-size:10px;padding:10px 12px}
-  .stats{gap:8px}.card{padding:12px;border-radius:14px}.stat-value,.bed-number{font-size:21px}.stat-label,.stat-foot{font-size:9px}
-  .grid-two,.auth-layout,.admin-grid,.bed-grid{grid-template-columns:1fr;gap:9px}
-  .section-head h2{font-size:14px}.field{font-size:10px;padding:9px}.search{min-width:100%}.form-grid{grid-template-columns:1fr}.form-grid .wide{grid-column:auto}
-}
-</style>
+<meta name="description" content="FlowMed Nexus 2.0 Autonomous Hospital Operations and AI Bed-Balancing Command Center">
+<title>FlowMed Nexus 2.0 | Autonomous Hospital Operations &amp; AI Command</title>
+<link rel="stylesheet" href="./styles.css">
 </head>
 <body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <div class="shell">
-<aside class="sidebar">
+<aside class="sidebar" aria-label="Hospital Operations Sidebar">
  <div class="brand">
-  <div class="brand-row"><div class="brand-logo">✦</div><div class="brand-name">FlowMed <span>Nexus</span></div></div>
+  <div class="brand-row"><div class="brand-logo" aria-hidden="true">✦</div><div class="brand-name">FlowMed <span>Nexus</span></div></div>
   <small>AUTONOMOUS CARE OPS · 2.0</small>
  </div>
- <div class="nav-label">COMMAND MODULES</div>
- <nav class="nav">
-  <button type="button" class="active" data-page="dashboard"><span class="nav-left"><span>◫</span>Dashboard</span></button>
-  <button type="button" data-page="patients"><span class="nav-left"><span>♙</span>Patients</span><span class="nav-pill">120</span></button>
-  <button type="button" data-page="appointments"><span class="nav-left"><span>▦</span>Appointments</span><span class="nav-pill">18</span></button>
-  <button type="button" data-page="beds"><span class="nav-left"><span>▤</span>Bed Management</span><span class="nav-pill" id="navBedPill">38</span></button>
-  <button type="button" data-page="labs"><span class="nav-left"><span>⚗</span>Lab Reports</span></button>
-  <button type="button" data-page="assistant"><span class="nav-left"><span>✧</span>AI Copilot</span></button>
-  <button type="button" data-page="account"><span class="nav-left"><span>◉</span>Workspace</span></button>
-  <button type="button" id="adminNav" data-page="admin"><span class="nav-left"><span>⚙</span>Admin Control</span></button>
+ <div class="nav-label" id="nav-heading">COMMAND MODULES</div>
+ <nav class="nav" aria-labelledby="nav-heading">
+  <button type="button" class="active" data-page="dashboard" aria-current="page"><span class="nav-left"><span aria-hidden="true">◫</span>Dashboard</span></button>
+  <button type="button" data-page="patients"><span class="nav-left"><span aria-hidden="true">♙</span>Patients</span><span class="nav-pill" aria-label="120 active patients">120</span></button>
+  <button type="button" data-page="appointments"><span class="nav-left"><span aria-hidden="true">▦</span>Appointments</span><span class="nav-pill" aria-label="18 scheduled appointments">18</span></button>
+  <button type="button" data-page="beds"><span class="nav-left"><span aria-hidden="true">▤</span>Bed Management</span><span class="nav-pill" id="navBedPill" aria-label="Available beds count">38</span></button>
+  <button type="button" data-page="labs"><span class="nav-left"><span aria-hidden="true">⚗</span>Lab Reports</span></button>
+  <button type="button" data-page="assistant"><span class="nav-left"><span aria-hidden="true">✧</span>AI Copilot</span></button>
+  <button type="button" data-page="account"><span class="nav-left"><span aria-hidden="true">◉</span>Workspace</span></button>
+  <button type="button" id="adminNav" data-page="admin"><span class="nav-left"><span aria-hidden="true">⚙</span>Admin Control</span></button>
  </nav>
- <div class="secure-note"><b>✦ Hackathon Prototype</b>Interactive hospital operations & AI bed-balancing engine. Fictional demo data.</div>
+ <div class="secure-note"><b><span aria-hidden="true">✦</span> Hackathon Prototype</b>Interactive hospital operations &amp; AI bed-balancing engine. Fictional demo data.</div>
 </aside>
 
-<main class="main">
+<main class="main" id="main-content" tabindex="-1">
 <header class="topbar">
  <div>
   <div class="eyebrow">FLOWMED NEXUS 2.0 · AI HEALTHCARE COMMAND</div>
   <h1 id="pageTitle">Dashboard overview</h1>
  </div>
  <div class="top-right">
-  <span class="pill" id="date"></span>
-  <span class="pill pill-live"><span class="pulse"></span>System Optimal</span>
+  <span class="pill" id="date" aria-label="Current system date"></span>
+  <span class="pill pill-live" role="status" aria-live="polite"><span class="pulse" aria-hidden="true"></span>System Optimal</span>
  </div>
 </header>
 
-<!-- DASHBOARD -->
-<section class="page active" id="page-dashboard">
+<section class="page active" id="page-dashboard" aria-labelledby="pageTitle">
  <div class="hero">
   <div>
-   <span class="hero-badge">✧ PREDICTIVE HOSPITAL CAPACITY ENGINE</span>
+   <span class="hero-badge"><span aria-hidden="true">✧</span> PREDICTIVE HOSPITAL CAPACITY ENGINE</span>
    <h2>Autonomous patient flow &amp; zero-bottleneck bed allocation.</h2>
    <p>Real-time telemetry across hospital wards, triage queues, and diagnostic labs—powered by predictive AI surge balancing to prevent emergency overcrowding.</p>
   </div>
   <div class="hero-actions">
-   <button type="button" class="hero-cta" onclick="showPage('beds')">Manage Ward Beds →</button>
-   <button type="button" class="hero-ghost" onclick="simulateSurge()">⚡ Simulate ER Surge</button>
+   <button type="button" class="hero-cta" data-nav-target="beds">Manage Ward Beds →</button>
+   <button type="button" class="hero-ghost" id="heroSurgeBtn"><span aria-hidden="true">⚡</span> Simulate ER Surge</button>
   </div>
  </div>
 
- <div class="ai-banner">
-  <div class="ai-banner-text" id="aiLiveBanner"><b>✧ AI Copilot Insight:</b> ICU capacity is at <b>80%</b>. Recommend reserving 4 step-down beds in General Ward for incoming post-op transfers.</div>
-  <button type="button" class="btn btn-soft" onclick="showPage('assistant')">Open AI Copilot →</button>
+ <div class="ai-banner" role="region" aria-label="AI Copilot Live Insight">
+  <div class="ai-banner-text" id="aiLiveBanner" aria-live="polite"><b><span aria-hidden="true">✧</span> AI Copilot Insight:</b> ICU capacity is at <b>80%</b>. Recommend reserving 4 step-down beds in General Ward for incoming post-op transfers.</div>
+  <button type="button" class="btn btn-soft" data-nav-target="assistant">Open AI Copilot →</button>
  </div>
 
  <div class="section-head"><div><h2>Command Center Snapshot</h2><p>Real-time operational indicators across all active hospital units</p></div><span class="hint">LIVE SIMULATION</span></div>
  <div class="stats">
-  <div class="card"><div class="stat-head"><span class="stat-icon mint">♙</span><span class="badge">+12% flow</span></div><div class="stat-value">120</div><div class="stat-label">Active patient records</div><div class="stat-foot">Avg triage time: 9 mins</div></div>
-  <div class="card"><div class="stat-head"><span class="stat-icon lav">▦</span><span class="badge">Today</span></div><div class="stat-value">18</div><div class="stat-label">Scheduled consultations</div><div class="stat-foot">94% on-time consultant rate</div></div>
-  <div class="card"><div class="stat-head"><span class="stat-icon yellow">▤</span><span class="badge" id="bedAvailabilityBadge">35% free</span></div><div class="stat-value" id="dashboardBeds">38</div><div class="stat-label">Available beds</div><div class="stat-foot" id="dashboardBedFoot">38 of 110 beds open</div></div>
-  <div class="card"><div class="stat-head"><span class="stat-icon peach">⚗</span><span class="badge">Fast-Track</span></div><div class="stat-value">32</div><div class="stat-label">Diagnostic lab reports</div><div class="stat-foot">26 completed · 6 processing</div></div>
+  <div class="card"><div class="stat-head"><span class="stat-icon mint" aria-hidden="true">♙</span><span class="badge">+12% flow</span></div><div class="stat-value">120</div><div class="stat-label">Active patient records</div><div class="stat-foot">Avg triage time: 9 mins</div></div>
+  <div class="card"><div class="stat-head"><span class="stat-icon lav" aria-hidden="true">▦</span><span class="badge">Today</span></div><div class="stat-value">18</div><div class="stat-label">Scheduled consultations</div><div class="stat-foot">94% on-time consultant rate</div></div>
+  <div class="card"><div class="stat-head"><span class="stat-icon yellow" aria-hidden="true">▤</span><span class="badge" id="bedAvailabilityBadge">35% free</span></div><div class="stat-value" id="dashboardBeds">38</div><div class="stat-label">Available beds</div><div class="stat-foot" id="dashboardBedFoot">38 of 110 beds open</div></div>
+  <div class="card"><div class="stat-head"><span class="stat-icon peach" aria-hidden="true">⚗</span><span class="badge">Fast-Track</span></div><div class="stat-value">32</div><div class="stat-label">Diagnostic lab reports</div><div class="stat-foot">26 completed · 6 processing</div></div>
  </div>
 
  <div class="grid-two">
   <div class="card">
    <div class="panel-title"><span>Department Utilization &amp; Capacity</span><span class="badge" id="occStatusBadge">Balanced</span></div>
-   <div class="metric"><span>Emergency &amp; Triage Flow</span><b>78%</b></div><div class="bar"><span style="width:78%"></span></div>
-   <div class="metric"><span>Hospital-Wide Bed Occupancy</span><b id="dashboardOccupancy">65%</b></div><div class="bar"><span id="dashboardOccupancyBar" style="width:65%"></span></div>
-   <div class="metric"><span>Diagnostic Lab Turnaround</span><b>84%</b></div><div class="bar"><span style="width:84%"></span></div>
+   <div class="metric"><span>Emergency &amp; Triage Flow</span><b>78%</b></div>
+   <div class="bar" role="progressbar" aria-label="Emergency and Triage Flow" aria-valuenow="78" aria-valuemin="0" aria-valuemax="100"><span class="w-78"></span></div>
+   <div class="metric"><span>Hospital-Wide Bed Occupancy</span><b id="dashboardOccupancy">65%</b></div>
+   <div class="bar" id="dashboardOccupancyRole" role="progressbar" aria-label="Hospital-Wide Bed Occupancy" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"><span id="dashboardOccupancyBar" class="w-65"></span></div>
+   <div class="metric"><span>Diagnostic Lab Turnaround</span><b>84%</b></div>
+   <div class="bar" role="progressbar" aria-label="Diagnostic Lab Turnaround" aria-valuenow="84" aria-valuemin="0" aria-valuemax="100"><span class="w-84"></span></div>
   </div>
   <div class="card">
    <div class="panel-title">Rapid Actions</div>
-   <div class="metric">Interactive Ward Bed Board <button type="button" class="btn btn-soft btn-xs" onclick="showPage('beds')">Open →</button></div>
-   <div class="metric">Patient Triage Directory <button type="button" class="btn btn-soft btn-xs" onclick="showPage('patients')">Open →</button></div>
-   <div class="metric">Add / Update Ward Capacity <button type="button" class="btn btn-soft btn-xs" onclick="showPage('admin')">Admin →</button></div>
+   <div class="metric">Interactive Ward Bed Board <button type="button" class="btn btn-soft btn-xs" data-nav-target="beds" aria-label="Open Interactive Ward Bed Board">Open →</button></div>
+   <div class="metric">Patient Triage Directory <button type="button" class="btn btn-soft btn-xs" data-nav-target="patients" aria-label="Open Patient Triage Directory">Open →</button></div>
+   <div class="metric">Add / Update Ward Capacity <button type="button" class="btn btn-soft btn-xs" data-nav-target="admin" aria-label="Open Admin Ward Capacity Controls">Admin →</button></div>
   </div>
  </div>
 </section>
 
-<!-- PATIENTS -->
-<section class="page" id="page-patients">
+<section class="page" id="page-patients" aria-label="Patient Triage and Directory">
  <div class="section-head"><div><h2>Patient triage &amp; directory</h2><p>Fictional sample records for demonstration</p></div><span class="hint">SAMPLE DATA</span></div>
- <div class="toolbar"><input id="patientSearch" class="field search" placeholder="Search patient name, ID, or department…" oninput="filterTable('patientSearch','patientRows')"></div>
- <div class="table-wrap"><table><thead><tr><th>Patient</th><th>ID</th><th>Department</th><th>Acuity</th><th>Status</th></tr></thead><tbody id="patientRows">
+ <div class="toolbar">
+  <label for="patientSearch" class="sr-only">Search patient name, ID, or department</label>
+  <input id="patientSearch" type="search" class="field search" placeholder="Search patient name, ID, or department…">
+ </div>
+ <div class="table-wrap"><table aria-label="Patient Triage Directory"><thead><tr><th scope="col">Patient</th><th scope="col">ID</th><th scope="col">Department</th><th scope="col">Acuity</th><th scope="col">Status</th></tr></thead><tbody id="patientRows">
   <tr><td><b>Alex Rivera</b></td><td>FM-1001</td><td>Cardiology</td><td>Priority 2</td><td><span class="status-dot">Checked in</span></td></tr>
   <tr><td><b>Sara Morgan</b></td><td>FM-1002</td><td>Neurology</td><td>Routine</td><td><span class="status-dot">Scheduled</span></td></tr>
   <tr><td><b>Jordan Kim</b></td><td>FM-1003</td><td>General Medicine</td><td>Priority 2</td><td><span class="status-dot">Under review</span></td></tr>
@@ -236,11 +102,13 @@ tr:last-child td{border:0}
  </tbody></table></div>
 </section>
 
-<!-- APPOINTMENTS -->
-<section class="page" id="page-appointments">
+<section class="page" id="page-appointments" aria-label="Consultant Appointment Schedule">
  <div class="section-head"><div><h2>Consultant appointment schedule</h2><p>Automated queue optimization &amp; slot tracking</p></div><span class="hint">DEMO SCHEDULE</span></div>
- <div class="toolbar"><input id="appointmentSearch" class="field search" placeholder="Search doctor, patient, or department…" oninput="filterTable('appointmentSearch','appointmentRows')"></div>
- <div class="table-wrap"><table><thead><tr><th>Time</th><th>Patient</th><th>Department</th><th>Consultant</th><th>Status</th></tr></thead><tbody id="appointmentRows">
+ <div class="toolbar">
+  <label for="appointmentSearch" class="sr-only">Search doctor, patient, or department</label>
+  <input id="appointmentSearch" type="search" class="field search" placeholder="Search doctor, patient, or department…">
+ </div>
+ <div class="table-wrap"><table aria-label="Consultant Appointment Schedule"><thead><tr><th scope="col">Time</th><th scope="col">Patient</th><th scope="col">Department</th><th scope="col">Consultant</th><th scope="col">Status</th></tr></thead><tbody id="appointmentRows">
   <tr><td>09:00 AM</td><td><b>Alex Rivera</b></td><td>Cardiology</td><td>Dr. R. Wilson</td><td><span class="status-dot">In Consultation</span></td></tr>
   <tr><td>10:30 AM</td><td><b>Sara Morgan</b></td><td>Neurology</td><td>Dr. L. Chen</td><td><span class="status-dot">Upcoming</span></td></tr>
   <tr><td>11:15 AM</td><td><b>Jordan Kim</b></td><td>General Medicine</td><td>Dr. A. Rao</td><td><span class="status-dot">Vitals Ready</span></td></tr>
@@ -248,18 +116,16 @@ tr:last-child td{border:0}
  </tbody></table></div>
 </section>
 
-<!-- BEDS -->
-<section class="page" id="page-beds">
+<section class="page" id="page-beds" aria-label="Smart Bed Management">
  <div class="section-head">
   <div><h2>Smart bed management</h2><p>Test real-time admissions &amp; discharges directly on each ward card</p></div>
-  <div style="display:flex;gap:6px"><button type="button" class="btn btn-soft btn-xs" onclick="simulateSurge()">⚡ Simulate Surge</button><button type="button" class="btn btn-soft btn-xs" onclick="resetDemo()">↺ Reset</button></div>
+  <div class="flex-gap-6"><button type="button" class="btn btn-soft btn-xs" id="bedSurgeBtn"><span aria-hidden="true">⚡</span> Simulate Surge</button><button type="button" class="btn btn-soft btn-xs" id="bedResetBtn"><span aria-hidden="true">↺</span> Reset</button></div>
  </div>
- <div class="bed-grid" id="wardGrid"></div>
- <div class="card" style="margin-top:14px"><div class="panel-title">AI Capacity Balancing Engine</div><p id="wardNote" class="small">Displaying sample ward capacity data. Click + Admit or - Discharge to see live recalculation.</p></div>
+ <div class="bed-grid" id="wardGrid" role="region" aria-label="Hospital Ward Bed Cards"></div>
+ <div class="card mt-14"><div class="panel-title">AI Capacity Balancing Engine</div><p id="wardNote" class="small" aria-live="polite">Displaying sample ward capacity data. Click + Admit or - Discharge to see live recalculation.</p></div>
 </section>
 
-<!-- LABS -->
-<section class="page" id="page-labs">
+<section class="page" id="page-labs" aria-label="Diagnostic Laboratory Pipeline">
  <div class="section-head"><div><h2>Diagnostic laboratory pipeline</h2><p>Automated sample tracking &amp; turnaround metrics</p></div><span class="hint">DEMO PIPELINE</span></div>
  <div class="grid-two">
   <div class="card"><div class="stat-head"><b>Complete Blood Panel</b><span class="badge">Completed</span></div><p class="small">LAB-2041 · Patient: Alex Rivera (FM-1001) · Turnaround: 28 mins</p></div>
@@ -269,339 +135,63 @@ tr:last-child td{border:0}
  </div>
 </section>
 
-<!-- AI ASSISTANT -->
-<section class="page" id="page-assistant">
+<section class="page" id="page-assistant" aria-label="AI Operations Copilot">
  <div class="section-head"><div><h2>AI operations copilot</h2><p>Ask operational, bed-allocation, or surge-planning questions</p></div><span class="hint">INTERACTIVE AI</span></div>
  <div class="card">
-  <h3>✧ FlowMed Operations Intelligence</h3>
+  <h3><span aria-hidden="true">✧</span> FlowMed Operations Intelligence</h3>
   <p class="small">Analyzes current ward occupancy and recommends optimal patient routing. Select a quick prompt or type your own:</p>
-  <div class="chip-row">
-   <button type="button" class="chip" onclick="quickAsk('Which ward is closest to capacity right now?')">Which ward is closest to capacity?</button>
-   <button type="button" class="chip" onclick="quickAsk('Recommend a bed reallocation plan for an ER surge.')">Recommend ER surge plan</button>
-   <button type="button" class="chip" onclick="quickAsk('Generate shift handoff summary.')">Generate shift handoff summary</button>
+  <div class="chip-row" role="group" aria-label="Quick AI Analysis Prompts">
+   <button type="button" class="chip" data-prompt="Which ward is closest to capacity right now?">Which ward is closest to capacity?</button>
+   <button type="button" class="chip" data-prompt="Recommend a bed reallocation plan for an ER surge.">Recommend ER surge plan</button>
+   <button type="button" class="chip" data-prompt="Generate shift handoff summary.">Generate shift handoff summary</button>
   </div>
-  <div class="toolbar"><input id="question" class="field search" placeholder="Ask about bed capacity, bottlenecks, or shift scheduling…"><button type="button" class="btn btn-primary" onclick="askAI()">Analyze</button></div>
-  <div id="reply" class="ai-reply-box">Ready. Click any prompt above or ask a hospital operations question to analyze live ward metrics.</div>
+  <div class="toolbar">
+   <label for="question" class="sr-only">Ask an operational question</label>
+   <input id="question" type="text" class="field search" placeholder="Ask about bed capacity, bottlenecks, or shift scheduling…">
+   <button type="button" class="btn btn-primary" id="askAiBtn">Analyze</button>
+  </div>
+  <div id="reply" class="ai-reply-box" role="region" aria-live="polite" aria-label="AI Copilot Analysis Output">Ready. Click any prompt above or ask a hospital operations question to analyze live ward metrics.</div>
  </div>
 </section>
 
-<!-- ACCOUNT -->
-<section class="page" id="page-account">
+<section class="page" id="page-account" aria-label="Workspace and Access Control">
  <div class="section-head"><div><h2>Workspace &amp; access control</h2><p>Role-based hospital administrator session</p></div><span class="hint">DEMO SESSION</span></div>
  <div class="auth-layout">
-  <div class="card"><h3>Active operator profile</h3><p class="small">Switch operator credentials or restore default hackathon demo metrics.</p><div class="auth-form"><input id="email" class="field" type="email" value="santhoshthiyyari@gmail.com" placeholder="Operator email"><div class="auth-actions"><button type="button" class="btn btn-primary" onclick="updateSession()">Update Operator</button><button type="button" class="btn btn-soft" onclick="resetDemo()">Restore Default Data</button></div></div><div id="authMessage" class="message">Administrator session active.</div></div>
-  <div class="card"><h3>System diagnostics</h3><div class="metric">Architecture <b>Standalone Zero-Latency Engine</b></div><div class="metric">State Sync <b>Real-Time Reactive DOM</b></div><div class="metric">Operator <b id="userStatus">santhoshthiyyari@gmail.com</b></div><div class="metric">Role <b id="roleStatus">Chief Operations Admin</b></div></div>
+  <div class="card"><h3>Active operator profile</h3><p class="small">Switch operator credentials or restore default hackathon demo metrics.</p><div class="auth-form"><label for="email" class="sr-only">Operator email address</label><input id="email" class="field" type="email" autocomplete="email" value="ops.admin@flowmed-nexus.demo" placeholder="Operator email"><div class="auth-actions"><button type="button" class="btn btn-primary" id="updateSessionBtn">Update Operator</button><button type="button" class="btn btn-soft" id="accountResetBtn">Restore Default Data</button></div></div><div id="authMessage" class="message" role="status" aria-live="polite">Administrator session active.</div></div>
+  <div class="card"><h3>System diagnostics</h3><div class="metric">Architecture <b>Standalone Zero-Latency Engine</b></div><div class="metric">State Sync <b>Real-Time Reactive DOM</b></div><div class="metric">Operator <b id="userStatus">ops.admin@flowmed-nexus.demo</b></div><div class="metric">Role <b id="roleStatus">Chief Operations Admin</b></div></div>
  </div>
 </section>
 
-<!-- ADMIN -->
-<section class="page" id="page-admin">
+<section class="page" id="page-admin" aria-label="Admin Control Centre">
  <div class="section-head"><div><h2>Admin control centre</h2><p>Add new hospital wards, modify bed counts, and audit operator logs.</p></div><span class="hint">ADMIN CONTROL</span></div>
  <div class="admin-grid">
   <div class="card">
    <div class="panel-title">Configure hospital ward</div>
    <input id="wardEditId" type="hidden">
    <div class="form-grid">
-    <input id="wardName" class="field wide" placeholder="Ward name (e.g. Cardiology ICU)">
+    <label for="wardName" class="sr-only">Hospital ward name</label>
+    <input id="wardName" type="text" class="field wide" placeholder="Ward name (e.g. Cardiology ICU)">
+    <label for="totalBeds" class="sr-only">Total ward beds</label>
     <input id="totalBeds" class="field" type="number" min="1" step="1" placeholder="Total beds">
+    <label for="availableBeds" class="sr-only">Available ward beds</label>
     <input id="availableBeds" class="field" type="number" min="0" step="1" placeholder="Available beds">
+    <label for="wardStatus" class="sr-only">Ward operational status</label>
     <select id="wardStatus" class="field wide"><option>Active</option><option>High Alert</option><option>Maintenance</option></select>
    </div>
-   <div class="toolbar"><button type="button" class="btn btn-primary" onclick="saveWard()">Save ward</button><button type="button" class="btn btn-soft" onclick="clearWardForm()">Clear form</button></div>
-   <div id="adminMessage" class="message"></div>
+   <div class="toolbar"><button type="button" class="btn btn-primary" id="saveWardBtn">Save ward</button><button type="button" class="btn btn-soft" id="clearWardBtn">Clear form</button></div>
+   <div id="adminMessage" class="message" role="status" aria-live="polite"></div>
   </div>
-  <div class="card"><div class="panel-title">Governance &amp; audit</div><div class="metric">Operator <b id="adminEmail">santhoshthiyyari@gmail.com</b></div><div class="metric">Access Level <b>Full Ward Provisioning</b></div><p class="small">Every ward creation, bed adjustment, or surge simulation is logged below for compliance review.</p></div>
+  <div class="card"><div class="panel-title">Governance &amp; audit</div><div class="metric">Operator <b id="adminEmail">ops.admin@flowmed-nexus.demo</b></div><div class="metric">Access Level <b>Full Ward Provisioning</b></div><p class="small">Every ward creation, bed adjustment, or surge simulation is logged below for compliance review.</p></div>
  </div>
  <div class="section-head"><div><h2>Configured hospital wards</h2><p>Click Edit to modify capacity or Delete to remove a ward.</p></div></div>
- <div class="table-wrap"><table><thead><tr><th>Ward</th><th>Total Beds</th><th>Available</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminWardRows"></tbody></table></div>
+ <div class="table-wrap"><table aria-label="Configured Hospital Wards"><thead><tr><th scope="col">Ward</th><th scope="col">Total Beds</th><th scope="col">Available</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead><tbody id="adminWardRows"></tbody></table></div>
  <div class="section-head"><div><h2>Operations audit trail</h2><p>Chronological log of all capacity changes.</p></div></div>
- <div class="table-wrap"><table><thead><tr><th>Timestamp</th><th>Event</th><th>Target Ward</th><th>Operator</th></tr></thead><tbody id="auditRows"></tbody></table></div>
+ <div class="table-wrap"><table aria-label="Operations Audit Trail"><thead><tr><th scope="col">Timestamp</th><th scope="col">Event</th><th scope="col">Target Ward</th><th scope="col">Operator</th></tr></thead><tbody id="auditRows"></tbody></table></div>
 </section>
 
-<div class="footer">FlowMed Nexus 2.0 · PromptWars × AI Vibeathon 2026 Prototype · Fictional Demo Data</div>
+<footer class="footer">FlowMed Nexus 2.0 · PromptWars × AI Vibeathon 2026 Prototype · Fictional Demo Data</footer>
 </main>
 </div>
-
-<script>
-const $ = id => document.getElementById(id);
-
-const defaultWards = [
-  { id: "emergency", name: "Emergency & Trauma", total: 20, free: 6, status: "Active" },
-  { id: "general", name: "General Medicine", total: 50, free: 18, status: "Active" },
-  { id: "icu", name: "Intensive Care (ICU)", total: 15, free: 3, status: "Active" },
-  { id: "paediatrics", name: "Paediatrics Ward", total: 25, free: 11, status: "Active" }
-];
-
-let wards = JSON.parse(JSON.stringify(defaultWards));
-let auditLogs = [
-  { time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), action: "SYSTEM_BOOT", ward: "4 Wards Online", actor: "santhoshthiyyari@gmail.com" }
-];
-
-const titles = {
-  dashboard: "Dashboard overview",
-  patients: "Patient triage & directory",
-  appointments: "Appointment schedule",
-  beds: "Smart bed management",
-  labs: "Diagnostic lab pipeline",
-  assistant: "AI operations copilot",
-  account: "Workspace & access",
-  admin: "Admin control centre"
-};
-
-window.showPage = page => {
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  const target = $("page-" + page);
-  if (!target) return;
-  target.classList.add("active");
-  document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("active", b.dataset.page === page));
-  $("pageTitle").textContent = titles[page] || "FlowMed Nexus 2.0";
-};
-
-document.querySelectorAll(".nav button[data-page]").forEach(b => {
-  b.addEventListener("click", () => showPage(b.dataset.page));
-});
-
-window.filterTable = (inputId, rowsId) => {
-  const term = $(inputId).value.toLowerCase();
-  [...$(rowsId).rows].forEach(row => {
-    row.style.display = row.innerText.toLowerCase().includes(term) ? "" : "none";
-  });
-};
-
-window.quickAsk = text => {
-  $("question").value = text;
-  window.askAI();
-};
-
-window.askAI = () => {
-  const q = $("question").value.trim();
-  if (!q) {
-    $("reply").textContent = "Enter an operational question above to run AI capacity analysis.";
-    return;
-  }
-  const total = wards.reduce((s, w) => s + w.total, 0);
-  const free = wards.reduce((s, w) => s + w.free, 0);
-  const busiest = [...wards].sort((a, b) => (a.free / a.total) - (b.free / b.total))[0];
-  const openest = [...wards].sort((a, b) => (b.free / b.total) - (a.free / a.total))[0];
-  const busiestOcc = busiest ? Math.round((busiest.total - busiest.free) / busiest.total * 100) : 0;
-
-  $("reply").innerHTML = `
-    <b>✧ FlowMed AI Recommendation:</b><br>
-    • <b>Network Capacity:</b> ${free} of ${total} total beds available (${total ? Math.round((total - free) / total * 100) : 0}% hospital occupancy).<br>
-    • <b>Primary Bottleneck:</b> <b>${busiest ? busiest.name : "N/A"}</b> is at <b>${busiestOcc}% occupancy</b> (${busiest ? busiest.free : 0} beds left).<br>
-    • <b>Actionable Routing:</b> Route non-critical step-down patients to <b>${openest ? openest.name : "General Ward"}</b> (${openest ? openest.free : 0} beds open) to preserve critical care buffer.
-  `;
-};
-
-window.simulateSurge = () => {
-  let remaining = 6;
-  wards.forEach(w => {
-    if (remaining > 0 && w.free > 0) {
-      const take = Math.min(w.free, remaining, 2);
-      w.free -= take;
-      remaining -= take;
-    }
-  });
-  addAudit("ER_SURGE_SIMULATED", "Multi-Ward (+6 Admissions)");
-  renderAll();
-  $("aiLiveBanner").innerHTML = `<b>⚡ Surge Alert Active:</b> 6 emergency admissions routed across wards. AI recommends preparing discharge-ready patients in General Medicine.`;
-};
-
-$("date").textContent = new Date().toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short", year: "numeric" });
-
-function safeText(tag, value) {
-  const el = document.createElement(tag);
-  el.textContent = String(value ?? "");
-  return el;
-}
-
-window.adjustBed = (id, delta) => {
-  const w = wards.find(x => x.id === id);
-  if (!w) return;
-  const nextFree = w.free + delta;
-  if (nextFree < 0 || nextFree > w.total) return;
-  w.free = nextFree;
-  addAudit(delta < 0 ? "PATIENT_ADMITTED" : "PATIENT_DISCHARGED", w.name);
-  renderAll();
-};
-
-function renderAll() {
-  const grid = $("wardGrid");
-  const adminBody = $("adminWardRows");
-  grid.replaceChildren();
-  adminBody.replaceChildren();
-
-  let total = 0;
-  let free = 0;
-  const colors = ["mint", "lav", "yellow", "peach"];
-
-  wards.forEach((w, index) => {
-    total += w.total;
-    free += w.free;
-    const occPct = w.total ? Math.round((w.total - w.free) / w.total * 100) : 0;
-
-    const card = document.createElement("div");
-    card.className = "card bed-card";
-
-    const top = document.createElement("div");
-    top.className = "bed-top";
-    const icon = safeText("span", "▤");
-    icon.className = "stat-icon " + colors[index % colors.length];
-    const badge = safeText("span", occPct >= 85 ? "Critical" : occPct >= 70 ? "High" : "Optimal");
-    badge.className = "badge" + (occPct >= 85 ? " badge-crit" : occPct >= 70 ? " badge-warn" : "");
-    top.append(icon, badge);
-
-    const heading = safeText("h3", w.name);
-    const number = safeText("div", w.free + " / " + w.total);
-    number.className = "bed-number";
-    const label = safeText("p", "Available beds (" + occPct + "% occupied)");
-
-    const bar = document.createElement("div");
-    bar.className = "bar";
-    const fill = document.createElement("span");
-    fill.style.width = occPct + "%";
-    if (occPct >= 85) fill.className = "crit";
-    else if (occPct >= 70) fill.className = "warn";
-    bar.appendChild(fill);
-
-    const controls = document.createElement("div");
-    controls.className = "bed-controls";
-    const admitBtn = safeText("button", "+ Admit");
-    admitBtn.type = "button";
-    admitBtn.className = "btn btn-soft btn-xs";
-    admitBtn.disabled = w.free === 0;
-    admitBtn.onclick = () => adjustBed(w.id, -1);
-
-    const dischargeBtn = safeText("button", "- Discharge");
-    dischargeBtn.type = "button";
-    dischargeBtn.className = "btn btn-soft btn-xs";
-    dischargeBtn.disabled = w.free === w.total;
-    dischargeBtn.onclick = () => adjustBed(w.id, 1);
-
-    controls.append(admitBtn, dischargeBtn);
-    card.append(top, heading, number, label, bar, controls);
-    grid.appendChild(card);
-
-    // Admin Table Row
-    const tr = document.createElement("tr");
-    [w.name, w.total, w.free, w.status].forEach(v => tr.appendChild(safeText("td", v)));
-    const actions = document.createElement("td");
-    const edit = safeText("button", "Edit");
-    const del = safeText("button", "Delete");
-    edit.type = "button";
-    del.type = "button";
-    edit.className = "btn btn-soft btn-xs";
-    del.className = "btn btn-danger btn-xs";
-    del.style.marginLeft = "5px";
-    edit.addEventListener("click", () => editWard(w.id));
-    del.addEventListener("click", () => removeWard(w.id));
-    actions.append(edit, del);
-    tr.appendChild(actions);
-    adminBody.appendChild(tr);
-  });
-
-  $("dashboardBeds").textContent = String(free);
-  $("navBedPill").textContent = String(free);
-  $("bedAvailabilityBadge").textContent = total ? Math.round(free / total * 100) + "% free" : "No data";
-  $("dashboardBedFoot").textContent = total ? `${free} of ${total} beds open` : "No ward records";
-  const occupancy = total ? Math.round((total - free) / total * 100) : 0;
-  $("dashboardOccupancy").textContent = total ? occupancy + "%" : "—";
-  $("dashboardOccupancyBar").style.width = occupancy + "%";
-  $("occStatusBadge").textContent = occupancy >= 80 ? "High Load" : "Balanced";
-  $("wardNote").textContent = `Live Telemetry: ${free} of ${total} beds available across ${wards.length} wards (${occupancy}% hospital-wide occupancy).`;
-
-  const auditBody = $("auditRows");
-  auditBody.replaceChildren();
-  auditLogs.forEach(log => {
-    const tr = document.createElement("tr");
-    [log.time, log.action, log.ward, log.actor].forEach(v => tr.appendChild(safeText("td", v)));
-    auditBody.appendChild(tr);
-  });
-}
-
-function addAudit(action, wardName) {
-  const actor = $("userStatus").textContent || "santhoshthiyyari@gmail.com";
-  const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-  auditLogs.unshift({ time, action, ward: wardName, actor });
-}
-
-window.clearWardForm = (keepMessage = false) => {
-  $("wardEditId").value = "";
-  $("wardName").value = "";
-  $("totalBeds").value = "";
-  $("availableBeds").value = "";
-  $("wardStatus").value = "Active";
-  if (!keepMessage) $("adminMessage").textContent = "";
-};
-
-function editWard(id) {
-  const w = wards.find(x => x.id === id);
-  if (!w) return;
-  $("wardEditId").value = w.id;
-  $("wardName").value = w.name;
-  $("totalBeds").value = w.total;
-  $("availableBeds").value = w.free;
-  $("wardStatus").value = w.status;
-  $("adminMessage").textContent = "Editing " + w.name;
-  showPage("admin");
-}
-
-window.saveWard = () => {
-  const editId = $("wardEditId").value;
-  const name = $("wardName").value.trim();
-  const totalText = $("totalBeds").value;
-  const freeText = $("availableBeds").value;
-  const total = Number(totalText);
-  const free = Number(freeText);
-  const status = $("wardStatus").value;
-
-  if (!name || totalText === "" || freeText === "" || !Number.isInteger(total) || !Number.isInteger(free) || total <= 0 || free < 0 || free > total) {
-    $("adminMessage").textContent = "Enter a ward name and valid whole-number bed counts (Available ≤ Total).";
-    return;
-  }
-
-  if (editId) {
-    const idx = wards.findIndex(w => w.id === editId);
-    if (idx !== -1) {
-      wards[idx] = { id: editId, name, total, free, status };
-      addAudit("UPDATED_WARD", name);
-      $("adminMessage").textContent = "Ward updated successfully.";
-    }
-  } else {
-    wards.push({ id: "ward-" + Date.now(), name, total, free, status });
-    addAudit("CREATED_WARD", name);
-    $("adminMessage").textContent = "New ward provisioned successfully.";
-  }
-
-  window.clearWardForm(true);
-  renderAll();
-};
-
-function removeWard(id) {
-  const w = wards.find(x => x.id === id);
-  if (!w || !confirm(`Remove ward "${w.name}"?`)) return;
-  wards = wards.filter(x => x.id !== id);
-  addAudit("REMOVED_WARD", w.name);
-  renderAll();
-}
-
-window.updateSession = () => {
-  const mail = $("email").value.trim() || "santhoshthiyyari@gmail.com";
-  $("userStatus").textContent = mail;
-  $("adminEmail").textContent = mail;
-  $("authMessage").textContent = "Operator switched to " + mail;
-};
-
-window.resetDemo = () => {
-  wards = JSON.parse(JSON.stringify(defaultWards));
-  addAudit("RESET_TELEMETRY", "All Wards");
-  renderAll();
-  $("authMessage").textContent = "Default hospital ward telemetry restored.";
-  $("aiLiveBanner").innerHTML = `<b>✧ AI Copilot Insight:</b> ICU capacity is at <b>80%</b>. Recommend reserving 4 step-down beds in General Ward for incoming post-op transfers.`;
-};
-
-renderAll();
-</script>
+<script src="./app.js" defer></script>
 </body>
 </html>
-
