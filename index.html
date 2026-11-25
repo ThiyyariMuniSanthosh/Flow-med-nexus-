@@ -3,79 +3,107 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>FlowMed Nexus 2.0</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
 
-:root {
-  --green:#087f5b;
-  --lime:#c5f36b;
-  --white:#f7faf7;
-  --violet:#a78bfa;
-  --dark:#20332c;
-  --muted:#78877f;
+:root{
+ --green:#087f5b;
+ --lime:#c5f36b;
+ --white:#f7faf7;
+ --violet:#a78bfa;
+ --dark:#20332c;
+ --muted:#78877f;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{
-  font-family:'DM Sans',sans-serif;
-  background:var(--white);
-  color:var(--dark);
-}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--white);color:var(--dark)}
 .layout{display:flex;min-height:100vh}
+
+/* LEFT SIDEBAR */
 .sidebar{
-  width:245px;background:#fff;padding:28px 19px;
-  border-right:1px solid #e8eee9;position:fixed;
-  height:100vh;display:flex;flex-direction:column;
+ width:245px;background:#fff;padding:26px 17px;
+ border-right:1px solid #e8eee9;
+ position:fixed;left:0;top:0;height:100vh;
+ display:flex;flex-direction:column;z-index:100;
+ overflow-y:auto;
 }
 .logo{font-size:22px;font-weight:800;color:var(--green)}
 .logo span{color:#9bcf37}
-.tagline{font-size:11px;color:var(--muted);margin-top:5px}
-.nav-title{font-size:10px;color:#a1aaa5;margin:35px 10px 12px;font-weight:700;letter-spacing:1.5px}
+.tagline{font-size:9px;color:var(--muted);margin-top:6px;letter-spacing:1px}
+.nav-title{font-size:10px;color:#a1aaa5;margin:34px 10px 12px;font-weight:700;letter-spacing:1.5px}
+.nav{display:flex;flex-direction:column;gap:5px}
 .nav a{
- display:block;text-decoration:none;color:#718078;
- padding:12px 13px;border-radius:12px;margin:5px 0;
- font-size:13px;font-weight:600;transition:.2s;
+ display:flex;align-items:center;gap:11px;
+ text-decoration:none;color:#718078;
+ padding:13px 12px;border-radius:12px;
+ font-size:13px;font-weight:600;transition:.25s;
 }
-.nav a:hover,.nav a.active{background:#e9f7ef;color:var(--green)}
-.profile{margin-top:auto;background:#eff8f1;padding:13px;border-radius:15px;font-size:12px}
-.avatar{background:var(--green);color:white;width:35px;height:35px;border-radius:12px;display:grid;place-items:center;font-weight:800}
-.main{margin-left:245px;width:calc(100% - 245px);padding:30px 36px}
-.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;gap:15px}
+.nav a:hover{background:#eff8f1;color:var(--green);transform:translateX(3px)}
+.nav a.active{background:#e4f5eb;color:var(--green);box-shadow:inset 3px 0 var(--green)}
+.nav-icon{width:22px;text-align:center;font-size:17px}
+.profile{margin-top:auto;background:#eff8f1;padding:13px;border-radius:15px;font-size:11px}
+.avatar{background:var(--green);color:white;width:36px;height:36px;border-radius:12px;display:grid;place-items:center;font-weight:800}
+.profile-row{display:flex;gap:10px;align-items:center}
+
+/* MAIN */
+.main{margin-left:245px;width:calc(100% - 245px);padding:30px 36px;min-width:0}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;gap:12px}
 .welcome h1{font-size:27px;font-weight:800}
 .welcome p{color:var(--muted);font-size:13px;margin-top:6px}
 .top-actions{display:flex;gap:10px;align-items:center}
 .status{background:#e6f7e9;color:var(--green);padding:9px 13px;border-radius:30px;font-size:11px;font-weight:700}
 .date{font-size:12px;color:var(--muted)}
+
+/* HERO */
 .hero{
  background:linear-gradient(115deg,#087f5b,#12a879);
- color:white;padding:28px;border-radius:23px;
+ color:white;padding:29px;border-radius:23px;
  display:flex;justify-content:space-between;align-items:center;
  position:relative;overflow:hidden;margin-bottom:25px;
 }
-.hero:after{content:"";position:absolute;width:230px;height:230px;border:35px solid #ffffff17;border-radius:50%;right:8%;top:-115px}
-.hero h2{font-size:24px;max-width:480px;position:relative;z-index:1}
-.hero p{font-size:13px;color:#d8f5e7;margin-top:10px;max-width:450px;line-height:1.7;position:relative;z-index:1}
-.hero button{background:var(--lime);color:#23432e;border:0;padding:13px 19px;border-radius:12px;font-weight:800;cursor:pointer;position:relative;z-index:2}
+.hero:after{
+ content:"";position:absolute;width:230px;height:230px;
+ border:35px solid #ffffff17;border-radius:50%;
+ right:8%;top:-115px;pointer-events:none;
+}
+.hero-content{position:relative;z-index:1}
+.hero h2{font-size:24px;max-width:480px}
+.hero p{font-size:13px;color:#d8f5e7;margin-top:10px;max-width:460px;line-height:1.7}
+.hero button{
+ background:var(--lime);color:#23432e;border:0;
+ padding:13px 19px;border-radius:12px;font-weight:800;
+ cursor:pointer;position:relative;z-index:2;
+}
+
+/* CARDS */
 .section-head{display:flex;justify-content:space-between;align-items:center;margin:27px 0 15px}
 .section-head h3{font-size:17px}
 .section-head span{font-size:11px;color:var(--muted)}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
-.card{background:white;border:1px solid #eaf0eb;border-radius:18px;padding:19px;box-shadow:0 5px 20px #173c2510}
+.card{
+ background:white;border:1px solid #eaf0eb;border-radius:18px;
+ padding:19px;box-shadow:0 5px 20px #173c2510;
+ transition:.25s;
+}
+.card:hover{transform:translateY(-3px);box-shadow:0 10px 25px #173c2518}
 .stat-top{display:flex;justify-content:space-between;align-items:center}
 .icon{width:39px;height:39px;border-radius:13px;display:grid;place-items:center;font-size:19px}
 .i1{background:#e5f7ed}.i2{background:#f0ebff}.i3{background:#f1f8d9}.i4{background:#fff0e5}
 .number{font-size:28px;font-weight:800;margin-top:15px}
 .stat-name{font-size:12px;color:var(--muted);margin-top:4px}
 .change{font-size:10px;color:var(--green);margin-top:12px;font-weight:700}
+.pill{padding:5px 9px;border-radius:20px;background:#e7f7eb;color:var(--green);font-size:10px;font-weight:700}
+.violet{background:#f0ebff;color:#7957ca}
+.orange{background:#fff0e5;color:#bb7137}
+
+/* OPERATIONS */
 .content-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:17px}
 .panel-title{font-size:15px;font-weight:800;margin-bottom:17px}
-.metric{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #edf1ed;font-size:12px}
+.metric{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid #edf1ed;font-size:12px;gap:8px}
 .metric:last-child{border:0}
 .metric strong{font-size:12px}
-.pill{padding:5px 9px;border-radius:20px;background:#e7f7eb;color:var(--green);font-size:10px;font-weight:700}
-.pill.violet{background:#f0ebff;color:#7957ca}
-.pill.orange{background:#fff0e5;color:#bb7137}
 .progress{height:8px;background:#edf2ed;border-radius:20px;margin-top:9px;overflow:hidden}
 .progress div{height:100%;border-radius:20px;background:linear-gradient(90deg,#087f5b,#b7e85c)}
 .ai-box{background:linear-gradient(135deg,#f0ebff,#f5f2ff);border:1px solid #e9e0ff}
@@ -83,52 +111,105 @@ body{
 .ai-input{display:flex;gap:8px}
 .ai-input input{min-width:0;flex:1;border:1px solid #e5def5;border-radius:11px;padding:12px;font:inherit;font-size:12px;outline:none}
 .ai-input button{border:0;background:#8c6be0;color:white;border-radius:11px;padding:0 15px;font-weight:700;cursor:pointer}
-#reply{font-size:12px;color:#5c4b88;margin-top:12px;line-height:1.6}
-.bottom-note{margin-top:24px;text-align:center;color:#9aa69e;font-size:10px}
+#reply{font-size:12px;color:#5c4b88;margin-top:12px;line-height:1.6;overflow-wrap:anywhere}
+.bottom-note{margin-top:25px;text-align:center;color:#9aa69e;font-size:10px}
 button:hover{filter:brightness(.96)}
+button:active{transform:scale(.98)}
+
+/* TABLET */
 @media(max-width:950px){
- .sidebar{width:190px}.main{margin-left:190px;width:calc(100% - 190px);padding:25px 20px}
+ .sidebar{width:200px}
+ .main{margin-left:200px;width:calc(100% - 200px);padding:23px 17px}
  .stats{grid-template-columns:repeat(2,1fr)}
-}
-@media(max-width:650px){
- .sidebar{position:relative;width:100%;height:auto;padding:17px;display:block;border-right:0;border-bottom:1px solid #e8eee9}
- .nav-title,.profile{display:none}.nav{display:flex;overflow-x:auto;gap:5px;margin-top:12px}
- .nav a{white-space:nowrap;padding:9px}
- .layout{display:block}.main{margin:0;width:100%;padding:22px 15px}
- .topbar{align-items:flex-start}.welcome h1{font-size:21px}
- .date{display:none}.hero{display:block;padding:23px}
- .hero h2{font-size:21px}.hero button{margin-top:18px}
- .stats{gap:10px}.card{padding:14px}.number{font-size:24px}
  .content-grid{grid-template-columns:1fr}
+}
+
+/* MOBILE - PERMANENT LEFT MENU */
+@media(max-width:650px){
+ .layout{display:flex;min-height:100vh}
+ .sidebar{
+  position:fixed;left:0;top:0;width:140px;height:100vh;
+  padding:17px 9px;display:flex;flex-direction:column;
+  overflow-y:auto;z-index:100;
+ }
+ .logo{font-size:17px}
+ .tagline{font-size:7px;letter-spacing:.5px}
+ .nav-title{display:block;margin:25px 5px 10px;font-size:9px}
+ .nav{display:flex;flex-direction:column;gap:4px;overflow:visible}
+ .nav a{font-size:10px;padding:12px 6px;gap:6px;white-space:normal}
+ .nav-icon{width:19px;font-size:15px}
+ .profile{display:block;margin-top:auto;padding:9px}
+ .profile-row{gap:6px}
+ .avatar{width:29px;height:29px;font-size:10px}
+ .profile strong{font-size:9px}
+ .profile span{font-size:8px}
+
+ .main{
+  margin-left:140px;width:calc(100% - 140px);
+  min-width:0;padding:18px 10px;
+ }
+ .topbar{align-items:flex-start;margin-bottom:20px}
+ .welcome h1{font-size:17px}
+ .welcome p{font-size:10px;line-height:1.5}
+ .top-actions{display:block}
+ .status{font-size:8px;padding:7px}
+ .date{display:none}
+
+ .hero{display:block;padding:17px;margin-bottom:18px}
+ .hero h2{font-size:17px;line-height:1.4}
+ .hero p{font-size:10px;line-height:1.6}
+ .hero button{margin-top:14px;font-size:10px;padding:10px}
+
+ .section-head{margin:20px 0 12px}
+ .section-head h3{font-size:13px}
+ .section-head span{font-size:8px}
+ .stats{grid-template-columns:1fr;gap:9px}
+ .card{padding:12px;border-radius:14px}
+ .number{font-size:23px;margin-top:10px}
+ .stat-name{font-size:11px}
+ .change{font-size:9px}
+ .content-grid{grid-template-columns:1fr;gap:12px}
+ .panel-title{font-size:13px}
+ .metric{font-size:10px;padding:11px 0}
+ .pill{font-size:8px}
+ .ai-box p{font-size:10px}
+ .ai-input input{padding:10px;font-size:10px;width:0}
+ .ai-input button{font-size:10px;padding:0 9px}
+ #reply{font-size:10px}
+ .bottom-note{font-size:8px;line-height:1.5}
 }
 </style>
 </head>
+
 <body>
 <div class="layout">
 
+<!-- LEFT MENU -->
 <aside class="sidebar">
  <div class="logo">FlowMed <span>Nexus.</span></div>
- <div class="tagline">INTELLIGENT HEALTHCARE ECOSYSTEM</div>
+ <div class="tagline">INTELLIGENT HEALTHCARE</div>
 
- <div class="nav-title">WORKSPACE</div>
+ <div class="nav-title">MAIN MENU</div>
  <nav class="nav">
-  <a class="active" href="#dashboard">◈ Dashboard</a>
-  <a href="#patients">♙ Patients</a>
-  <a href="#appointments">▦ Appointments</a>
-  <a href="#beds">▣ Bed Management</a>
-  <a href="#labs">⌁ Lab Reports</a>
-  <a href="#ai">✧ AI Assistant</a>
+  <a class="active" href="#dashboard"><span class="nav-icon">◈</span>Dashboard</a>
+  <a href="#patients"><span class="nav-icon">♙</span>Patients</a>
+  <a href="#appointments"><span class="nav-icon">▦</span>Appointments</a>
+  <a href="#beds"><span class="nav-icon">▣</span>Bed Management</a>
+  <a href="#labs"><span class="nav-icon">⌁</span>Lab Reports</a>
+  <a href="#ai"><span class="nav-icon">✧</span>AI Assistant</a>
  </nav>
 
  <div class="profile">
-  <div style="display:flex;gap:10px;align-items:center">
+  <div class="profile-row">
    <div class="avatar">FN</div>
    <div><strong>FlowMed Admin</strong><br><span style="color:#78877f">Demo workspace</span></div>
   </div>
  </div>
 </aside>
 
+<!-- MAIN DASHBOARD -->
 <main class="main" id="dashboard">
+
  <header class="topbar">
   <div class="welcome">
    <h1>Healthcare Overview ✨</h1>
@@ -136,85 +217,137 @@ button:hover{filter:brightness(.96)}
   </div>
   <div class="top-actions">
    <span class="status">● System Online</span>
-   <span class="date" id="date"></span>
+   <div class="date" id="date"></div>
   </div>
  </header>
 
  <section class="hero">
-  <div>
+  <div class="hero-content">
    <h2>Smarter healthcare starts with connected intelligence.</h2>
    <p>Monitor patient flow, coordinate hospital resources and explore AI-powered healthcare workflows in one unified platform.</p>
   </div>
-  <button onclick="document.getElementById('ai').scrollIntoView({behavior:'smooth'})">Explore AI Assistant ↗</button>
+  <button onclick="document.getElementById('ai').scrollIntoView({behavior:'smooth'})">Explore AI ↗</button>
  </section>
 
  <div class="section-head">
-  <h3>Platform Overview</h3><span>Sample demonstration data</span>
+  <h3>Platform Overview</h3>
+  <span>Demonstration data</span>
  </div>
 
  <section class="stats">
-  <div class="card">
+  <div class="card" id="patients">
    <div class="stat-top"><span class="icon i1">♙</span><span class="pill">Demo</span></div>
-   <div class="number">120</div><div class="stat-name">Total Patients</div>
+   <div class="number">120</div>
+   <div class="stat-name">Total Patients</div>
    <div class="change">● Sample records</div>
   </div>
-  <div class="card">
+
+  <div class="card" id="appointments">
    <div class="stat-top"><span class="icon i2">▦</span><span class="pill violet">Demo</span></div>
-   <div class="number">18</div><div class="stat-name">Appointments</div>
+   <div class="number">18</div>
+   <div class="stat-name">Appointments</div>
    <div class="change">● Sample schedule</div>
   </div>
-  <div class="card">
+
+  <div class="card" id="beds">
    <div class="stat-top"><span class="icon i3">▣</span><span class="pill">Demo</span></div>
-   <div class="number">24</div><div class="stat-name">Available Beds</div>
+   <div class="number">24</div>
+   <div class="stat-name">Available Beds</div>
    <div class="change">● Sample availability</div>
   </div>
+
   <div class="card">
    <div class="stat-top"><span class="icon i4">✧</span><span class="pill orange">Preview</span></div>
-   <div class="number">AI</div><div class="stat-name">Intelligence Hub</div>
+   <div class="number">AI</div>
+   <div class="stat-name">Intelligence Hub</div>
    <div class="change">● Interface ready</div>
   </div>
  </section>
 
- <div class="section-head"><h3>Smart Operations</h3><span>Live interface preview</span></div>
+ <div class="section-head">
+  <h3>Smart Operations</h3>
+  <span>Platform modules</span>
+ </div>
 
  <section class="content-grid">
-  <div class="card" id="patients">
+
+  <div class="card">
    <div class="panel-title">Hospital Resource Insights</div>
-   <div class="metric"><span>Patient flow monitoring</span><span class="pill">Available</span></div>
-   <div class="metric"><span>Bed availability tracking</span><strong>24 beds</strong></div>
+
+   <div class="metric">
+    <span>Patient flow monitoring</span>
+    <span class="pill">Available</span>
+   </div>
+
+   <div class="metric">
+    <span>Bed availability tracking</span>
+    <strong>24 beds</strong>
+   </div>
+
    <div class="progress"><div style="width:65%"></div></div>
-   <div class="metric" id="appointments"><span>Appointment coordination</span><span class="pill violet">18 scheduled</span></div>
-   <div class="metric" id="beds"><span>Resource coordination</span><span class="pill">Demo mode</span></div>
-   <div class="metric" id="labs"><span>Lab report readiness</span><span class="pill orange">Preview</span></div>
+
+   <div class="metric">
+    <span>Appointment coordination</span>
+    <span class="pill violet">18 scheduled</span>
+   </div>
+
+   <div class="metric">
+    <span>Resource coordination</span>
+    <span class="pill">Demo mode</span>
+   </div>
+
+   <div class="metric" id="labs">
+    <span>Lab report readiness</span>
+    <span class="pill orange">Preview</span>
+   </div>
   </div>
 
   <div class="card ai-box" id="ai">
    <div class="panel-title">✧ FlowMed AI Assistant</div>
    <p>Explore healthcare technology, hospital workflows and platform features. This demo assistant does not provide medical diagnosis or treatment advice.</p>
+
    <div class="ai-input">
     <input id="question" placeholder="Ask about FlowMed Nexus...">
     <button onclick="askAI()">Ask ↗</button>
    </div>
+
    <div id="reply">Your AI interface is ready for secure Gemini integration.</div>
   </div>
+
  </section>
 
  <div class="bottom-note">
   FLOWMED NEXUS 2.0 · STUDENT INNOVATION PROJECT · DEMONSTRATION DATA ONLY
  </div>
+
 </main>
 </div>
 
 <script>
 document.getElementById("date").textContent =
- new Date().toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"});
+ new Date().toLocaleDateString("en-IN",{
+  day:"numeric",month:"short",year:"numeric"
+ });
 
 function askAI(){
  const q=document.getElementById("question").value.trim();
  const r=document.getElementById("reply");
- if(!q){r.textContent="Please enter a question first.";return;}
+
+ if(!q){
+  r.textContent="Please enter a question first.";
+  return;
+ }
+
  r.textContent="This is the FlowMed demo interface. Secure Gemini AI integration will be added through a protected backend. For now, explore the dashboard and its sample healthcare workflows.";
 }
+
+// Highlight selected navigation item
+document.querySelectorAll(".nav a").forEach(link=>{
+ link.addEventListener("click",()=>{
+  document.querySelectorAll(".nav a").forEach(a=>a.classList.remove("active"));
+  link.classList.add("active");
+ });
+});
 </script>
 </body>
 </html>
