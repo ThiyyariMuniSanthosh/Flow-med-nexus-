@@ -7,7 +7,7 @@
 <title>FlowMed Nexus 2.0 | Smart Healthcare Operations</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap');
-:root{--green:#087f5b;--green2:#12a879;--lime:#c8f36a;--ink:#1d332b;--muted:#7b8b82;--bg:#f5f8f5;--line:#e7eee8;--shadow:0 12px 35px #153d2610}
+:root{--green:#087f5b;--lime:#c8f36a;--ink:#1d332b;--muted:#7b8b82;--bg:#f5f8f5;--line:#e7eee8;--shadow:0 12px 35px #153d2610}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif}button,input,select{font:inherit}button{cursor:pointer}
 .sidebar{position:fixed;inset:0 auto 0 0;width:245px;background:#fff;border-right:1px solid var(--line);padding:24px 16px;display:flex;flex-direction:column;z-index:5}.brand{padding:2px 10px 24px}.brand-name{font:800 22px Manrope;color:var(--green)}.brand-name span{color:#a5cf40}.brand small{display:block;color:#91a097;font-size:9px;letter-spacing:1.5px;margin-top:5px}.nav-label{font-size:9px;font-weight:800;letter-spacing:1.5px;color:#a5b0a9;margin:14px 10px}.nav{display:grid;gap:5px}.nav button{border:0;background:transparent;color:#74847b;text-align:left;padding:12px;border-radius:11px;font-size:12px;font-weight:700}.nav button.active,.nav button:hover{background:#e8f6ec;color:var(--green)}.nav-icon{display:inline-block;width:25px}.secure-note{margin-top:auto;background:#f0f8f1;border:1px solid #e2f0e5;border-radius:13px;padding:12px;font-size:10px;color:#668071;line-height:1.6}.secure-note b{display:block;color:var(--green)}
 .main{margin-left:245px;padding:26px 30px;max-width:1700px}.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:24px}.eyebrow{font-size:10px;color:var(--green);font-weight:800;letter-spacing:1.3px}.topbar h1{font:800 24px Manrope;margin:4px 0}.top-right{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.date,.status{font-size:10px;padding:9px 12px;border-radius:30px;background:#fff;border:1px solid var(--line)}.status{background:#e8f7ed;color:var(--green);font-weight:800}
@@ -60,7 +60,7 @@
 <section class="page" id="page-beds"><div class="section-head"><div><h2>Smart bed management</h2><p>Live ward capacity from Firestore <b>Wards</b> subcollections</p></div><span class="hint">LIVE CAPACITY</span></div><div class="bed-grid" id="wardGrid"><div class="card empty-note">Sign in to load live ward data.</div></div><div class="card" style="margin-top:13px"><div class="panel-title">Live capacity note</div><p id="wardNote" class="small">Ward figures update when Firestore records change. Demo data only.</p></div></section>
 <section class="page" id="page-labs"><div class="section-head"><div><h2>Laboratory reports</h2><p>Sample report workflow</p></div><span class="hint">DEMO REPORTS</span></div><div class="grid-two"><div class="card"><b>Blood Panel</b><p class="small">LAB-2041 · Completed</p></div><div class="card"><b>Thyroid Profile</b><p class="small">LAB-2042 · Processing</p></div><div class="card"><b>Lipid Profile</b><p class="small">LAB-2043 · Awaiting review</p></div></div><p class="small">This prototype does not store or interpret medical test results.</p></section>
 <section class="page" id="page-assistant"><div class="section-head"><div><h2>AI operations assistant</h2><p>Workflow questions only—not clinical diagnosis</p></div><span class="hint">AI PREVIEW</span></div><div class="card"><h3>✧ How can I help with hospital operations?</h3><p class="small">Gemini is not connected yet. This is a safe preview interface.</p><div class="toolbar"><input id="question" class="field search" placeholder="Ask about workflow or scheduling…"><button class="btn btn-primary" onclick="askAI()">Send</button></div><div id="reply" class="small">Your response will appear here.</div></div></section>
-<section class="page" id="page-account"><div class="section-head"><div><h2>Account & security</h2><p>Firebase Authentication</p></div><span class="hint">ACCOUNT SETTINGS</span></div><div class="auth-layout">
+<section class="page" id="page-account"><div class="section-head"><div><h2>Account &amp; security</h2><p>Firebase Authentication</p></div><span class="hint">ACCOUNT SETTINGS</span></div><div class="auth-layout">
  <div class="card"><h3>Sign in or create an account</h3><p class="small">Use your demo email and password. Firebase handles password authentication.</p><div class="auth-form"><input id="email" class="field" type="email" placeholder="Email address" autocomplete="email"><input id="password" class="field" type="password" placeholder="Password (minimum 6 characters)" autocomplete="current-password"><div class="auth-actions"><button class="btn btn-primary" onclick="createAccount()">Create account</button><button class="btn btn-soft" onclick="signIn()">Sign in</button><button class="btn btn-soft" onclick="signOutUser()">Sign out</button></div></div><div id="authMessage" class="message">Checking Firebase…</div></div>
  <div class="card"><h3>Connection status</h3><div class="metric">Authentication <b id="authState">Checking…</b></div><div class="metric">Firestore <b id="dbState">Checking…</b></div><div class="metric">Signed-in user <b id="userStatus">Not signed in</b></div><div class="metric">Access role <b id="roleStatus">Guest</b></div><p class="small">Admin access is restricted to the configured administrator account.</p></div>
 </div></section>
@@ -84,7 +84,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, collectionGroup, onSnapshot, addDoc, updateDoc, deleteDoc, getDocs, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, collectionGroup, doc, onSnapshot, addDoc, updateDoc, deleteDoc, getDocs, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDaGqCp7gomqV5EsQhquoRjaWmcQSUIbLU",
@@ -124,7 +124,6 @@ window.askAI=()=>{
   $("reply").textContent=q?"AI preview only: Gemini is not connected. Operational questions should be reviewed by hospital staff. No clinical advice is provided.":"Please enter a workflow question.";
 };
 $("date").textContent=new Date().toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short",year:"numeric"});
-
 function safeText(tag,value){const el=document.createElement(tag);el.textContent=String(value??"");return el;}
 function showWardMessage(message){
   $("wardGrid").replaceChildren();
@@ -158,7 +157,8 @@ function renderWards(snapshot){
   wardsCache=[];$("wardGrid").replaceChildren();$("adminWardRows").replaceChildren();
   let total=0,free=0,invalid=0;const colors=["mint","lav","yellow","peach"];
   snapshot.forEach((docSnap,index)=>{
-    const w=normalizeWard(docSnap);if(!w){invalid++;console.warn("Invalid Wards document:",docSnap.ref.path,docSnap.data());return;}
+    const w=normalizeWard(docSnap);
+    if(!w){invalid++;console.warn("Invalid Wards document:",docSnap.ref.path,docSnap.data());return;}
     wardsCache.push(w);total+=w.total;free+=w.free;
     const card=document.createElement("div");card.className="card bed-card";
     const icon=safeText("span","▤");icon.className="stat-icon "+colors[index%colors.length];
@@ -171,7 +171,8 @@ function renderWards(snapshot){
       const tr=document.createElement("tr");[w.name,w.total,w.free,w.status].forEach(v=>tr.appendChild(safeText("td",v)));
       const actions=document.createElement("td"),edit=safeText("button","Edit"),del=safeText("button","Delete");
       edit.className="btn btn-soft";del.className="btn btn-danger";del.style.marginLeft="5px";
-      edit.addEventListener("click",()=>editWard(w.path));del.addEventListener("click",()=>removeWard(w.path,w.name));
+      edit.addEventListener("click",()=>editWard(w.path));
+      del.addEventListener("click",()=>removeWard(w.path,w.name));
       actions.append(edit,del);tr.appendChild(actions);$("adminWardRows").appendChild(tr);
     }
   });
@@ -185,9 +186,14 @@ async function writeAudit(action,wardName){
   if(!isAdmin())throw new Error("Administrator sign-in required.");
   await addDoc(collection(db,"auditLogs"),{action,wardName:wardName||"—",actorEmail:currentUser.email,createdAt:serverTimestamp()});
 }
+function showAuditWarning(message){
+  $("auditRows").replaceChildren();
+  const tr=document.createElement("tr"),td=safeText("td",message);td.colSpan=4;tr.appendChild(td);$("auditRows").appendChild(tr);
+}
 window.clearWardForm=()=>{
-  $("wardDocPath").value="";$("parentSopId").disabled=false;$("wardName").value="";
-  $("totalBeds").value="";$("availableBeds").value="";$("wardStatus").value="Active";$("adminMessage").textContent="";
+  $("wardDocPath").value="";$("parentSopId").disabled=false;$("parentSopId").value="";
+  $("wardName").value="";$("totalBeds").value="";$("availableBeds").value="";
+  $("wardStatus").value="Active";$("adminMessage").textContent="";
 };
 function editWard(path){
   const w=wardsCache.find(x=>x.path===path);if(!w)return;
@@ -205,33 +211,57 @@ window.saveWard=async()=>{
   if(!path&&!parentId){$("adminMessage").textContent="Enter the parent SOP document ID from Firestore before creating a ward.";return;}
   const payload={ward_name:name,total_beds:total,available_beds:free,status};
   try{
-    $("adminMessage").textContent="Saving…";
+    $("adminMessage").textContent="Saving ward…";
+    let savedRef;
     if(path){
-      const existing=wardsCache.find(w=>w.path===path);if(!existing)throw new Error("Ward is not in the current loaded list. Refresh and try again.");
-      await updateDoc(existing.ref,payload);await writeAudit("UPDATED_WARD",name);
+      const existing=wardsCache.find(w=>w.path===path);
+      if(!existing)throw new Error("Ward is not in the current loaded list. Refresh and try again.");
+      await updateDoc(existing.ref,payload);savedRef=existing.ref;
     }else{
-      await addDoc(collection(db,"sop_documents",parentId,"Wards"),payload);await writeAudit("CREATED_WARD",name);
+      savedRef=await addDoc(collection(db,"sop_documents",parentId,"Wards"),payload);
     }
-    window.clearWardForm();$("adminMessage").textContent="Ward saved successfully.";await loadAuditLogs();
-  }catch(error){console.error(error);$("adminMessage").textContent="Save failed: "+error.message;}
+    $("adminMessage").textContent="Ward saved successfully. Writing audit entry…";
+    try{
+      await writeAudit(path?"UPDATED_WARD":"CREATED_WARD",name);
+      $("adminMessage").textContent="Ward saved successfully and audit entry recorded.";
+    }catch(auditError){
+      console.error("Ward saved, but audit log failed:",auditError);
+      $("adminMessage").textContent="Ward was saved, but the audit log could not be written: "+auditError.message;
+    }
+    window.clearWardForm();
+    $("adminMessage").textContent += " The live ward list will refresh automatically.";
+    if(isAdmin())await loadAuditLogs();
+  }catch(error){
+    console.error(error);
+    $("adminMessage").textContent="Ward save failed: "+error.message;
+  }
 };
 async function removeWard(path,name){
   if(!isAdmin()||!confirm('Delete ward "'+name+'"? This cannot be undone.'))return;
   try{
     const ward=wardsCache.find(w=>w.path===path);if(!ward)throw new Error("Ward is no longer loaded.");
-    await deleteDoc(ward.ref);await writeAudit("DELETED_WARD",name);await loadAuditLogs();
+    await deleteDoc(ward.ref);
+    try{await writeAudit("DELETED_WARD",name);alert("Ward deleted and audit entry recorded.");}
+    catch(auditError){console.error(auditError);alert("Ward deleted, but audit logging failed: "+auditError.message);}
+    await loadAuditLogs();
   }catch(error){alert("Delete failed: "+error.message);}
 }
 async function loadAuditLogs(){
-  if(!isAdmin())return;const body=$("auditRows");body.replaceChildren();
+  if(!isAdmin())return;
+  const body=$("auditRows");body.replaceChildren();
   try{
     const snap=await getDocs(query(collection(db,"auditLogs"),orderBy("createdAt","desc"),limit(50)));
-    if(snap.empty){body.innerHTML='<tr><td colspan="4">No audit events yet.</td></tr>';return;}
+    if(snap.empty){showAuditWarning("No audit events yet.");return;}
     snap.forEach(item=>{
-      const d=item.data(),tr=document.createElement("tr"),time=d.createdAt?.toDate?d.createdAt.toDate().toLocaleString():"Just now";
-      [time,d.action||"—",d.wardName||"—",d.actorEmail||"—"].forEach(v=>tr.appendChild(safeText("td",v)));body.appendChild(tr);
+      const d=item.data(),tr=document.createElement("tr");
+      const time=d.createdAt?.toDate?d.createdAt.toDate().toLocaleString():"Timestamp pending";
+      [time,d.action||"—",d.wardName||"—",d.actorEmail||"—"].forEach(v=>tr.appendChild(safeText("td",v)));
+      body.appendChild(tr);
     });
-  }catch(error){body.innerHTML='<tr><td colspan="4">Could not load logs: '+String(error.message).replace(/[<>&"]/g,"")+'</td></tr>';}
+  }catch(error){
+    console.error("Audit log read failed:",error);
+    showAuditWarning("Could not load audit logs: "+error.message);
+  }
 }
 window.loadAuditLogs=loadAuditLogs;
 function credentials(){
@@ -252,27 +282,41 @@ window.signOutUser=async()=>{
   try{await signOut(auth);$("authMessage").textContent="Signed out.";showPage("dashboard");}
   catch(error){$("authMessage").textContent=error.message;}
 };
-$("systemStatus").textContent="● Firebase configured";$("authState").textContent="Ready";$("dbState").textContent="Initialized";
+$("systemStatus").textContent="● Firebase configured";
+$("authState").textContent="Ready";
+$("dbState").textContent="Initialized";
 onAuthStateChanged(auth,user=>{
   currentUser=user;
   $("userStatus").textContent=user?user.email:"Not signed in";
-  const admin=isAdmin();$("roleStatus").textContent=admin?"Administrator":(user?"Standard user":"Guest");
-  $("adminNav").hidden=!admin;$("adminEmail").textContent=admin?user.email:"—";
+  const admin=isAdmin();
+  $("roleStatus").textContent=admin?"Administrator":(user?"Standard user":"Guest");
+  $("adminNav").hidden=!admin;
+  $("adminEmail").textContent=admin?user.email:"—";
   if(stopWardListener){stopWardListener();stopWardListener=null;}
   wardsCache=[];
   if(user){
     $("authMessage").textContent=admin?"Signed in as administrator.":"Signed in. Standard-user access.";
     showWardMessage('Loading documents from Firestore "Wards" subcollections…');
     stopWardListener=onSnapshot(collectionGroup(db,"Wards"),renderWards,error=>{
-      console.error("Ward listener error:",error);showWardMessage("Could not load ward data: "+error.message);
-      $("wardNote").textContent="Check Firestore rules and collection-group read permissions.";
+      console.error("Ward listener error:",error);
+      showWardMessage("Could not load ward data: "+error.message);
+      $("wardNote").textContent="Check Firestore Rules, signed-in status, and collection-group read permissions.";
+      $("systemStatus").textContent="● Firestore permission/error";
     });
-    if(admin)loadAuditLogs();else if($("page-admin").classList.contains("active"))showPage("dashboard");
+    $("systemStatus").textContent="● Connected";
+    if(admin)loadAuditLogs();
+    else{
+      $("adminWardRows").innerHTML='<tr><td colspan="5">Administrator sign-in required.</td></tr>';
+      $("auditRows").innerHTML='<tr><td colspan="4">Administrator sign-in required.</td></tr>';
+      if($("page-admin").classList.contains("active"))showPage("dashboard");
+    }
   }else{
     $("authMessage").textContent="Firebase is ready. Sign in to load live ward data.";
-    showWardMessage("Sign in to Firebase to load live ward data.");updateDashboardBeds(0,0);
+    showWardMessage("Sign in to Firebase to load live ward data.");
+    updateDashboardBeds(0,0);
     $("adminWardRows").innerHTML='<tr><td colspan="5">Admin sign-in required.</td></tr>';
     $("auditRows").innerHTML='<tr><td colspan="4">Admin sign-in required.</td></tr>';
+    $("systemStatus").textContent="● Sign-in required";
     if($("page-admin").classList.contains("active"))showPage("dashboard");
   }
 });
