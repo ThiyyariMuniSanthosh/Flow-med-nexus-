@@ -1,14 +1,23 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#087f5b">
 <title>FlowMed Nexus 2.0 | Smart Healthcare Operations</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap');
-:root{--green:#087f5b;--green2:#12a879;--lime:#c8f36a;--ink:#1d332b;--muted:#7b8b82;--bg:#f5f8f5;--line:#e7eee8;--purple:#8c6be0;--shadow:0 12px 35px #153d2610}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif}button,input,select{font:inherit}button{cursor:pointer}.sidebar{position:fixed;inset:0 auto 0 0;width:245px;background:#fff;border-right:1px solid var(--line);padding:24px 16px;display:flex;flex-direction:column;z-index:5}.brand{padding:2px 10px 24px}.brand-name{font:800 22px Manrope;color:var(--green)}.brand-name span{color:#a5cf40}.brand small{display:block;color:#91a097;font-size:9px;letter-spacing:1.5px;margin-top:5px}.nav-label{font-size:9px;font-weight:800;letter-spacing:1.5px;color:#a5b0a9;margin:14px 10px}.nav{display:grid;gap:5px}.nav button{border:0;background:transparent;color:#74847b;text-align:left;padding:12px;border-radius:11px;font-size:12px;font-weight:700}.nav button.active,.nav button:hover{background:#e8f6ec;color:var(--green)}.nav-icon{display:inline-block;width:25px}.secure-note{margin-top:auto;background:#f0f8f1;border:1px solid #e2f0e5;border-radius:13px;padding:12px;font-size:10px;color:#668071;line-height:1.6}.secure-note b{display:block;color:var(--green)}.main{margin-left:245px;padding:26px 30px;max-width:1700px}.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:24px}.eyebrow{font-size:10px;color:var(--green);font-weight:800;letter-spacing:1.3px}.topbar h1{font:800 24px Manrope;margin:4px 0}.top-right{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.date,.status{font-size:10px;padding:9px 12px;border-radius:30px;background:#fff;border:1px solid var(--line)}.status{background:#e8f7ed;color:var(--green);font-weight:800}.page{display:none}.page.active{display:block}.hero{background:linear-gradient(112deg,#086b50,#13a979);color:#fff;border-radius:20px;padding:27px;display:flex;justify-content:space-between;align-items:center;gap:18px}.hero h2{font:800 23px Manrope;margin:0}.hero p{font-size:12px;line-height:1.7;color:#d7f4e6;max-width:650px}.hero-tag{background:var(--lime);color:#23422d;border:0;border-radius:10px;padding:12px;font-weight:800}.section-head{display:flex;justify-content:space-between;align-items:end;margin:23px 0 12px;gap:10px}.section-head h2{font:800 16px Manrope;margin:0}.section-head p{font-size:11px;color:var(--muted);margin:5px 0 0}.hint{font-size:9px;color:#94a198}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:17px;box-shadow:var(--shadow);min-width:0}.stat-head,.metric{display:flex;justify-content:space-between;align-items:center;gap:10px}.stat-icon{width:36px;height:36px;border-radius:11px;display:grid;place-items:center}.mint{background:#e7f7ed}.lav{background:#f1edff}.yellow{background:#f4f9df}.peach{background:#fff1e7}.stat-value,.bed-number{font:800 26px Manrope;margin-top:12px}.stat-label,.stat-foot{font-size:10px;color:var(--muted);margin-top:4px}.stat-foot{color:var(--green);font-weight:800}.badge{font-size:9px;font-weight:800;padding:5px 8px;border-radius:30px;background:#e8f7ed;color:var(--green)}.grid-two{display:grid;grid-template-columns:1.2fr .9fr;gap:13px;margin-top:14px}.panel-title{font:800 13px Manrope;margin-bottom:12px}.metric{padding:11px 0;border-bottom:1px solid #edf2ed;font-size:11px}.metric:last-child{border:0}.bar{height:7px;background:#edf2ed;border-radius:10px;margin-top:8px;overflow:hidden}.bar span{display:block;height:100%;background:linear-gradient(90deg,var(--green),#b6e75c)}.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:13px 0}.field{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:11px;outline:none;color:var(--ink);min-width:0}.field:focus{border-color:#8bc9a2}.search{min-width:190px;flex:1}.btn{border:0;border-radius:10px;padding:10px 13px;font-size:10px;font-weight:800}.btn-primary{background:var(--green);color:white}.btn-soft{background:#eaf6ed;color:var(--green)}.btn-danger{background:#fff0ed;color:#b34b37}.bed-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.bed-card h3{font:800 12px Manrope;margin:0}.bed-card p{font-size:10px;color:var(--muted);margin:5px 0}.table-wrap{overflow:auto;background:white;border:1px solid var(--line);border-radius:14px}table{width:100%;border-collapse:collapse;min-width:560px}th,td{text-align:left;padding:12px 14px;border-bottom:1px solid #edf2ed;font-size:10px}th{font-size:9px;color:#91a097;text-transform:uppercase}tr:last-child td{border:0}.auth-layout{display:grid;grid-template-columns:1fr 1fr;gap:13px}.auth-form{display:grid;gap:9px;margin-top:13px}.auth-form input{width:100%}.auth-actions{display:flex;gap:8px;flex-wrap:wrap}.message{font-size:10px;color:var(--green);margin-top:10px;line-height:1.6;overflow-wrap:anywhere}.empty-note{padding:22px;text-align:center;color:var(--muted);font-size:11px}.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.form-grid .wide{grid-column:1/-1}.small{font-size:10px;color:var(--muted);line-height:1.6}.footer{text-align:center;color:#a1ada5;font-size:9px;margin-top:25px}
+:root{--green:#087f5b;--green2:#12a879;--lime:#c8f36a;--ink:#1d332b;--muted:#7b8b82;--bg:#f5f8f5;--line:#e7eee8;--shadow:0 12px 35px #153d2610}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif}button,input,select{font:inherit}button{cursor:pointer}
+.sidebar{position:fixed;inset:0 auto 0 0;width:245px;background:#fff;border-right:1px solid var(--line);padding:24px 16px;display:flex;flex-direction:column;z-index:5}.brand{padding:2px 10px 24px}.brand-name{font:800 22px Manrope;color:var(--green)}.brand-name span{color:#a5cf40}.brand small{display:block;color:#91a097;font-size:9px;letter-spacing:1.5px;margin-top:5px}.nav-label{font-size:9px;font-weight:800;letter-spacing:1.5px;color:#a5b0a9;margin:14px 10px}.nav{display:grid;gap:5px}.nav button{border:0;background:transparent;color:#74847b;text-align:left;padding:12px;border-radius:11px;font-size:12px;font-weight:700}.nav button.active,.nav button:hover{background:#e8f6ec;color:var(--green)}.nav-icon{display:inline-block;width:25px}.secure-note{margin-top:auto;background:#f0f8f1;border:1px solid #e2f0e5;border-radius:13px;padding:12px;font-size:10px;color:#668071;line-height:1.6}.secure-note b{display:block;color:var(--green)}
+.main{margin-left:245px;padding:26px 30px;max-width:1700px}.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:24px}.eyebrow{font-size:10px;color:var(--green);font-weight:800;letter-spacing:1.3px}.topbar h1{font:800 24px Manrope;margin:4px 0}.top-right{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.date,.status{font-size:10px;padding:9px 12px;border-radius:30px;background:#fff;border:1px solid var(--line)}.status{background:#e8f7ed;color:var(--green);font-weight:800}
+.page{display:none}.page.active{display:block}.hero{background:linear-gradient(112deg,#086b50,#13a979);color:#fff;border-radius:20px;padding:27px;display:flex;justify-content:space-between;align-items:center;gap:18px}.hero h2{font:800 23px Manrope;margin:0}.hero p{font-size:12px;line-height:1.7;color:#d7f4e6;max-width:650px}.hero-tag{background:var(--lime);color:#23422d;border:0;border-radius:10px;padding:12px;font-weight:800}
+.section-head{display:flex;justify-content:space-between;align-items:end;margin:23px 0 12px;gap:10px}.section-head h2{font:800 16px Manrope;margin:0}.section-head p{font-size:11px;color:var(--muted);margin:5px 0 0}.hint{font-size:9px;color:#94a198}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:17px;box-shadow:var(--shadow);min-width:0}.stat-head,.metric{display:flex;justify-content:space-between;align-items:center;gap:10px}.stat-icon{width:36px;height:36px;border-radius:11px;display:grid;place-items:center}.mint{background:#e7f7ed}.lav{background:#f1edff}.yellow{background:#f4f9df}.peach{background:#fff1e7}.stat-value,.bed-number{font:800 26px Manrope;margin-top:12px}.stat-label,.stat-foot{font-size:10px;color:var(--muted);margin-top:4px}.stat-foot{color:var(--green);font-weight:800}.badge{font-size:9px;font-weight:800;padding:5px 8px;border-radius:30px;background:#e8f7ed;color:var(--green)}
+.grid-two{display:grid;grid-template-columns:1.2fr .9fr;gap:13px;margin-top:14px}.panel-title{font:800 13px Manrope;margin-bottom:12px}.metric{padding:11px 0;border-bottom:1px solid #edf2ed;font-size:11px}.metric:last-child{border:0}.bar{height:7px;background:#edf2ed;border-radius:10px;margin-top:8px;overflow:hidden}.bar span{display:block;height:100%;background:linear-gradient(90deg,var(--green),#b6e75c)}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:13px 0}.field{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:11px;outline:none;color:var(--ink);min-width:0}.field:focus{border-color:#8bc9a2}.search{min-width:190px;flex:1}.btn{border:0;border-radius:10px;padding:10px 13px;font-size:10px;font-weight:800}.btn-primary{background:var(--green);color:white}.btn-soft{background:#eaf6ed;color:var(--green)}.btn-danger{background:#fff0ed;color:#b34b37}
+.bed-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.bed-card h3{font:800 12px Manrope;margin:0}.bed-card p{font-size:10px;color:var(--muted);margin:5px 0}.table-wrap{overflow:auto;background:white;border:1px solid var(--line);border-radius:14px}table{width:100%;border-collapse:collapse;min-width:560px}th,td{text-align:left;padding:12px 14px;border-bottom:1px solid #edf2ed;font-size:10px}th{font-size:9px;color:#91a097;text-transform:uppercase}tr:last-child td{border:0}
+.auth-layout{display:grid;grid-template-columns:1fr 1fr;gap:13px}.auth-form{display:grid;gap:9px;margin-top:13px}.auth-form input{width:100%}.auth-actions{display:flex;gap:8px;flex-wrap:wrap}.message{font-size:10px;color:var(--green);margin-top:10px;line-height:1.6;overflow-wrap:anywhere}.empty-note{padding:22px;text-align:center;color:var(--muted);font-size:11px}.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.form-grid .wide{grid-column:1/-1}.small{font-size:10px;color:var(--muted);line-height:1.6}.footer{text-align:center;color:#a1ada5;font-size:9px;margin-top:25px}
 @media(max-width:950px){.sidebar{width:205px}.main{margin-left:205px;padding:20px}.stats{grid-template-columns:repeat(2,1fr)}.bed-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:650px){.sidebar{width:120px;padding:14px 7px}.brand{padding:3px 3px 15px}.brand-name{font-size:15px}.brand small{font-size:7px}.nav-label{font-size:8px;margin:10px 4px}.nav button{padding:10px 6px;font-size:9px}.nav-icon{width:18px}.secure-note{font-size:8px;padding:8px}.main{margin-left:120px;padding:15px 10px}.topbar h1{font-size:17px}.eyebrow{font-size:8px}.topbar{align-items:flex-start}.top-right{display:grid;justify-items:end;font-size:8px}.date,.status{font-size:8px;padding:6px 8px}.hero{display:block;padding:17px}.hero h2{font-size:17px}.hero p{font-size:10px}.hero-tag{font-size:9px}.stats{gap:7px}.card{padding:11px;border-radius:12px}.stat-value,.bed-number{font-size:21px}.stat-label,.stat-foot{font-size:8px}.grid-two,.auth-layout,.admin-grid{grid-template-columns:1fr;gap:9px}.bed-grid{gap:7px}.section-head h2{font-size:13px}.section-head p{font-size:9px}.toolbar{gap:6px}.field{font-size:9px;padding:9px}.search{min-width:100%}.btn{font-size:9px;padding:9px}.form-grid{grid-template-columns:1fr}.form-grid .wide{grid-column:auto}}
 </style>
@@ -32,7 +41,6 @@
 </aside>
 <main class="main">
 <header class="topbar"><div><div class="eyebrow">FLOWMED NEXUS 2.0</div><h1 id="pageTitle">Dashboard overview</h1></div><div class="top-right"><span class="date" id="date"></span><span class="status" id="systemStatus">● Connecting</span></div></header>
-
 <section class="page active" id="page-dashboard">
  <div class="hero"><div><h2>Healthcare operations, made clearer.</h2><p>A unified workspace concept for patient flow, appointments, bed capacity and laboratory updates. Explore each module from the navigation.</p></div><button class="hero-tag" onclick="showPage('beds')">View live beds →</button></div>
  <div class="section-head"><div><h2>Today's snapshot</h2><p>Illustrative demo indicators across the hospital workspace</p></div><span class="hint">DEMO DATA</span></div>
@@ -47,31 +55,25 @@
   <div class="card"><div class="panel-title">Quick navigation</div><div class="metric">Patient directory <button class="btn btn-soft" onclick="showPage('patients')">Open →</button></div><div class="metric">Appointments <button class="btn btn-soft" onclick="showPage('appointments')">Open →</button></div><div class="metric">Bed availability <button class="btn btn-soft" onclick="showPage('beds')">Open →</button></div></div>
  </div>
 </section>
-
 <section class="page" id="page-patients"><div class="section-head"><div><h2>Patient directory</h2><p>Fictional sample records for the prototype</p></div><span class="hint">SAMPLE DATA</span></div><div class="toolbar"><input id="patientSearch" class="field search" placeholder="Search patients…" oninput="filterTable('patientSearch','patientRows')"></div><div class="table-wrap"><table><thead><tr><th>Patient</th><th>ID</th><th>Department</th><th>Status</th></tr></thead><tbody id="patientRows"><tr><td>Alex Rivera</td><td>FM-1001</td><td>Cardiology</td><td>Checked in</td></tr><tr><td>Sara Morgan</td><td>FM-1002</td><td>Neurology</td><td>Scheduled</td></tr><tr><td>Jordan Kim</td><td>FM-1003</td><td>General Medicine</td><td>Under review</td></tr></tbody></table></div><p class="small">Fictional demonstration records only.</p></section>
-
 <section class="page" id="page-appointments"><div class="section-head"><div><h2>Appointment schedule</h2><p>Sample schedule and appointment status</p></div><span class="hint">DEMO</span></div><div class="toolbar"><input id="appointmentSearch" class="field search" placeholder="Search appointments…" oninput="filterTable('appointmentSearch','appointmentRows')"></div><div class="table-wrap"><table><thead><tr><th>Time</th><th>Patient</th><th>Department</th><th>Consultant</th><th>Status</th></tr></thead><tbody id="appointmentRows"><tr><td>09:00 AM</td><td>Alex Rivera</td><td>Cardiology</td><td>Dr. Wilson</td><td>Checked in</td></tr><tr><td>10:30 AM</td><td>Sara Morgan</td><td>Neurology</td><td>Dr. Chen</td><td>Upcoming</td></tr><tr><td>11:15 AM</td><td>Jordan Kim</td><td>General Medicine</td><td>Dr. Rao</td><td>Waiting</td></tr></tbody></table></div></section>
-
-<section class="page" id="page-beds"><div class="section-head"><div><h2>Smart bed management</h2><p>Live ward capacity from Firestore <b>wards</b> collection</p></div><span class="hint">LIVE CAPACITY</span></div><div class="bed-grid" id="wardGrid"><div class="card empty-note">Sign in to load live ward data.</div></div><div class="card" style="margin-top:13px"><div class="panel-title">Live capacity note</div><p id="wardNote" class="small">Ward figures update when Firestore records change. Demo data only.</p></div></section>
-
+<section class="page" id="page-beds"><div class="section-head"><div><h2>Smart bed management</h2><p>Live ward capacity from Firestore <b>Wards</b> subcollections</p></div><span class="hint">LIVE CAPACITY</span></div><div class="bed-grid" id="wardGrid"><div class="card empty-note">Sign in to load live ward data.</div></div><div class="card" style="margin-top:13px"><div class="panel-title">Live capacity note</div><p id="wardNote" class="small">Ward figures update when Firestore records change. Demo data only.</p></div></section>
 <section class="page" id="page-labs"><div class="section-head"><div><h2>Laboratory reports</h2><p>Sample report workflow</p></div><span class="hint">DEMO REPORTS</span></div><div class="grid-two"><div class="card"><b>Blood Panel</b><p class="small">LAB-2041 · Completed</p></div><div class="card"><b>Thyroid Profile</b><p class="small">LAB-2042 · Processing</p></div><div class="card"><b>Lipid Profile</b><p class="small">LAB-2043 · Awaiting review</p></div></div><p class="small">This prototype does not store or interpret medical test results.</p></section>
-
 <section class="page" id="page-assistant"><div class="section-head"><div><h2>AI operations assistant</h2><p>Workflow questions only—not clinical diagnosis</p></div><span class="hint">AI PREVIEW</span></div><div class="card"><h3>✧ How can I help with hospital operations?</h3><p class="small">Gemini is not connected yet. This is a safe preview interface.</p><div class="toolbar"><input id="question" class="field search" placeholder="Ask about workflow or scheduling…"><button class="btn btn-primary" onclick="askAI()">Send</button></div><div id="reply" class="small">Your response will appear here.</div></div></section>
-
 <section class="page" id="page-account"><div class="section-head"><div><h2>Account & security</h2><p>Firebase Authentication</p></div><span class="hint">ACCOUNT SETTINGS</span></div><div class="auth-layout">
  <div class="card"><h3>Sign in or create an account</h3><p class="small">Use your demo email and password. Firebase handles password authentication.</p><div class="auth-form"><input id="email" class="field" type="email" placeholder="Email address" autocomplete="email"><input id="password" class="field" type="password" placeholder="Password (minimum 6 characters)" autocomplete="current-password"><div class="auth-actions"><button class="btn btn-primary" onclick="createAccount()">Create account</button><button class="btn btn-soft" onclick="signIn()">Sign in</button><button class="btn btn-soft" onclick="signOutUser()">Sign out</button></div></div><div id="authMessage" class="message">Checking Firebase…</div></div>
  <div class="card"><h3>Connection status</h3><div class="metric">Authentication <b id="authState">Checking…</b></div><div class="metric">Firestore <b id="dbState">Checking…</b></div><div class="metric">Signed-in user <b id="userStatus">Not signed in</b></div><div class="metric">Access role <b id="roleStatus">Guest</b></div><p class="small">Admin access is restricted to the configured administrator account.</p></div>
- </div></section>
-
+</div></section>
 <section class="page" id="page-admin">
  <div class="section-head"><div><h2>Admin control centre</h2><p>Manage demonstration ward records and review administrative activity.</p></div><span class="hint">ADMIN ONLY</span></div>
  <div class="admin-grid">
-  <div class="card"><div class="panel-title">Add / edit ward</div><input id="wardDocId" type="hidden"><div class="form-grid">
+  <div class="card"><div class="panel-title">Add / edit ward</div><input id="wardDocPath" type="hidden"><div class="form-grid">
+   <input id="parentSopId" class="field wide" placeholder="Parent SOP document ID (required for new ward)">
    <input id="wardName" class="field wide" placeholder="Ward name (e.g. ICU)">
-   <input id="totalBeds" class="field" type="number" min="0" placeholder="Total beds">
-   <input id="availableBeds" class="field" type="number" min="0" placeholder="Available beds">
+   <input id="totalBeds" class="field" type="number" min="0" step="1" placeholder="Total beds">
+   <input id="availableBeds" class="field" type="number" min="0" step="1" placeholder="Available beds">
    <select id="wardStatus" class="field wide"><option>Active</option><option>Maintenance</option><option>Inactive</option></select>
-  </div><div class="toolbar"><button class="btn btn-primary" onclick="saveWard()">Save ward</button><button class="btn btn-soft" onclick="clearWardForm()">Clear form</button></div><div id="adminMessage" class="message"></div></div>
+  </div><div class="toolbar"><button class="btn btn-primary" onclick="saveWard()">Save ward</button><button class="btn btn-soft" onclick="clearWardForm()">Clear form</button></div><div id="adminMessage" class="message"></div><p class="small">New ward documents are added under /sop_documents/{parent ID}/Wards. Use the exact parent SOP document ID from Firestore.</p></div>
   <div class="card"><div class="panel-title">Admin account</div><div class="metric">Signed in as <b id="adminEmail">—</b></div><div class="metric">Permission <b>Ward management</b></div><p class="small">Changes are recorded in the audit log. Use fictional demonstration values only.</p></div>
  </div>
  <div class="section-head"><div><h2>Ward records</h2><p>Select Edit to load a ward into the form.</p></div></div><div class="table-wrap"><table><thead><tr><th>Ward</th><th>Total</th><th>Available</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminWardRows"><tr><td colspan="5">Loading…</td></tr></tbody></table></div>
@@ -79,11 +81,10 @@
 </section>
 <div class="footer">FlowMed Nexus 2.0 · Student prototype · Fictional demo data only</div>
 </main></div>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, getDocs, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, collectionGroup, onSnapshot, addDoc, updateDoc, deleteDoc, getDocs, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDaGqCp7gomqV5EsQhquoRjaWmcQSUIbLU",
@@ -98,190 +99,181 @@ const ADMIN_EMAIL = "santhoshthiyyari@gmail.com";
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-let stopWardListener = null;
+const $ = id => document.getElementById(id);
 let currentUser = null;
+let stopWardListener = null;
 let wardsCache = [];
 
-const $ = id => document.getElementById(id);
 const titles = {dashboard:"Dashboard overview",patients:"Patient directory",appointments:"Appointment schedule",beds:"Bed management",labs:"Laboratory reports",assistant:"AI operations assistant",account:"Account & security",admin:"Admin control centre"};
-
-window.showPage = function(page) {
-  if (page === "admin" && !isAdmin()) { alert("Admin access only."); return; }
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  const target = $("page-" + page);
-  if (!target) return;
+function isAdmin(){return !!currentUser && (currentUser.email||"").toLowerCase()===ADMIN_EMAIL.toLowerCase();}
+window.showPage = page => {
+  if(page==="admin"&&!isAdmin()){alert("Admin access only.");return;}
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  const target=$("page-"+page); if(!target)return;
   target.classList.add("active");
-  document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("active", b.dataset.page === page));
-  $("pageTitle").textContent = titles[page] || "FlowMed Nexus";
+  document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
+  $("pageTitle").textContent=titles[page]||"FlowMed Nexus";
 };
-document.querySelectorAll(".nav button[data-page]").forEach(b => b.addEventListener("click", () => showPage(b.dataset.page)));
-window.filterTable = function(inputId, rowsId) {
-  const term = $(inputId).value.toLowerCase();
-  [...$(rowsId).rows].forEach(row => row.style.display = row.innerText.toLowerCase().includes(term) ? "" : "none");
+document.querySelectorAll(".nav button[data-page]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
+window.filterTable=(inputId,rowsId)=>{
+  const term=$(inputId).value.toLowerCase();
+  [...$(rowsId).rows].forEach(row=>row.style.display=row.innerText.toLowerCase().includes(term)?"":"none");
 };
-window.askAI = function() {
-  const q = $("question").value.trim();
-  $("reply").textContent = q ? "AI preview only: Gemini is not connected. For this prototype, operational questions should be reviewed by hospital staff. No clinical advice is provided." : "Please enter a workflow question.";
+window.askAI=()=>{
+  const q=$("question").value.trim();
+  $("reply").textContent=q?"AI preview only: Gemini is not connected. Operational questions should be reviewed by hospital staff. No clinical advice is provided.":"Please enter a workflow question.";
 };
-$("date").textContent = new Date().toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short",year:"numeric"});
-function isAdmin() { return !!currentUser && currentUser.email === ADMIN_EMAIL; }
-function showWardMessage(message) {
-  $("wardGrid").replaceChildren();
-  const el = document.createElement("div"); el.className = "card empty-note"; el.style.gridColumn = "1/-1"; el.textContent = message; $("wardGrid").appendChild(el);
-}
-function updateDashboardBeds(available,total) {
-  $("dashboardBeds").textContent = String(available);
-  $("bedAvailabilityBadge").textContent = total ? Math.round(available/total*100)+"% available" : "No ward data";
-  $("dashboardBedFoot").textContent = total ? available+" of "+total+" beds available" : "No ward records found";
-  const occupancy = total ? Math.round((total-available)/total*100) : 0;
-  $("dashboardOccupancy").textContent = total ? occupancy+"%" : "—";
-  $("dashboardOccupancyBar").style.width = occupancy+"%";
-}
-function safeText(tag, text) { const el = document.createElement(tag); el.textContent = text; return el; }
+$("date").textContent=new Date().toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short",year:"numeric"});
 
-function renderWards(snapshot) {
-  wardsCache = [];
+function safeText(tag,value){const el=document.createElement(tag);el.textContent=String(value??"");return el;}
+function showWardMessage(message){
   $("wardGrid").replaceChildren();
-  $("adminWardRows").replaceChildren();
-  let total=0, available=0;
-  const colors=["mint","lav","yellow","peach"];
-  snapshot.forEach((item,index) => {
-    const d=item.data();
-    const name=String(d.ward_name || item.id);
-    const beds=Number(d.total_beds), free=Number(d.available_beds);
-    const status=String(d.status || "Active");
-    if (!Number.isInteger(beds) || !Number.isInteger(free) || beds<0 || free<0 || free>beds) return;
-    const ward={id:item.id,ward_name:name,total_beds:beds,available_beds:free,status};
-    wardsCache.push(ward); total+=beds; available+=free;
-    const card=document.createElement("div"); card.className="card bed-card";
-    const icon=safeText("span","▤"); icon.className="stat-icon "+colors[index%colors.length];
-    const heading=safeText("h3",name);
-    const number=safeText("div",free+" / "+beds); number.className="bed-number";
-    const label=safeText("p","Available beds");
-    const bar=document.createElement("div"); bar.className="bar";
-    const fill=document.createElement("span"); fill.style.width=(beds?((beds-free)/beds*100):0)+"%"; bar.appendChild(fill);
-    const state=safeText("p","Status: "+status+" · "+(beds?Math.round((beds-free)/beds*100):0)+"% occupied");
-    card.append(icon,heading,number,label,bar,state); $("wardGrid").appendChild(card);
-    if (isAdmin()) {
-      const tr=document.createElement("tr");
-      const cells=[name,beds,free,status];
-      cells.forEach(v=>tr.appendChild(safeText("td",String(v))));
-      const actions=document.createElement("td");
-      const edit=document.createElement("button"); edit.className="btn btn-soft"; edit.textContent="Edit"; edit.onclick=()=>editWard(item.id);
-      const del=document.createElement("button"); del.className="btn btn-danger"; del.textContent="Delete"; del.style.marginLeft="5px"; del.onclick=()=>removeWard(item.id,name);
-      actions.append(edit,del); tr.appendChild(actions); $("adminWardRows").appendChild(tr);
+  const el=safeText("div",message);el.className="card empty-note";el.style.gridColumn="1/-1";$("wardGrid").appendChild(el);
+}
+function updateDashboardBeds(available,total){
+  $("dashboardBeds").textContent=String(available);
+  $("bedAvailabilityBadge").textContent=total?Math.round(available/total*100)+"% available":"No ward data";
+  $("dashboardBedFoot").textContent=total?available+" of "+total+" beds available":"No ward records found";
+  const occupancy=total?Math.round((total-available)/total*100):0;
+  $("dashboardOccupancy").textContent=total?occupancy+"%":"—";
+  $("dashboardOccupancyBar").style.width=occupancy+"%";
+}
+function pick(data,keys){
+  for(const key of keys){if(data[key]!==undefined&&data[key]!==null&&data[key]!=="")return data[key];}
+  return undefined;
+}
+function normalizeWard(docSnap){
+  const d=docSnap.data();
+  const name=String(pick(d,["ward_name","wardName","name","ward","title"])??docSnap.id);
+  const totalRaw=pick(d,["total_beds","totalBeds","total_bed","total","bed_capacity","bedCapacity"]);
+  const freeRaw=pick(d,["available_beds","availableBeds","available","free_beds","freeBeds"]);
+  const occupiedRaw=pick(d,["occupied_beds","occupiedBeds","occupied","used_beds","usedBeds"]);
+  const total=Number(totalRaw);
+  const free=freeRaw!==undefined?Number(freeRaw):(occupiedRaw!==undefined?total-Number(occupiedRaw):NaN);
+  const status=String(pick(d,["status","ward_status","wardStatus"])??"Active");
+  if(totalRaw===undefined||(freeRaw===undefined&&occupiedRaw===undefined)||!Number.isInteger(total)||!Number.isInteger(free)||total<0||free<0||free>total)return null;
+  return {id:docSnap.id,path:docSnap.ref.path,ref:docSnap.ref,parentId:docSnap.ref.parent.parent?.id||"",name,total,free,status};
+}
+function renderWards(snapshot){
+  wardsCache=[];$("wardGrid").replaceChildren();$("adminWardRows").replaceChildren();
+  let total=0,free=0,invalid=0;const colors=["mint","lav","yellow","peach"];
+  snapshot.forEach((docSnap,index)=>{
+    const w=normalizeWard(docSnap);if(!w){invalid++;console.warn("Invalid Wards document:",docSnap.ref.path,docSnap.data());return;}
+    wardsCache.push(w);total+=w.total;free+=w.free;
+    const card=document.createElement("div");card.className="card bed-card";
+    const icon=safeText("span","▤");icon.className="stat-icon "+colors[index%colors.length];
+    const heading=safeText("h3",w.name),number=safeText("div",w.free+" / "+w.total);number.className="bed-number";
+    const label=safeText("p","Available beds"),bar=document.createElement("div");bar.className="bar";
+    const fill=document.createElement("span");fill.style.width=(w.total?((w.total-w.free)/w.total*100):0)+"%";bar.appendChild(fill);
+    const state=safeText("p","Status: "+w.status+" · "+(w.total?Math.round((w.total-w.free)/w.total*100):0)+"% occupied");
+    card.append(icon,heading,number,label,bar,state);$("wardGrid").appendChild(card);
+    if(isAdmin()){
+      const tr=document.createElement("tr");[w.name,w.total,w.free,w.status].forEach(v=>tr.appendChild(safeText("td",v)));
+      const actions=document.createElement("td"),edit=safeText("button","Edit"),del=safeText("button","Delete");
+      edit.className="btn btn-soft";del.className="btn btn-danger";del.style.marginLeft="5px";
+      edit.addEventListener("click",()=>editWard(w.path));del.addEventListener("click",()=>removeWard(w.path,w.name));
+      actions.append(edit,del);tr.appendChild(actions);$("adminWardRows").appendChild(tr);
     }
   });
-  if (!wardsCache.length) showWardMessage("No valid ward records found. Check the wards collection fields.");
-  updateDashboardBeds(available,total);
-  $("wardNote").textContent=wardsCache.length ? "Live Firestore update received: "+available+" of "+total+" beds available across "+wardsCache.length+" wards. Demo values only." : "No valid ward records found.";
-  if (isAdmin() && !wardsCache.length) $("adminWardRows").innerHTML='<tr><td colspan="5">No ward records yet. Add the first ward above.</td></tr>';
+  updateDashboardBeds(free,total);
+  if(!wardsCache.length)showWardMessage(snapshot.empty?'No documents found in any subcollection named "Wards".':"Ward documents were found, but their bed-count fields are missing or invalid.");
+  $("wardNote").textContent=wardsCache.length?`Live Firestore update: ${free} of ${total} beds available across ${wardsCache.length} wards. Demo data only.`:"No valid ward records found. Check each Wards document's fields and numeric bed counts.";
+  if(isAdmin()&&!wardsCache.length)$("adminWardRows").innerHTML='<tr><td colspan="5">No valid ward records found.</td></tr>';
+  if(invalid)console.warn(invalid+" ward document(s) skipped because fields were invalid.");
 }
-async function writeAudit(action, wardName) {
-  if (!isAdmin()) throw new Error("Admin permission required.");
-  await addDoc(collection(db,"auditLogs"), {
-    action, wardName: wardName || "—", actorEmail: currentUser.email,
-    createdAt: serverTimestamp()
-  });
+async function writeAudit(action,wardName){
+  if(!isAdmin())throw new Error("Administrator sign-in required.");
+  await addDoc(collection(db,"auditLogs"),{action,wardName:wardName||"—",actorEmail:currentUser.email,createdAt:serverTimestamp()});
 }
-function clearWardForm() {
-  $("wardDocId").value=""; $("wardName").value=""; $("totalBeds").value="";
-  $("availableBeds").value=""; $("wardStatus").value="Active"; $("adminMessage").textContent="";
-}
-window.clearWardForm=clearWardForm;
-function editWard(id) {
-  const w=wardsCache.find(x=>x.id===id); if(!w) return;
-  $("wardDocId").value=w.id; $("wardName").value=w.ward_name;
-  $("totalBeds").value=w.total_beds; $("availableBeds").value=w.available_beds;
-  $("wardStatus").value=w.status; $("adminMessage").textContent="Editing "+w.ward_name;
-  showPage("admin");
-}
-window.saveWard = async function() {
-  if (!isAdmin()) { $("adminMessage").textContent="Admin access required."; return; }
-  const id=$("wardDocId").value;
-  const name=$("wardName").value.trim();
-  const total=Number($("totalBeds").value), free=Number($("availableBeds").value);
-  const status=$("wardStatus").value;
-  if (!name || $("totalBeds").value==="" || $("availableBeds").value==="" ||
-      !Number.isInteger(total) || !Number.isInteger(free) || total<0 || free<0 || free>total) {
-    $("adminMessage").textContent="Enter a ward name and valid whole-number bed counts. Available beds cannot exceed total beds."; return;
-  }
-  try {
-    $("adminMessage").textContent="Saving…";
-    const payload={ward_name:name,total_beds:total,available_beds:free,status};
-    if (id) { await updateDoc(doc(db,"wards",id),payload); await writeAudit("UPDATED_WARD",name); }
-    else { await addDoc(collection(db,"wards"),payload); await writeAudit("CREATED_WARD",name); }
-    clearWardForm(); $("adminMessage").textContent="Ward saved successfully.";
-    await loadAuditLogs();
-  } catch(e) { $("adminMessage").textContent="Save failed: "+e.message; }
+window.clearWardForm=()=>{
+  $("wardDocPath").value="";$("parentSopId").disabled=false;$("wardName").value="";
+  $("totalBeds").value="";$("availableBeds").value="";$("wardStatus").value="Active";$("adminMessage").textContent="";
 };
-async function removeWard(id,name) {
-  if (!isAdmin() || !confirm("Delete ward '"+name+"'? This cannot be undone.")) return;
-  try { await deleteDoc(doc(db,"wards",id)); await writeAudit("DELETED_WARD",name); await loadAuditLogs(); }
-  catch(e) { alert("Delete failed: "+e.message); }
+function editWard(path){
+  const w=wardsCache.find(x=>x.path===path);if(!w)return;
+  $("wardDocPath").value=w.path;$("parentSopId").value=w.parentId;$("parentSopId").disabled=true;
+  $("wardName").value=w.name;$("totalBeds").value=w.total;$("availableBeds").value=w.free;$("wardStatus").value=w.status;
+  $("adminMessage").textContent="Editing "+w.name+" ("+w.path+")";showPage("admin");
 }
-async function loadAuditLogs() {
-  if (!isAdmin()) return;
-  const body=$("auditRows"); body.replaceChildren();
-  try {
-    const q=query(collection(db,"auditLogs"),orderBy("createdAt","desc"),limit(50));
-    const snap=await getDocs(q);
-    if (snap.empty) { body.appendChild(safeText("tr","")); body.firstChild.innerHTML='<td colspan="4">No audit events yet.</td>'; return; }
-    snap.forEach(d=>{
-      const x=d.data(), tr=document.createElement("tr");
-      const time=x.createdAt?.toDate ? x.createdAt.toDate().toLocaleString() : "Just now";
-      [time,x.action||"—",x.wardName||"—",x.actorEmail||"—"].forEach(v=>tr.appendChild(safeText("td",String(v))));
-      body.appendChild(tr);
+window.saveWard=async()=>{
+  if(!isAdmin()){$("adminMessage").textContent="Administrator access required.";return;}
+  const path=$("wardDocPath").value,parentId=$("parentSopId").value.trim(),name=$("wardName").value.trim();
+  const totalText=$("totalBeds").value,freeText=$("availableBeds").value,total=Number(totalText),free=Number(freeText),status=$("wardStatus").value;
+  if(!name||totalText===""||freeText===""||!Number.isInteger(total)||!Number.isInteger(free)||total<0||free<0||free>total){
+    $("adminMessage").textContent="Enter a ward name and valid whole-number bed counts. Available beds cannot exceed total beds.";return;
+  }
+  if(!path&&!parentId){$("adminMessage").textContent="Enter the parent SOP document ID from Firestore before creating a ward.";return;}
+  const payload={ward_name:name,total_beds:total,available_beds:free,status};
+  try{
+    $("adminMessage").textContent="Saving…";
+    if(path){
+      const existing=wardsCache.find(w=>w.path===path);if(!existing)throw new Error("Ward is not in the current loaded list. Refresh and try again.");
+      await updateDoc(existing.ref,payload);await writeAudit("UPDATED_WARD",name);
+    }else{
+      await addDoc(collection(db,"sop_documents",parentId,"Wards"),payload);await writeAudit("CREATED_WARD",name);
+    }
+    window.clearWardForm();$("adminMessage").textContent="Ward saved successfully.";await loadAuditLogs();
+  }catch(error){console.error(error);$("adminMessage").textContent="Save failed: "+error.message;}
+};
+async function removeWard(path,name){
+  if(!isAdmin()||!confirm('Delete ward "'+name+'"? This cannot be undone.'))return;
+  try{
+    const ward=wardsCache.find(w=>w.path===path);if(!ward)throw new Error("Ward is no longer loaded.");
+    await deleteDoc(ward.ref);await writeAudit("DELETED_WARD",name);await loadAuditLogs();
+  }catch(error){alert("Delete failed: "+error.message);}
+}
+async function loadAuditLogs(){
+  if(!isAdmin())return;const body=$("auditRows");body.replaceChildren();
+  try{
+    const snap=await getDocs(query(collection(db,"auditLogs"),orderBy("createdAt","desc"),limit(50)));
+    if(snap.empty){body.innerHTML='<tr><td colspan="4">No audit events yet.</td></tr>';return;}
+    snap.forEach(item=>{
+      const d=item.data(),tr=document.createElement("tr"),time=d.createdAt?.toDate?d.createdAt.toDate().toLocaleString():"Just now";
+      [time,d.action||"—",d.wardName||"—",d.actorEmail||"—"].forEach(v=>tr.appendChild(safeText("td",v)));body.appendChild(tr);
     });
-  } catch(e) { body.innerHTML='<tr><td colspan="4">Could not load logs: '+String(e.message).replace(/[<>&"]/g,"")+'</td></tr>'; }
+  }catch(error){body.innerHTML='<tr><td colspan="4">Could not load logs: '+String(error.message).replace(/[<>&"]/g,"")+'</td></tr>';}
 }
 window.loadAuditLogs=loadAuditLogs;
-
-function credentials() {
-  const email=$("email").value.trim(), password=$("password").value;
-  if (!email || !password) throw new Error("Enter both email and password.");
-  if (password.length<6) throw new Error("Password must be at least 6 characters.");
+function credentials(){
+  const email=$("email").value.trim(),password=$("password").value;
+  if(!email||!password)throw new Error("Enter both email and password.");
+  if(password.length<6)throw new Error("Password must be at least 6 characters.");
   return {email,password};
 }
 window.createAccount=async()=>{
-  try { $("authMessage").textContent="Creating account…"; const c=credentials(); await createUserWithEmailAndPassword(auth,c.email,c.password); $("authMessage").textContent="Account created. Sign-in successful."; }
-  catch(e) { $("authMessage").textContent=e.message; }
+  try{$("authMessage").textContent="Creating account…";const c=credentials();await createUserWithEmailAndPassword(auth,c.email,c.password);$("authMessage").textContent="Account created and signed in.";}
+  catch(error){$("authMessage").textContent=error.message;}
 };
 window.signIn=async()=>{
-  try { $("authMessage").textContent="Signing in…"; const c=credentials(); await signInWithEmailAndPassword(auth,c.email,c.password); $("authMessage").textContent="Signed in successfully."; }
-  catch(e) { $("authMessage").textContent=e.message; }
+  try{$("authMessage").textContent="Signing in…";const c=credentials();await signInWithEmailAndPassword(auth,c.email,c.password);$("authMessage").textContent="Signed in successfully.";}
+  catch(error){$("authMessage").textContent=error.message;}
 };
 window.signOutUser=async()=>{
-  try { await signOut(auth); $("authMessage").textContent="Signed out."; showPage("dashboard"); }
-  catch(e) { $("authMessage").textContent=e.message; }
+  try{await signOut(auth);$("authMessage").textContent="Signed out.";showPage("dashboard");}
+  catch(error){$("authMessage").textContent=error.message;}
 };
-
-$("systemStatus").textContent="● Firebase connected";
-$("authState").textContent="Connected"; $("dbState").textContent="Initialized";
+$("systemStatus").textContent="● Firebase configured";$("authState").textContent="Ready";$("dbState").textContent="Initialized";
 onAuthStateChanged(auth,user=>{
   currentUser=user;
-  $("userStatus").textContent=user ? user.email : "Not signed in";
-  const admin=isAdmin();
-  $("roleStatus").textContent=admin ? "Administrator" : (user ? "Standard user" : "Guest");
-  $("adminNav").hidden=!admin;
-  $("adminEmail").textContent=admin ? user.email : "—";
-  if (stopWardListener) { stopWardListener(); stopWardListener=null; }
-  if (user) {
-    $("authMessage").textContent=admin ? "Signed in as administrator." : "Signed in. You have standard-user access.";
-    showWardMessage("Loading live ward data from Firestore…");
-    stopWardListener=onSnapshot(collection(db,"wards"),renderWards,error=>{
-      console.error(error); showWardMessage("Could not load ward data: "+error.message);
-      $("wardNote").textContent="Check Firestore rules and the wards collection.";
+  $("userStatus").textContent=user?user.email:"Not signed in";
+  const admin=isAdmin();$("roleStatus").textContent=admin?"Administrator":(user?"Standard user":"Guest");
+  $("adminNav").hidden=!admin;$("adminEmail").textContent=admin?user.email:"—";
+  if(stopWardListener){stopWardListener();stopWardListener=null;}
+  wardsCache=[];
+  if(user){
+    $("authMessage").textContent=admin?"Signed in as administrator.":"Signed in. Standard-user access.";
+    showWardMessage('Loading documents from Firestore "Wards" subcollections…');
+    stopWardListener=onSnapshot(collectionGroup(db,"Wards"),renderWards,error=>{
+      console.error("Ward listener error:",error);showWardMessage("Could not load ward data: "+error.message);
+      $("wardNote").textContent="Check Firestore rules and collection-group read permissions.";
     });
-    if (admin) { loadAuditLogs(); }
-    else if ($("page-admin").classList.contains("active")) showPage("dashboard");
-  } else {
+    if(admin)loadAuditLogs();else if($("page-admin").classList.contains("active"))showPage("dashboard");
+  }else{
     $("authMessage").textContent="Firebase is ready. Sign in to load live ward data.";
-    showWardMessage("Sign in to Firebase to load live ward data.");
-    updateDashboardBeds(0,0);
+    showWardMessage("Sign in to Firebase to load live ward data.");updateDashboardBeds(0,0);
     $("adminWardRows").innerHTML='<tr><td colspan="5">Admin sign-in required.</td></tr>';
     $("auditRows").innerHTML='<tr><td colspan="4">Admin sign-in required.</td></tr>';
-    if ($("page-admin").classList.contains("active")) showPage("dashboard");
+    if($("page-admin").classList.contains("active"))showPage("dashboard");
   }
 });
 </script>
