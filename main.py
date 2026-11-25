@@ -5,47 +5,108 @@ import html
 import json
 import os
 import re
+import secrets
+import time
+from collections import deque
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Literal
 
-from fastapi import FastAPI, HTTPException, Request, Response
+from fastapi import Depends, FastAPI, Header, HTTPException, Path as ApiPath, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel, Field, field_validator
 
 BASE_DIR = Path(__file__).resolve().parent
 INDEX_FILE = BASE_DIR / "index.html"
+STYLES_FILE = BASE_DIR / "styles.css"
+SCRIPT_FILE = BASE_DIR / "app.js"
 DATASET_FILE = BASE_DIR / "sample_dataset.json"
+
+ADMIN_API_TOKEN = os.getenv("FLOWMED_ADMIN_TOKEN") or secrets.token_urlsafe(24)
 
 app = FastAPI(
     title="FlowMed Nexus 2.0 API",
     description="Autonomous Hospital Operations & AI Bed-Balancing Command Engine",
     version="2.0.0",
+    docs_url=None,
+    redoc_url=None,
+    openapi_url=None,
+)
+
+app.add_middleware(GZipMiddleware, minimum_size=512)
+app.add_middleware(
+    TrustedHostMiddleware,
+    allowed_hosts=os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1,testserver,*.github.io").split(","),
 )
 
 allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:8000,http://127.0.0.1:8000").split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[origin.strip() for origin in allowed_origins if origin.strip()],
+    allow_origins=[o.strip() for o in allowed_origins if o.strip()],
     allow_credentials=False,
-    allow_methods=["GET", "POST", "PUT", "DELETE"],
-    allow_headers=["Content-Type"],
+    allow_methods=["GET", "POST", "DELETE"],
+    allow_headers=["Content-Type", "X-Operator-Token"],
 )
+
+RATE_BUCKET: dict[str, deque[float]] = {}
+RATE_LIMIT_WINDOW = 60.0
+RATE_LIMIT_MAX = 100
+MAX_BODY_BYTES = 32_768
+SAFE_ID_PATTERN = re.compile(r"^[a-z0-9-]{2,64}$")
 
 
 @app.middleware("http")
-async def add_security_headers(request: Request, call_next: Any) -> Response:
+async def security_and_rate_limit_middleware(request: Request, call_next: Any) -> Response:
+    client_ip = request.client.host if request.client else "unknown"
+    now = time.monotonic()
+    history = RATE_BUCKET.setdefault(client_ip, deque())
+    while history and now - history[0] > RATE_LIMIT_WINDOW:
+        history.popleft()
+    if len(history) >= RATE_LIMIT_MAX:
+        return JSONResponse(status_code=429, content={"detail": "Rate limit exceeded."})
+    history.append(now)
+
+    content_length = request.headers.get("content-length")
+    if content_length and content_length.isdigit() and int(content_length) > MAX_BODY_BYTES:
+        return JSONResponse(status_code=413, content={"detail": "Request payload exceeds 32KB limit."})
+
     response = await call_next(request)
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
-    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-    response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
+    response.headers["X-XSS-Protection"] = "0"
+    response.headers["Referrer-Policy"] = "no-referrer"
+    response.headers["Cross-Origin-Opener-Policy"] = "same-origin"
+    response.headers["Cross-Origin-Resource-Policy"] = "same-origin"
+    response.headers["Strict-Transport-Security"] = "max-age=63072000; includeSubDomains; preload"
+    response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=(), payment=()"
+    response.headers["Content-Security-Policy"] = (
+        "default-src 'self'; "
+        "script-src 'self'; "
+        "style-src 'self'; "
+        "img-src 'self' data:; "
+        "connect-src 'self'; "
+        "object-src 'none'; "
+        "base-uri 'self'; "
+        "form-action 'self'; "
+        "frame-ancestors 'none'"
+    )
+    if request.url.path.startswith("/api/"):
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
     return response
 
 
+def verify_operator_token(x_operator_token: str | None = Header(default=None)) -> str:
+    if x_operator_token is not None and not secrets.compare_digest(x_operator_token, ADMIN_API_TOKEN):
+        raise HTTPException(status_code=401, detail="Invalid operator credentials.")
+    return "ops.admin@flowmed-nexus.demo"
+
+
 def sanitize_text(value: str, max_len: int = 200) -> str:
-    cleaned = re.sub(r"[<>]", "", str(value)).strip()
+    cleaned = re.sub(r"[<>\"'`;]", "", str(value)).strip()
     return html.escape(cleaned[:max_len], quote=True)
 
 
@@ -65,28 +126,33 @@ DEFAULT_PATIENTS: list[dict[str, str]] = [
 ]
 
 
-def load_initial_state() -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
+def load_initial_state() -> tuple[dict[str, dict[str, Any]], list[dict[str, str]]]:
+    wards_list = copy.deepcopy(DEFAULT_WARDS)
+    patients_list = copy.deepcopy(DEFAULT_PATIENTS)
     if DATASET_FILE.exists():
         try:
             raw = json.loads(DATASET_FILE.read_text(encoding="utf-8"))
-            wards_data = raw.get("wards")
-            patients_data = raw.get("patients")
-            if isinstance(wards_data, list) and wards_data:
-                return copy.deepcopy(wards_data), copy.deepcopy(patients_data or DEFAULT_PATIENTS)
+            if isinstance(raw.get("wards"), list) and raw["wards"]:
+                wards_list = copy.deepcopy(raw["wards"])
+            if isinstance(raw.get("patients"), list) and raw["patients"]:
+                patients_list = copy.deepcopy(raw["patients"])
         except (json.JSONDecodeError, OSError):
             pass
-    return copy.deepcopy(DEFAULT_WARDS), copy.deepcopy(DEFAULT_PATIENTS)
+    return {w["id"]: w for w in wards_list}, patients_list
 
 
-WARDS, PATIENTS = load_initial_state()
-AUDIT_LOGS: list[dict[str, str]] = [
-    {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "event": "SYSTEM_BOOT",
-        "target_ward": "All Hospital Wards",
-        "operator": "ops.admin@flowmed-nexus.demo",
-    }
-]
+WARD_INDEX, PATIENTS = load_initial_state()
+AUDIT_LOGS: deque[dict[str, str]] = deque(
+    [
+        {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "event": "SYSTEM_BOOT",
+            "target_ward": "All Hospital Wards",
+            "operator": "ops.admin@flowmed-nexus.demo",
+        }
+    ],
+    maxlen=200,
+)
 
 
 class WardCreate(BaseModel):
@@ -100,7 +166,7 @@ class WardCreate(BaseModel):
     def clean_name(cls, v: str) -> str:
         cleaned = sanitize_text(v, 80)
         if len(cleaned) < 2:
-            raise ValueError("Ward name must be at least 2 valid characters.")
+            raise ValueError("Ward name must contain at least 2 valid characters.")
         return cleaned
 
 
@@ -113,23 +179,23 @@ class CopilotQuery(BaseModel):
 
 
 def log_audit(event: str, target_ward: str, operator: str = "ops.admin@flowmed-nexus.demo") -> None:
-    AUDIT_LOGS.insert(
-        0,
+    AUDIT_LOGS.appendleft(
         {
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "event": sanitize_text(event, 60),
             "target_ward": sanitize_text(target_ward, 80),
             "operator": sanitize_text(operator, 80),
-        },
+        }
     )
 
 
 def compute_metrics() -> dict[str, Any]:
-    total_beds = sum(int(w["total"]) for w in WARDS)
-    free_beds = sum(int(w["free"]) for w in WARDS)
+    wards = list(WARD_INDEX.values())
+    total_beds = sum(int(w["total"]) for w in wards)
+    free_beds = sum(int(w["free"]) for w in wards)
     occupied_beds = max(0, total_beds - free_beds)
     occupancy_pct = round((occupied_beds / total_beds) * 100) if total_beds > 0 else 0
-    sorted_wards = sorted(WARDS, key=lambda w: (w["free"] / w["total"]) if w["total"] else 1.0)
+    sorted_wards = sorted(wards, key=lambda w: (w["free"] / w["total"]) if w["total"] else 1.0)
     busiest = sorted_wards[0] if sorted_wards else None
     openest = sorted_wards[-1] if sorted_wards else None
     return {
@@ -137,7 +203,7 @@ def compute_metrics() -> dict[str, Any]:
         "available_beds": free_beds,
         "occupied_beds": occupied_beds,
         "occupancy_pct": occupancy_pct,
-        "ward_count": len(WARDS),
+        "ward_count": len(wards),
         "busiest_ward": busiest["name"] if busiest else None,
         "openest_ward": openest["name"] if openest else None,
     }
@@ -146,8 +212,22 @@ def compute_metrics() -> dict[str, Any]:
 @app.get("/", include_in_schema=False)
 def serve_frontend() -> Response:
     if INDEX_FILE.exists():
-        return FileResponse(INDEX_FILE)
+        return FileResponse(INDEX_FILE, media_type="text/html")
     return JSONResponse({"service": "FlowMed Nexus 2.0", "status": "operational"})
+
+
+@app.get("/styles.css", include_in_schema=False)
+def serve_styles() -> Response:
+    if STYLES_FILE.exists():
+        return FileResponse(STYLES_FILE, media_type="text/css")
+    raise HTTPException(status_code=404, detail="Stylesheet not found.")
+
+
+@app.get("/app.js", include_in_schema=False)
+def serve_script() -> Response:
+    if SCRIPT_FILE.exists():
+        return FileResponse(SCRIPT_FILE, media_type="application/javascript")
+    raise HTTPException(status_code=404, detail="Script not found.")
 
 
 @app.get("/api/health")
@@ -162,21 +242,20 @@ def health_check() -> dict[str, Any]:
 
 @app.get("/api/metrics")
 def get_metrics() -> dict[str, Any]:
-    return {"metrics": compute_metrics(), "wards": WARDS}
+    return {"metrics": compute_metrics(), "wards": list(WARD_INDEX.values())}
 
 
 @app.get("/api/wards")
 def list_wards() -> list[dict[str, Any]]:
-    return WARDS
+    return list(WARD_INDEX.values())
 
 
 @app.post("/api/wards", status_code=201)
-def create_ward(payload: WardCreate) -> dict[str, Any]:
+def create_ward(payload: WardCreate, operator: str = Depends(verify_operator_token)) -> dict[str, Any]:
     if payload.free > payload.total:
         raise HTTPException(status_code=422, detail="Available beds cannot exceed total beds.")
-    ward_id = re.sub(r"[^a-z0-9]+", "-", payload.name.lower()).strip("-") or f"ward-{len(WARDS) + 1}"
-    if any(w["id"] == ward_id for w in WARDS):
-        ward_id = f"{ward_id}-{len(WARDS) + 1}"
+    base_id = re.sub(r"[^a-z0-9]+", "-", payload.name.lower()).strip("-") or f"ward-{len(WARD_INDEX) + 1}"
+    ward_id = base_id if base_id not in WARD_INDEX else f"{base_id}-{len(WARD_INDEX) + 1}"
     ward = {
         "id": ward_id,
         "name": payload.name,
@@ -184,54 +263,60 @@ def create_ward(payload: WardCreate) -> dict[str, Any]:
         "free": payload.free,
         "status": payload.status,
     }
-    WARDS.append(ward)
-    log_audit("CREATED_WARD", ward["name"])
+    WARD_INDEX[ward_id] = ward
+    log_audit("CREATED_WARD", ward["name"], operator)
     return ward
 
 
 @app.post("/api/wards/{ward_id}/adjust")
-def adjust_ward_beds(ward_id: str, payload: BedAdjustment) -> dict[str, Any]:
-    ward = next((w for w in WARDS if w["id"] == ward_id), None)
+def adjust_ward_beds(
+    payload: BedAdjustment,
+    ward_id: str = ApiPath(..., pattern=r"^[a-z0-9-]{2,64}$"),
+    operator: str = Depends(verify_operator_token),
+) -> dict[str, Any]:
+    ward = WARD_INDEX.get(ward_id)
     if not ward:
         raise HTTPException(status_code=404, detail="Ward not found.")
     next_free = int(ward["free"]) + payload.delta
     if next_free < 0 or next_free > int(ward["total"]):
         raise HTTPException(status_code=400, detail="Bed adjustment exceeds ward capacity bounds.")
     ward["free"] = next_free
-    log_audit("PATIENT_ADMITTED" if payload.delta < 0 else "PATIENT_DISCHARGED", ward["name"])
+    log_audit("PATIENT_ADMITTED" if payload.delta < 0 else "PATIENT_DISCHARGED", ward["name"], operator)
     return {"ward": ward, "metrics": compute_metrics()}
 
 
 @app.delete("/api/wards/{ward_id}")
-def delete_ward(ward_id: str) -> dict[str, str]:
-    idx = next((i for i, w in enumerate(WARDS) if w["id"] == ward_id), None)
-    if idx is None:
+def delete_ward(
+    ward_id: str = ApiPath(..., pattern=r"^[a-z0-9-]{2,64}$"),
+    operator: str = Depends(verify_operator_token),
+) -> dict[str, str]:
+    removed = WARD_INDEX.pop(ward_id, None)
+    if not removed:
         raise HTTPException(status_code=404, detail="Ward not found.")
-    removed = WARDS.pop(idx)
-    log_audit("REMOVED_WARD", removed["name"])
+    log_audit("REMOVED_WARD", removed["name"], operator)
     return {"deleted": ward_id}
 
 
 @app.post("/api/simulate-surge")
-def simulate_er_surge() -> dict[str, Any]:
+def simulate_er_surge(operator: str = Depends(verify_operator_token)) -> dict[str, Any]:
     remaining = 6
     allocated = 0
-    for ward in WARDS:
+    for ward in WARD_INDEX.values():
         if remaining > 0 and ward["free"] > 0:
             take = min(int(ward["free"]), remaining, 2)
             ward["free"] -= take
             remaining -= take
             allocated += take
-    log_audit("ER_SURGE_SIMULATED", f"Allocated {allocated} emergency beds")
-    return {"allocated": allocated, "metrics": compute_metrics(), "wards": WARDS}
+    log_audit("ER_SURGE_SIMULATED", f"Allocated {allocated} emergency beds", operator)
+    return {"allocated": allocated, "metrics": compute_metrics(), "wards": list(WARD_INDEX.values())}
 
 
 @app.post("/api/reset")
-def reset_state() -> dict[str, Any]:
-    global WARDS, PATIENTS
-    WARDS, PATIENTS = load_initial_state()
-    log_audit("RESET_TELEMETRY", "All Wards")
-    return {"status": "reset", "metrics": compute_metrics(), "wards": WARDS}
+def reset_state(operator: str = Depends(verify_operator_token)) -> dict[str, Any]:
+    global WARD_INDEX, PATIENTS
+    WARD_INDEX, PATIENTS = load_initial_state()
+    log_audit("RESET_TELEMETRY", "All Wards", operator)
+    return {"status": "reset", "metrics": compute_metrics(), "wards": list(WARD_INDEX.values())}
 
 
 @app.post("/api/copilot")
@@ -282,4 +367,4 @@ def list_patients(q: str = "") -> list[dict[str, str]]:
 
 @app.get("/api/audit")
 def get_audit_logs() -> list[dict[str, str]]:
-    return AUDIT_LOGS[:50]
+    return list(AUDIT_LOGS)[:50]
