@@ -1,0 +1,34 @@
+{
+  "metadata": {
+    "dataset_name": "FlowMed Nexus 2.0 Synthetic Operations Dataset",
+    "disclaimer": "100% synthetic demonstration data. Not real patient or hospital records.",
+    "region": "Bengaluru Demo Network"
+  },
+  "hospitals": [
+    {"id": "HOSP-01", "name": "FlowMed Central Medical Center", "tier": "Primary Hub", "lat": 12.9716, "lng": 77.5946, "totalBeds": 180, "availableBeds": 24, "icuAvailable": 4, "ventilators": 6, "status": "High Load"},
+    {"id": "HOSP-02", "name": "Metro North General Hospital", "tier": "Partner Acute", "lat": 13.0250, "lng": 77.5850, "totalBeds": 140, "availableBeds": 31, "icuAvailable": 7, "ventilators": 5, "status": "Normal"},
+    {"id": "HOSP-03", "name": "East TechCare Specialty", "tier": "Partner Tertiary", "lat": 12.9780, "lng": 77.6650, "totalBeds": 120, "availableBeds": 19, "icuAvailable": 3, "ventilators": 4, "status": "Normal"},
+    {"id": "HOSP-04", "name": "South Wellness Institute", "tier": "Partner General", "lat": 12.9150, "lng": 77.5950, "totalBeds": 110, "availableBeds": 28, "icuAvailable": 6, "ventilators": 7, "status": "Optimal"},
+    {"id": "HOSP-05", "name": "West Regional Trauma Center", "tier": "Partner Trauma", "lat": 12.9650, "lng": 77.5200, "totalBeds": 150, "availableBeds": 11, "icuAvailable": 1, "ventilators": 2, "status": "Critical"}
+  ],
+  "sop_documents": [
+    {
+      "id": "SOP-01",
+      "title": "Code Surge Level 2 — Emergency Department Diversion & Bed Reallocation",
+      "category": "Capacity Management",
+      "content": "Triggered when ED wait time exceeds 35 minutes or ED bed occupancy exceeds 85%. Requires Hospital Administrator approval to convert Maintenance-cleared step-down beds to Active Overflow and notify Network Coordinator for partner load balancing."
+    },
+    {
+      "id": "SOP-02",
+      "title": "Laboratory STAT Turnaround & Automated Notification Protocol",
+      "category": "Laboratory Operations",
+      "content": "STAT specimens must move from Sample Collected to Processing within 15 minutes. Once marked Report Ready, automated portal/SMS readiness notifications are dispatched to the patient alias and ordering department. No clinical diagnosis is included in operational alerts."
+    },
+    {
+      "id": "SOP-03",
+      "title": "Cross-Hospital Resource Coordination & Privacy Firewall",
+      "category": "Network Governance",
+      "content": "Inter-hospital resource requests (ICU beds, ventilators, blood units) transmit only anonymized capacity codes and urgency tiers. Confidential patient identifiers (PHI) are never shared automatically across network nodes. All transfers require explicit Network Coordinator or Hospital Administrator sign-off."
+    }
+  ]
+}

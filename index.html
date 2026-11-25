@@ -1,0 +1,1966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FLOWMED NEXUS 2.0 — Hospital Capacity &amp; Coordination Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          colors: {
+            navy: { 950: '#070F1E', 900: '#0B1528', 800: '#112240', 700: '#1D3557' },
+            teal: { 600: '#0D9488', 500: '#14B8A6', 50: '#F0FDFA' },
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; background-color: #F8FAFC; color: #0F172A; }
+    .card-surface { background: #FFFFFF; border: 1px solid #E2E8F0; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04); }
+    .card-surface:hover { box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06); }
+    .nav-pill-active { background-color: #0D9488; color: #FFFFFF; }
+    .leaflet-container { font-family: 'Inter', system-ui, sans-serif; z-index: 1; }
+    @media print {
+      .no-print { display: none !important; }
+      body { background: #FFFFFF; }
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-teal-100 selection:text-navy-900">
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm pointer-events-none"></div>
+
+  <!-- Notification Drawer Modal -->
+  <div id="notif-drawer" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex justify-end">
+    <div class="w-full max-w-md bg-white h-full shadow-2xl flex flex-col border-l border-slate-200">
+      <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-navy-900 text-white">
+        <div class="flex items-center gap-2">
+          <i data-lucide="bell" class="w-4 h-4 text-teal-400"></i>
+          <h3 class="font-semibold text-sm">Operational Notifications (Simulated)</h3>
+        </div>
+        <div class="flex items-center gap-2">
+          <button data-action="mark-all-read" class="text-xs text-teal-300 hover:text-white px-2 py-1 rounded">Mark all read</button>
+          <button data-action="close-notif-drawer" class="p-1 rounded hover:bg-navy-800 text-slate-300 hover:text-white" aria-label="Close notifications">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+      <div id="notif-list" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
+    </div>
+  </div>
+
+  <!-- ========================= LANDING VIEW ========================= -->
+  <div id="landing-view" class="min-h-screen flex flex-col bg-white">
+    <!-- Landing Navbar -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-navy-900 flex items-center justify-center text-teal-400 shadow-sm">
+            <i data-lucide="activity" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <span class="font-bold tracking-tight text-navy-900 text-base sm:text-lg">FLOWMED NEXUS</span>
+            <span class="ml-1.5 text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-teal-50 text-teal-700 border border-teal-200">2.0</span>
+          </div>
+        </div>
+        <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
+          <a href="#platform-overview" class="hover:text-navy-900 transition-colors">Platform</a>
+          <a href="#core-modules" class="hover:text-navy-900 transition-colors">Modules</a>
+          <a href="#how-it-works" class="hover:text-navy-900 transition-colors">Workflow</a>
+          <a href="#architecture" class="hover:text-navy-900 transition-colors">Architecture</a>
+          <a href="#about-project" class="hover:text-navy-900 transition-colors">About</a>
+        </nav>
+        <div class="flex items-center gap-2.5">
+          <button data-action="enter-dashboard" data-tab="overview" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-navy-900 hover:bg-navy-800 text-white text-sm font-semibold transition-colors shadow-sm">
+            <span>View Live Dashboard</span>
+            <i data-lucide="arrow-right" class="w-4 h-4 text-teal-400"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="platform-overview" class="relative bg-navy-900 text-white overflow-hidden border-b border-navy-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20">
+        <div class="grid lg:grid-cols-12 gap-10 items-center">
+          <div class="lg:col-span-6 space-y-6">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-navy-800 border border-slate-700 text-xs font-medium text-teal-300">
+              <span class="w-2 h-2 rounded-full bg-teal-400"></span>
+              <span>Connecting Hospital Intelligence. Improving Patient Flow.</span>
+            </div>
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.12] text-white">
+              Smarter Hospital Operations. Better Connected Healthcare.
+            </h1>
+            <p class="text-base sm:text-lg text-slate-300 leading-relaxed max-w-xl">
+              An intelligent hospital coordination platform that transforms fragmented operational information into actionable insights.
+            </p>
+            <div class="flex flex-wrap items-center gap-3 pt-1">
+              <a href="#core-modules" class="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-teal-600 hover:bg-teal-500 text-white font-semibold text-sm transition-colors shadow-sm">
+                <span>Explore Platform</span>
+                <i data-lucide="compass" class="w-4 h-4"></i>
+              </a>
+              <button data-action="enter-dashboard" data-tab="overview" class="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-white text-navy-900 hover:bg-slate-100 font-semibold text-sm transition-colors shadow-sm">
+                <span>View Live Dashboard</span>
+                <i data-lucide="layout-dashboard" class="w-4 h-4 text-teal-600"></i>
+              </button>
+            </div>
+            <div class="pt-3 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-slate-400">
+              <span class="inline-flex items-center gap-1.5"><i data-lucide="shield-check" class="w-4 h-4 text-teal-400"></i> Human-Approved AI Actions</span>
+              <span class="inline-flex items-center gap-1.5"><i data-lucide="lock" class="w-4 h-4 text-teal-400"></i> Zero Real PHI (Synthetic Demo)</span>
+              <span class="inline-flex items-center gap-1.5"><i data-lucide="cpu" class="w-4 h-4 text-teal-400"></i> 5 Specialized AI Agents</span>
+            </div>
+          </div>
+
+          <!-- Interactive Dashboard Preview Widget -->
+          <div class="lg:col-span-6">
+            <div class="rounded-xl bg-white text-slate-900 shadow-2xl border border-slate-200 overflow-hidden">
+              <div class="px-4 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-teal-500"></span>
+                  <span class="text-xs font-semibold text-navy-900">Live Command Preview — Synthetic Demo</span>
+                </div>
+                <div class="flex items-center gap-1">
+                  <button data-action="preview-dept" data-dept="Emergency" class="preview-dept-btn px-2.5 py-1 rounded text-xs font-medium bg-navy-900 text-white">Emergency</button>
+                  <button data-action="preview-dept" data-dept="ICU" class="preview-dept-btn px-2.5 py-1 rounded text-xs font-medium text-slate-600 hover:bg-slate-200">ICU</button>
+                  <button data-action="preview-dept" data-dept="Laboratory" class="preview-dept-btn px-2.5 py-1 rounded text-xs font-medium text-slate-600 hover:bg-slate-200">Lab</button>
+                </div>
+              </div>
+              <div id="hero-preview-body" class="p-5 space-y-4">
+                <!-- Populated dynamically by JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Five Core Innovation Modules -->
+    <section id="core-modules" class="py-16 bg-slate-50 border-b border-slate-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-2xl mb-10">
+          <p class="text-xs font-bold uppercase tracking-wider text-teal-600 mb-2">Five Core Innovation Modules</p>
+          <h2 class="text-2xl sm:text-3xl font-bold text-navy-900 tracking-tight">Unified Operational Intelligence Across Every Department</h2>
+          <p class="text-slate-600 mt-2 text-sm sm:text-base">Click any module below to launch directly into its live interactive workspace.</p>
+        </div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div class="card-surface rounded-xl p-6 flex flex-col justify-between">
+            <div>
+              <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mb-4">
+                <i data-lucide="trending-up" class="w-5 h-5"></i>
+              </div>
+              <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Module 01</span>
+              <h3 class="text-lg font-bold text-navy-900 mt-1">AI Patient Flow Prediction</h3>
+              <p class="text-sm text-slate-600 mt-2 leading-relaxed">Hourly arrival forecasting (labeled as estimates), department demand heat, wait-time analytics, and bottleneck alerts.</p>
+            </div>
+            <button data-action="enter-dashboard" data-tab="patient-flow" class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-teal-600 hover:text-teal-700">
+              <span>Open Patient Flow</span><i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <div class="card-surface rounded-xl p-6 flex flex-col justify-between">
+            <div>
+              <div class="w-10 h-10 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center mb-4">
+                <i data-lucide="bed-double" class="w-5 h-5"></i>
+              </div>
+              <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Module 02</span>
+              <h3 class="text-lg font-bold text-navy-900 mt-1">Smart Bed Availability</h3>
+              <p class="text-sm text-slate-600 mt-2 leading-relaxed">Centralized ward-level bed visibility across Available, Occupied, and Maintenance states with utilization analytics.</p>
+            </div>
+            <button data-action="enter-dashboard" data-tab="bed-management" class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-teal-600 hover:text-teal-700">
+              <span>Open Bed Management</span><i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <div class="card-surface rounded-xl p-6 flex flex-col justify-between">
+            <div>
+              <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4">
+                <i data-lucide="flask-conical" class="w-5 h-5"></i>
+              </div>
+              <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Module 03</span>
+              <h3 class="text-lg font-bold text-navy-900 mt-1">Lab Report Readiness</h3>
+              <p class="text-sm text-slate-600 mt-2 leading-relaxed">End-to-end 5-stage specimen tracking from registration to simulated patient notification and ward handoff.</p>
+            </div>
+            <button data-action="enter-dashboard" data-tab="laboratory" class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-teal-600 hover:text-teal-700">
+              <span>Open Laboratory</span><i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <div class="card-surface rounded-xl p-6 flex flex-col justify-between">
+            <div>
+              <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4">
+                <i data-lucide="network" class="w-5 h-5"></i>
+              </div>
+              <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Module 04</span>
+              <h3 class="text-lg font-bold text-navy-900 mt-1">Cross-Hospital Coordination</h3>
+              <p class="text-sm text-slate-600 mt-2 leading-relaxed">Interactive regional hospital map, capacity comparison, and privacy-safe resource transfer requests without sharing PHI.</p>
+            </div>
+            <button data-action="enter-dashboard" data-tab="hospital-network" class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-teal-600 hover:text-teal-700">
+              <span>Open Hospital Network</span><i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <div class="card-surface rounded-xl p-6 flex flex-col justify-between md:col-span-2 lg:col-span-2 bg-navy-900 text-white border-navy-800">
+            <div>
+              <div class="w-10 h-10 rounded-lg bg-navy-800 text-teal-400 flex items-center justify-center mb-4">
+                <i data-lucide="bot" class="w-5 h-5"></i>
+              </div>
+              <span class="text-[11px] font-semibold uppercase tracking-wider text-teal-400">Module 05</span>
+              <h3 class="text-lg font-bold text-white mt-1">Agentic AI Hospital Operations Assistant</h3>
+              <p class="text-sm text-slate-300 mt-2 leading-relaxed max-w-2xl">
+                Five specialized operational agents (Patient Flow, Bed Availability, Lab Coordination, Resource Coordination, and Operations Reporting) grounded in live hospital data and SOP RAG documents—with mandatory human approval before any action.
+              </p>
+            </div>
+            <button data-action="enter-dashboard" data-tab="ai-assistant" class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-teal-400 hover:text-teal-300">
+              <span>Launch AI Operations Assistant</span><i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How the Platform Works & Real-World Problems -->
+    <section id="how-it-works" class="py-16 bg-white border-b border-slate-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-wider text-teal-600 mb-2">How FlowMed Nexus Works</p>
+          <h2 class="text-2xl font-bold text-navy-900 mb-6">From Fragmented Logs to Coordinated Action</h2>
+          <div class="space-y-4">
+            <div class="flex gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="w-8 h-8 rounded-lg bg-navy-900 text-white font-bold text-sm flex items-center justify-center shrink-0">1</div>
+              <div>
+                <h4 class="font-semibold text-navy-900 text-sm">Unified Operational Ingestion</h4>
+                <p class="text-xs text-slate-600 mt-1">Aggregates triage arrivals, ward bed statuses, lab specimen stages, and partner hospital capacity into a single live state.</p>
+              </div>
+            </div>
+            <div class="flex gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="w-8 h-8 rounded-lg bg-navy-900 text-white font-bold text-sm flex items-center justify-center shrink-0">2</div>
+              <div>
+                <h4 class="font-semibold text-navy-900 text-sm">Predictive &amp; RAG Intelligence</h4>
+                <p class="text-xs text-slate-600 mt-1">Compares real-time demand against estimated arrival curves and retrieves relevant hospital SOPs for surge or delay protocols.</p>
+              </div>
+            </div>
+            <div class="flex gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="w-8 h-8 rounded-lg bg-navy-900 text-white font-bold text-sm flex items-center justify-center shrink-0">3</div>
+              <div>
+                <h4 class="font-semibold text-navy-900 text-sm">Explainable Agent Recommendations</h4>
+                <p class="text-xs text-slate-600 mt-1">Specialized agents surface bottlenecks with transparent reasoning chains—never making clinical diagnoses.</p>
+              </div>
+            </div>
+            <div class="flex gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="w-8 h-8 rounded-lg bg-teal-600 text-white font-bold text-sm flex items-center justify-center shrink-0">4</div>
+              <div>
+                <h4 class="font-semibold text-navy-900 text-sm">Human-Approved Execution &amp; Audit</h4>
+                <p class="text-xs text-slate-600 mt-1">Administrators and coordinators review and approve proposed reallocations or inter-hospital requests with full audit logging.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <p class="text-xs font-bold uppercase tracking-wider text-blue-600 mb-2">Real-World Problems Addressed</p>
+          <h2 class="text-2xl font-bold text-navy-900 mb-6">Eliminating Operational Blind Spots</h2>
+          <div class="grid sm:grid-cols-2 gap-4">
+            <div class="p-5 rounded-xl border border-slate-200 bg-white">
+              <i data-lucide="clock-alert" class="w-5 h-5 text-amber-600 mb-3"></i>
+              <h4 class="font-semibold text-navy-900 text-sm">ED Overcrowding</h4>
+              <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Detects surge build-up hours ahead using arrival estimates so wards can prepare overflow beds proactively.</p>
+            </div>
+            <div class="p-5 rounded-xl border border-slate-200 bg-white">
+              <i data-lucide="bed" class="w-5 h-5 text-teal-600 mb-3"></i>
+              <h4 class="font-semibold text-navy-900 text-sm">Bed Turnaround Delays</h4>
+              <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Replaces manual phone calls and spreadsheets with live ward-by-ward bed status visibility.</p>
+            </div>
+            <div class="p-5 rounded-xl border border-slate-200 bg-white">
+              <i data-lucide="file-clock" class="w-5 h-5 text-blue-600 mb-3"></i>
+              <h4 class="font-semibold text-navy-900 text-sm">Lab Status Uncertainty</h4>
+              <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Keeps patients and ordering departments informed with automated readiness alerts at every stage.</p>
+            </div>
+            <div class="p-5 rounded-xl border border-slate-200 bg-white">
+              <i data-lucide="shield-alert" class="w-5 h-5 text-emerald-600 mb-3"></i>
+              <h4 class="font-semibold text-navy-900 text-sm">Siloed Hospital Networks</h4>
+              <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Enables fast ICU/ventilator coordination across regional hospitals without exposing confidential patient records.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Impact & Analytics + Tech Architecture -->
+    <section id="architecture" class="py-16 bg-slate-50 border-b border-slate-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14">
+        <div>
+          <div class="flex flex-wrap items-end justify-between gap-4 mb-6">
+            <div>
+              <p class="text-xs font-bold uppercase tracking-wider text-teal-600 mb-1">Simulated Pilot Benchmarks</p>
+              <h2 class="text-2xl font-bold text-navy-900">Operational Impact &amp; Analytics</h2>
+            </div>
+            <span class="text-xs px-2.5 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200 font-medium">Illustrative Prototype Targets</span>
+          </div>
+          <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="card-surface rounded-xl p-5">
+              <p class="text-xs font-medium text-slate-500">Wait-Time Visibility</p>
+              <p class="text-2xl font-extrabold text-navy-900 mt-1">Real-Time</p>
+              <p class="text-xs text-teal-600 mt-1 font-medium">6-department bottleneck tracking</p>
+            </div>
+            <div class="card-surface rounded-xl p-5">
+              <p class="text-xs font-medium text-slate-500">Lab Notification Loop</p>
+              <p class="text-2xl font-extrabold text-navy-900 mt-1">5 Stages</p>
+              <p class="text-xs text-teal-600 mt-1 font-medium">Automated readiness alerts</p>
+            </div>
+            <div class="card-surface rounded-xl p-5">
+              <p class="text-xs font-medium text-slate-500">Network Coordination</p>
+              <p class="text-2xl font-extrabold text-navy-900 mt-1">5 Hospitals</p>
+              <p class="text-xs text-teal-600 mt-1 font-medium">Zero-PHI capacity sharing</p>
+            </div>
+            <div class="card-surface rounded-xl p-5">
+              <p class="text-xs font-medium text-slate-500">AI Governance</p>
+              <p class="text-2xl font-extrabold text-navy-900 mt-1">100% Gated</p>
+              <p class="text-xs text-teal-600 mt-1 font-medium">Human approval + audit trail</p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <p class="text-xs font-bold uppercase tracking-wider text-teal-600 mb-2">Technology Architecture</p>
+          <h2 class="text-2xl font-bold text-navy-900 mb-6">Modular Full-Stack Health-Tech Blueprint</h2>
+          <div class="grid md:grid-cols-4 gap-4">
+            <div class="card-surface rounded-xl p-5">
+              <div class="text-xs font-bold text-blue-600 uppercase mb-2">Frontend Layer</div>
+              <h4 class="font-semibold text-navy-900 text-sm">Interactive Command UI</h4>
+              <p class="text-xs text-slate-600 mt-1.5">Tailwind CSS, Chart.js visualizations, Leaflet geospatial network map, and role-based views.</p>
+            </div>
+            <div class="card-surface rounded-xl p-5">
+              <div class="text-xs font-bold text-teal-600 uppercase mb-2">Backend API</div>
+              <h4 class="font-semibold text-navy-900 text-sm">Python + FastAPI</h4>
+              <p class="text-xs text-slate-600 mt-1.5">Pydantic-validated REST endpoints for bed updates, lab workflows, network requests, and audit logging.</p>
+            </div>
+            <div class="card-surface rounded-xl p-5">
+              <div class="text-xs font-bold text-indigo-600 uppercase mb-2">Data Layer</div>
+              <h4 class="font-semibold text-navy-900 text-sm">PostgreSQL / Supabase</h4>
+              <p class="text-xs text-slate-600 mt-1.5">Relational schema for hospitals, beds, flow metrics, lab orders, SOP documents, and immutable audit logs.</p>
+            </div>
+            <div class="card-surface rounded-xl p-5">
+              <div class="text-xs font-bold text-emerald-600 uppercase mb-2">AI &amp; RAG Engine</div>
+              <h4 class="font-semibold text-navy-900 text-sm">Gemini API + 5 Agents</h4>
+              <p class="text-xs text-slate-600 mt-1.5">State-grounded analytics, SOP retrieval-augmented generation, and human-in-the-loop action approvals.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About & Footer -->
+    <section id="about-project" class="py-14 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div class="max-w-2xl">
+          <p class="text-xs font-bold uppercase tracking-wider text-teal-600 mb-1">About FlowMed Nexus 2.0</p>
+          <h2 class="text-xl font-bold text-navy-900">Built for Responsible Healthcare Operations</h2>
+          <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+            FlowMed Nexus 2.0 demonstrates how modern health-tech startups can unify hospital command centers without compromising patient privacy or clinical safety. All AI outputs are strictly operational—never diagnostic—and all displayed records are synthetic demonstration data.
+          </p>
+        </div>
+        <button data-action="enter-dashboard" data-tab="overview" class="px-5 py-3 rounded-lg bg-navy-900 hover:bg-navy-800 text-white text-sm font-semibold transition-colors shrink-0">
+          Launch Operations Dashboard
+        </button>
+      </div>
+    </section>
+
+    <footer class="bg-navy-950 text-slate-400 py-8 border-t border-navy-800 mt-auto">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+        <div class="flex items-center gap-2 text-white font-semibold">
+          <i data-lucide="activity" class="w-4 h-4 text-teal-400"></i>
+          <span>FLOWMED NEXUS 2.0</span>
+          <span class="text-slate-500 font-normal">| Connecting Hospital Intelligence. Improving Patient Flow.</span>
+        </div>
+        <div>Synthetic Demonstration Prototype — No Real Patient Records (PHI)</div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ========================= DASHBOARD VIEW ========================= -->
+  <div id="dashboard-view" class="hidden min-h-screen flex flex-col bg-slate-50">
+    <!-- Top Dashboard Header -->
+    <header class="sticky top-0 z-40 bg-navy-900 text-white border-b border-navy-800 no-print">
+      <div class="max-w-[1440px] mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3 min-w-0">
+          <button data-action="go-landing" class="flex items-center gap-2 text-left group shrink-0" title="Back to Landing Page">
+            <div class="w-8 h-8 rounded-lg bg-navy-800 border border-slate-700 flex items-center justify-center text-teal-400 group-hover:border-teal-500 transition-colors">
+              <i data-lucide="activity" class="w-4 h-4"></i>
+            </div>
+            <span class="font-bold text-sm tracking-tight hidden sm:inline">FLOWMED NEXUS <span class="text-teal-400">2.0</span></span>
+          </button>
+          <span class="hidden md:inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider bg-amber-500/15 text-amber-300 border border-amber-500/30 shrink-0">
+            Synthetic Demo Data
+          </span>
+        </div>
+
+        <div class="flex items-center gap-2 sm:gap-3">
+          <!-- Role Switcher -->
+          <div class="flex items-center gap-1.5 bg-navy-800 border border-slate-700 rounded-lg px-2.5 py-1">
+            <i data-lucide="user-check" class="w-3.5 h-3.5 text-teal-400 shrink-0"></i>
+            <select id="role-switcher" aria-label="Active User Role" class="bg-transparent text-xs font-medium text-white focus:outline-none cursor-pointer">
+              <option value="Hospital Administrator" class="text-slate-900">Hospital Administrator</option>
+              <option value="Department Coordinator" class="text-slate-900">Department Coordinator</option>
+              <option value="Network Coordinator" class="text-slate-900">Network Coordinator</option>
+            </select>
+          </div>
+
+          <!-- Notification Bell -->
+          <button data-action="open-notif-drawer" class="relative p-2 rounded-lg bg-navy-800 hover:bg-navy-700 border border-slate-700 text-slate-200 transition-colors" aria-label="Notifications">
+            <i data-lucide="bell" class="w-4 h-4"></i>
+            <span id="notif-badge" class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-teal-500 text-navy-950 text-[10px] font-bold flex items-center justify-center">0</span>
+          </button>
+
+          <button data-action="go-landing" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-navy-800 hover:bg-navy-700 border border-slate-700 text-xs font-medium text-slate-200 transition-colors">
+            <i data-lucide="home" class="w-3.5 h-3.5"></i>
+            <span>Landing</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 8-Tab Navigation Bar -->
+      <div class="bg-white border-b border-slate-200 text-slate-700">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 flex items-center gap-1 overflow-x-auto py-2">
+          <button data-action="switch-tab" data-tab="overview" class="dash-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 transition-colors">
+            <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i><span>Overview</span>
+          </button>
+          <button data-action="switch-tab" data-tab="patient-flow" class="dash-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 transition-colors">
+            <i data-lucide="trending-up" class="w-3.5 h-3.5"></i><span>Patient Flow</span>
+          </button>
+          <button data-action="switch-tab" data-tab="bed-management" class="dash-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 transition-colors">
+            <i data-lucide="bed-double" class="w-3.5 h-3.5"></i><span>Bed Management</span>
+          </button>
+          <button data-action="switch-tab" data-tab="laboratory" class="dash-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 transition-colors">
+            <i data-lucide="flask-conical" class="w-3.5 h-3.5"></i><span>Laboratory</span>
+          </button>
+          <button data-action="switch-tab" data-tab="hospital-network" class="dash-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 transition-colors">
+            <i data-lucide="network" class="w-3.5 h-3.5"></i><span>Hospital Network</span>
+          </button>
+          <button data-action="switch-tab" data-tab="ai-assistant" class="dash-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 transition-colors">
+            <i data-lucide="bot" class="w-3.5 h-3.5"></i><span>AI Assistant</span>
+          </button>
+          <button data-action="switch-tab" data-tab="reports" class="dash-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 transition-colors">
+            <i data-lucide="file-text" class="w-3.5 h-3.5"></i><span>Reports</span>
+          </button>
+          <button data-action="switch-tab" data-tab="settings" class="dash-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 transition-colors">
+            <i data-lucide="settings" class="w-3.5 h-3.5"></i><span>Settings</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Dashboard Content Area -->
+    <main class="flex-1 max-w-[1440px] w-full mx-auto px-4 sm:px-6 py-6">
+      <!-- Tab 1: Overview -->
+      <section id="tab-overview" class="dash-section space-y-6"></section>
+
+      <!-- Tab 2: Patient Flow (Module 1) -->
+      <section id="tab-patient-flow" class="dash-section hidden space-y-6"></section>
+
+      <!-- Tab 3: Bed Management (Module 2) -->
+      <section id="tab-bed-management" class="dash-section hidden space-y-6"></section>
+
+      <!-- Tab 4: Laboratory (Module 3) -->
+      <section id="tab-laboratory" class="dash-section hidden space-y-6"></section>
+
+      <!-- Tab 5: Hospital Network (Module 4) -->
+      <section id="tab-hospital-network" class="dash-section hidden space-y-6"></section>
+
+      <!-- Tab 6: AI Assistant (Module 5) -->
+      <section id="tab-ai-assistant" class="dash-section hidden space-y-6"></section>
+
+      <!-- Tab 7: Reports -->
+      <section id="tab-reports" class="dash-section hidden space-y-6"></section>
+
+      <!-- Tab 8: Settings -->
+      <section id="tab-settings" class="dash-section hidden space-y-6"></section>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+      // The FastAPI server serves this page and the API from one origin.
+      const API_BASE = (window.FLOWMED_API_BASE || '').replace(/\/$/, '');
+
+      // --- INITIAL SYNTHETIC STATE ---
+      const INITIAL_STATE = {
+        view: 'landing',
+        activeTab: 'overview',
+        previewDept: 'Emergency',
+        role: 'Hospital Administrator',
+        geminiApiKey: '',
+        surgePct: 0,
+        flowDeptFilter: 'All',
+        bedDeptFilter: 'All',
+        bedStatusFilter: 'All',
+        bedSearch: '',
+        labSearch: '',
+        labStageFilter: 'All',
+        selectedAgent: 'Auto-Route',
+        totalRegisteredBase: 342,
+        waitingPatientsBase: 46,
+        hourlyFlow: [
+          { hour: '06:00', actual: 14, predicted: 15 },
+          { hour: '08:00', actual: 26, predicted: 24 },
+          { hour: '10:00', actual: 38, predicted: 35 },
+          { hour: '12:00', actual: 44, predicted: 41 },
+          { hour: '14:00', actual: 49, predicted: 45 },
+          { hour: '16:00', actual: 41, predicted: 43 },
+          { hour: '18:00', actual: null, predicted: 52 },
+          { hour: '20:00', actual: null, predicted: 39 },
+          { hour: '22:00', actual: null, predicted: 25 }
+        ],
+        departments: [
+          { name: 'Emergency', waitMins: 38, waiting: 18, throughput: 94, loadPct: 89 },
+          { name: 'Cardiology', waitMins: 22, waiting: 7, throughput: 48, loadPct: 72 },
+          { name: 'Orthopedics', waitMins: 19, waiting: 6, throughput: 52, loadPct: 65 },
+          { name: 'Pediatrics', waitMins: 16, waiting: 5, throughput: 61, loadPct: 58 },
+          { name: 'General Medicine', waitMins: 27, waiting: 10, throughput: 87, loadPct: 76 }
+        ],
+        beds: [
+          { id: 'ED-101', dept: 'Emergency', ward: 'Trauma Bay', status: 'Occupied' },
+          { id: 'ED-102', dept: 'Emergency', ward: 'Trauma Bay', status: 'Occupied' },
+          { id: 'ED-103', dept: 'Emergency', ward: 'Obs Unit', status: 'Available' },
+          { id: 'ED-104', dept: 'Emergency', ward: 'Obs Unit', status: 'Maintenance' },
+          { id: 'ICU-201', dept: 'ICU', ward: 'Critical Care A', status: 'Occupied' },
+          { id: 'ICU-202', dept: 'ICU', ward: 'Critical Care A', status: 'Occupied' },
+          { id: 'ICU-203', dept: 'ICU', ward: 'Critical Care B', status: 'Available' },
+          { id: 'ICU-204', dept: 'ICU', ward: 'Critical Care B', status: 'Occupied' },
+          { id: 'CAR-301', dept: 'Cardiology', ward: 'Telemetry', status: 'Available' },
+          { id: 'CAR-302', dept: 'Cardiology', ward: 'Telemetry', status: 'Occupied' },
+          { id: 'CAR-303', dept: 'Cardiology', ward: 'Step-Down', status: 'Available' },
+          { id: 'CAR-304', dept: 'Cardiology', ward: 'Step-Down', status: 'Maintenance' },
+          { id: 'ORT-401', dept: 'Orthopedics', ward: 'Surgical Ward', status: 'Available' },
+          { id: 'ORT-402', dept: 'Orthopedics', ward: 'Surgical Ward', status: 'Occupied' },
+          { id: 'ORT-403', dept: 'Orthopedics', ward: 'Recovery', status: 'Available' },
+          { id: 'ORT-404', dept: 'Orthopedics', ward: 'Recovery', status: 'Occupied' },
+          { id: 'PED-501', dept: 'Pediatrics', ward: 'Peds Wing', status: 'Available' },
+          { id: 'PED-502', dept: 'Pediatrics', ward: 'Peds Wing', status: 'Occupied' },
+          { id: 'PED-503', dept: 'Pediatrics', ward: 'Peds Wing', status: 'Available' },
+          { id: 'PED-504', dept: 'Pediatrics', ward: 'NICU Step', status: 'Available' },
+          { id: 'GEN-601', dept: 'General Medicine', ward: 'East Wing', status: 'Occupied' },
+          { id: 'GEN-602', dept: 'General Medicine', ward: 'East Wing', status: 'Available' },
+          { id: 'GEN-603', dept: 'General Medicine', ward: 'West Wing', status: 'Occupied' },
+          { id: 'GEN-604', dept: 'General Medicine', ward: 'West Wing', status: 'Maintenance' }
+        ],
+        labTests: [
+          { id: 'LAB-8821', alias: 'PT-SYN-401', dept: 'Emergency', test: 'Troponin-I Panel', priority: 'STAT', stage: 'Processing', estMins: 14, notified: false, note: 'Priority STAT processing in Bay 2' },
+          { id: 'LAB-8822', alias: 'PT-SYN-409', dept: 'Cardiology', test: 'Lipid & BNP Profile', priority: 'Urgent', stage: 'Ready', estMins: 0, notified: false, note: 'Awaiting ward acknowledgment' },
+          { id: 'LAB-8823', alias: 'PT-SYN-415', dept: 'General Medicine', test: 'Complete Blood Count', priority: 'Routine', stage: 'Collected', estMins: 35, notified: false, note: 'Sample logged at Central Lab' },
+          { id: 'LAB-8824', alias: 'PT-SYN-422', dept: 'Pediatrics', test: 'CRP & Electrolyte', priority: 'Urgent', stage: 'Notified', estMins: 0, notified: true, note: 'Simulated SMS + Portal alert sent' },
+          { id: 'LAB-8825', alias: 'PT-SYN-430', dept: 'Orthopedics', test: 'Pre-Op Coagulation', priority: 'Routine', stage: 'Registered', estMins: 55, notified: false, note: 'Phlebotomy dispatch queued' },
+          { id: 'LAB-8826', alias: 'PT-SYN-438', dept: 'Emergency', test: 'Lactate & ABG', priority: 'STAT', stage: 'Ready', estMins: 0, notified: false, note: 'Ready for notification dispatch' }
+        ],
+        hospitals: [
+          { id: 'HOSP-01', name: 'FlowMed Central Medical Center', tier: 'Primary Hub', lat: 12.9716, lng: 77.5946, totalBeds: 180, availableBeds: 24, icuAvailable: 4, ventilators: 6, status: 'High Load' },
+          { id: 'HOSP-02', name: 'Metro North General Hospital', tier: 'Partner Acute', lat: 13.0250, lng: 77.5850, totalBeds: 140, availableBeds: 31, icuAvailable: 7, ventilators: 5, status: 'Normal' },
+          { id: 'HOSP-03', name: 'East TechCare Specialty', tier: 'Partner Tertiary', lat: 12.9780, lng: 77.6650, totalBeds: 120, availableBeds: 19, icuAvailable: 3, ventilators: 4, status: 'Normal' },
+          { id: 'HOSP-04', name: 'South Wellness Institute', tier: 'Partner General', lat: 12.9150, lng: 77.5950, totalBeds: 110, availableBeds: 28, icuAvailable: 6, ventilators: 7, status: 'Optimal' },
+          { id: 'HOSP-05', name: 'West Regional Trauma Center', tier: 'Partner Trauma', lat: 12.9650, lng: 77.5200, totalBeds: 150, availableBeds: 11, icuAvailable: 1, ventilators: 2, status: 'Critical' }
+        ],
+        networkRequests: [
+          { id: 'REQ-301', from: 'HOSP-01', to: 'HOSP-02', resource: 'ICU Overflow Beds', qty: 3, urgency: 'High', status: 'Pending Approval', notes: 'ED surge buffer — anonymized capacity code only' },
+          { id: 'REQ-302', from: 'HOSP-05', to: 'HOSP-04', resource: 'Transport Ventilators', qty: 2, urgency: 'Critical', status: 'Approved', notes: 'Approved by Network Coordinator' }
+        ],
+        sops: [
+          { id: 'SOP-01', title: 'Code Surge Level 2 — ED Diversion & Bed Reallocation', category: 'Capacity Management', content: 'Triggered when ED wait time exceeds 35 minutes or ED occupancy exceeds 85%. Requires Hospital Administrator approval to convert Maintenance-cleared beds to Active Overflow and notify Network Coordinator.' },
+          { id: 'SOP-02', title: 'Laboratory STAT Turnaround & Automated Notification', category: 'Laboratory Operations', content: 'STAT specimens must transition from Collected to Processing within 15 minutes. When marked Report Ready, simulated portal/SMS readiness alerts are dispatched without clinical diagnosis details.' },
+          { id: 'SOP-03', title: 'Cross-Hospital Resource Coordination & Privacy Firewall', category: 'Network Governance', content: 'Inter-hospital requests transmit only anonymized resource codes and urgency tiers. Confidential patient PHI is never automatically shared. Network Coordinator or Hospital Administrator approval is mandatory.' }
+        ],
+        aiMessages: [
+          {
+            sender: 'ai',
+            agent: 'Patient Flow Analyst Agent',
+            text: 'Emergency Department is currently at 89% load with a 38-minute average wait time, exceeding the 35-minute threshold in SOP-01. Peak arrival is estimated at 18:00 (52 arrivals/hr).',
+            reasoning: 'Cross-referenced live ED load (89%) and 18:00 forecast against SOP-01 (Code Surge Level 2).',
+            sops: ['SOP-01'],
+            proposedAction: { id: 'ACT-1', label: 'Clear ED-104 from Maintenance to Available Overflow', type: 'clear-bed', target: 'ED-104', status: 'pending' }
+          }
+        ],
+        notifications: [
+          { id: 'N-1', title: 'ED Bottleneck Alert', body: 'Emergency wait time reached 38 mins (SOP-01 threshold: 35 mins).', time: '2m ago', read: false, type: 'warning' },
+          { id: 'N-2', title: 'Lab Report Ready (LAB-8822)', body: 'Lipid & BNP Profile for PT-SYN-409 is ready for simulated notification.', time: '8m ago', read: false, type: 'info' },
+          { id: 'N-3', title: 'Network Request REQ-301', body: 'Pending approval: 3 ICU Overflow Beds from Metro North General.', time: '15m ago', read: true, type: 'info' }
+        ],
+        auditLogs: [
+          { time: '10:32 AM', role: 'Network Coordinator', action: 'Approved REQ-302', details: '2 Transport Ventilators routed from South Wellness to West Trauma (Zero PHI).' },
+          { time: '10:15 AM', role: 'Department Coordinator', action: 'Dispatched Lab Alert', details: 'Simulated readiness notification sent for LAB-8824 (PT-SYN-422).' }
+        ]
+      };
+
+      let state = JSON.parse(JSON.stringify(INITIAL_STATE));
+      let charts = {};
+      let networkMap = null;
+
+      // Load persisted synthetic records from Firestore through the trusted backend.
+      // The dashboard keeps its bundled demo snapshot if Firebase is not configured.
+      async function loadFirebaseDashboardData() {
+        try {
+          const response = await fetch(`${API_BASE}/api/dashboard-data`);
+          if (!response.ok) return;
+          const data = await response.json();
+          if (data.source !== 'firebase-firestore') return;
+          const validHospitals = (data.hospitals || []).filter(h => h.name || h.Name);
+          if (validHospitals.length) {
+            state.hospitals = validHospitals.map(h => ({
+              id: h.id || h.hospital_id || 'HOSP-DEMO', name: h.name || h.Name || 'Demo Hospital',
+              tier: h.tier || 'Demo Network', lat: Number(h.lat || 0), lng: Number(h.lng || 0),
+              totalBeds: Number(h.totalBeds ?? h.total_beds ?? h.Total_beds ?? 0),
+              availableBeds: Number(h.availableBeds ?? h.available_beds ?? h.Available_beds ?? 0),
+              icuAvailable: Number(h.icuAvailable ?? h.icu_available ?? 0),
+              ventilators: Number(h.ventilators || 0), status: h.status || h.Status || 'Demo'
+            }));
+          }
+          if ((data.beds || []).length) state.beds = data.beds.map(b => ({
+            id: b.bed_id || b.id, dept: b.department || b.dept || 'General',
+            ward: b.ward || 'Demo Ward', status: b.status || 'Available'
+          }));
+          if ((data.lab_tests || []).length) state.labTests = data.lab_tests.map(t => ({
+            id: t.test_id || t.id, alias: t.patient_alias || 'DEMO-ALIAS',
+            dept: t.department || 'General', test: t.test_name || 'Demo Test',
+            priority: t.priority || 'Routine', stage: t.status || t.stage || 'Registered',
+            estMins: 0, notified: (t.status || t.stage) === 'Notified', note: 'Synthetic Firestore record'
+          }));
+          if ((data.resource_requests || []).length) state.networkRequests = data.resource_requests.map(r => ({
+            id: r.request_id || r.id, from: r.source_hospital_id || 'HOSP-01',
+            to: r.target_hospital_id || 'HOSP-02', resource: r.resource_type || 'Demo Resource',
+            qty: Number(r.quantity || 1), urgency: r.urgency || 'Standard',
+            status: r.status === 'Pending' ? 'Pending Approval' : (r.status || 'Pending Approval'),
+            notes: 'Synthetic Firestore record'
+          }));
+          if ((data.sops || []).length) state.sops = data.sops;
+          if (state.view === 'dashboard') switchTab(state.activeTab);
+          console.info('FlowMed dashboard data source:', data.source);
+        } catch (error) {
+          console.warn('Using bundled synthetic dashboard data; Firebase load failed.');
+        }
+      }
+
+      // --- UTILITIES ---
+      function showToast(title, msg, tone = 'teal') {
+        const container = document.getElementById('toast-container');
+        const el = document.createElement('div');
+        const border = tone === 'amber' ? 'border-amber-500' : tone === 'red' ? 'border-red-500' : 'border-teal-500';
+        el.className = `pointer-events-auto bg-navy-900 text-white px-4 py-3 rounded-xl shadow-lg border-l-4 ${border} text-xs transition-all`;
+        el.innerHTML = `<div class="font-semibold">${escapeHtml(title)}</div><div class="text-slate-300 mt-0.5">${escapeHtml(msg)}</div>`;
+        container.appendChild(el);
+        setTimeout(() => { el.remove(); }, 3800);
+      }
+
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function addAudit(action, details) {
+        const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        state.auditLogs.unshift({ time: now, role: state.role, action, details });
+      }
+
+      function addNotification(title, body, type = 'info') {
+        state.notifications.unshift({
+          id: 'N-' + Date.now(),
+          title,
+          body,
+          time: 'Just now',
+          read: false,
+          type
+        });
+        renderNotifications();
+      }
+
+      function destroyChart(key) {
+        if (charts[key]) {
+          charts[key].destroy();
+          delete charts[key];
+        }
+      }
+
+      function getBedStats() {
+        const total = state.beds.length;
+        const available = state.beds.filter(b => b.status === 'Available').length;
+        const occupied = state.beds.filter(b => b.status === 'Occupied').length;
+        const maintenance = state.beds.filter(b => b.status === 'Maintenance').length;
+        return { total, available, occupied, maintenance, utilPct: Math.round((occupied / total) * 100) };
+      }
+
+      function getAvgWait() {
+        const sum = state.departments.reduce((acc, d) => acc + d.waitMins, 0);
+        return Math.round(sum / state.departments.length);
+      }
+
+      function getTotalWaiting() {
+        return state.departments.reduce((acc, d) => acc + d.waiting, 0);
+      }
+
+      function getPendingLabs() {
+        return state.labTests.filter(t => t.stage !== 'Notified').length;
+      }
+
+      // --- LANDING HERO PREVIEW ---
+      function renderHeroPreview() {
+        const body = document.getElementById('hero-preview-body');
+        if (!body) return;
+        const dept = state.previewDept;
+        document.querySelectorAll('.preview-dept-btn').forEach(btn => {
+          const active = btn.dataset.dept === dept;
+          btn.className = active
+            ? 'preview-dept-btn px-2.5 py-1 rounded text-xs font-medium bg-navy-900 text-white'
+            : 'preview-dept-btn px-2.5 py-1 rounded text-xs font-medium text-slate-600 hover:bg-slate-200';
+        });
+
+        let html = '';
+        if (dept === 'Emergency') {
+          html = `
+            <div class="grid grid-cols-3 gap-3">
+              <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                <div class="text-[11px] text-slate-500">Current Load</div>
+                <div class="text-xl font-bold text-navy-900 mt-0.5">89%</div>
+                <div class="text-[11px] text-amber-600 font-medium">High Demand</div>
+              </div>
+              <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                <div class="text-[11px] text-slate-500">Avg Wait</div>
+                <div class="text-xl font-bold text-navy-900 mt-0.5">38 min</div>
+                <div class="text-[11px] text-slate-500">SOP Limit: 35m</div>
+              </div>
+              <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                <div class="text-[11px] text-slate-500">Est. Peak</div>
+                <div class="text-xl font-bold text-teal-600 mt-0.5">18:00</div>
+                <div class="text-[11px] text-slate-500">~52 arr/hr (est.)</div>
+              </div>
+            </div>
+            <div class="p-3.5 rounded-lg bg-teal-50 border border-teal-200 flex items-start gap-2.5">
+              <i data-lucide="sparkles" class="w-4 h-4 text-teal-600 shrink-0 mt-0.5"></i>
+              <div class="text-xs text-slate-700"><span class="font-semibold text-navy-900">AI Insight:</span> Clearing maintenance bed ED-104 and routing 3 overflow ICU requests to Metro North reduces projected wait by ~18%.</div>
+            </div>`;
+        } else if (dept === 'ICU') {
+          const icuAvail = state.beds.filter(b => b.dept === 'ICU' && b.status === 'Available').length;
+          html = `
+            <div class="grid grid-cols-3 gap-3">
+              <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                <div class="text-[11px] text-slate-500">Available ICU</div>
+                <div class="text-xl font-bold text-teal-600 mt-0.5">${icuAvail} / 4</div>
+                <div class="text-[11px] text-slate-500">Unit Sample</div>
+              </div>
+              <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                <div class="text-[11px] text-slate-500">Network ICU</div>
+                <div class="text-xl font-bold text-navy-900 mt-0.5">21</div>
+                <div class="text-[11px] text-emerald-600 font-medium">5 Partner Nodes</div>
+              </div>
+              <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                <div class="text-[11px] text-slate-500">Ventilators</div>
+                <div class="text-xl font-bold text-navy-900 mt-0.5">24</div>
+                <div class="text-[11px] text-slate-500">Regional Pool</div>
+              </div>
+            </div>
+            <div class="p-3.5 rounded-lg bg-blue-50 border border-blue-200 flex items-start gap-2.5">
+              <i data-lucide="shield-check" class="w-4 h-4 text-blue-600 shrink-0 mt-0.5"></i>
+              <div class="text-xs text-slate-700"><span class="font-semibold text-navy-900">Privacy Firewall Active:</span> Cross-hospital ICU coordination shares anonymized capacity codes only—zero patient PHI.</div>
+            </div>`;
+        } else {
+          html = `
+            <div class="grid grid-cols-3 gap-3">
+              <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                <div class="text-[11px] text-slate-500">Active Orders</div>
+                <div class="text-xl font-bold text-navy-900 mt-0.5">${state.labTests.length}</div>
+                <div class="text-[11px] text-slate-500">5-Stage Pipeline</div>
+              </div>
+              <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                <div class="text-[11px] text-slate-500">Ready to Notify</div>
+                <div class="text-xl font-bold text-teal-600 mt-0.5">${state.labTests.filter(t => t.stage === 'Ready').length}</div>
+                <div class="text-[11px] text-teal-700 font-medium">Actionable</div>
+              </div>
+              <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                <div class="text-[11px] text-slate-500">STAT Turnaround</div>
+                <div class="text-xl font-bold text-navy-900 mt-0.5">14 min</div>
+                <div class="text-[11px] text-emerald-600 font-medium">Within SOP-02</div>
+              </div>
+            </div>
+            <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 flex items-start gap-2.5">
+              <i data-lucide="bell-ring" class="w-4 h-4 text-teal-600 shrink-0 mt-0.5"></i>
+              <div class="text-xs text-slate-700"><span class="font-semibold text-navy-900">Readiness Loop:</span> Patients and wards receive simulated portal alerts the moment reports are marked Ready.</div>
+            </div>`;
+        }
+        body.innerHTML = html;
+        lucide.createIcons();
+      }
+
+      // --- NOTIFICATIONS ---
+      function renderNotifications() {
+        const unread = state.notifications.filter(n => !n.read).length;
+        const badge = document.getElementById('notif-badge');
+        if (badge) badge.textContent = unread;
+        const list = document.getElementById('notif-list');
+        if (!list) return;
+        if (state.notifications.length === 0) {
+          list.innerHTML = `<div class="text-center py-12 text-slate-400 text-sm">No notifications yet.</div>`;
+          return;
+        }
+        list.innerHTML = state.notifications.map(n => `
+          <div class="p-3.5 rounded-xl border ${n.read ? 'bg-white border-slate-200' : 'bg-teal-50/50 border-teal-200'}">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-bold text-navy-900">${escapeHtml(n.title)}</span>
+              <span class="text-[11px] text-slate-400">${escapeHtml(n.time)}</span>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">${escapeHtml(n.body)}</p>
+          </div>
+        `).join('');
+      }
+
+      // --- NAVIGATION ---
+      function setView(view, tab) {
+        state.view = view;
+        if (tab) state.activeTab = tab;
+        document.getElementById('landing-view').classList.toggle('hidden', view !== 'landing');
+        document.getElementById('dashboard-view').classList.toggle('hidden', view !== 'dashboard');
+        if (view === 'dashboard') {
+          switchTab(state.activeTab);
+        } else {
+          renderHeroPreview();
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function switchTab(tab) {
+        state.activeTab = tab;
+        document.querySelectorAll('.dash-tab-btn').forEach(btn => {
+          const active = btn.dataset.tab === tab;
+          btn.className = active
+            ? 'dash-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 transition-colors bg-navy-900 text-white'
+            : 'dash-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 transition-colors text-slate-600 hover:bg-slate-100 hover:text-navy-900';
+        });
+        document.querySelectorAll('.dash-section').forEach(sec => sec.classList.add('hidden'));
+        const target = document.getElementById(`tab-${tab}`);
+        if (target) target.classList.remove('hidden');
+
+        if (tab === 'overview') renderOverview();
+        if (tab === 'patient-flow') renderPatientFlow();
+        if (tab === 'bed-management') renderBedManagement();
+        if (tab === 'laboratory') renderLaboratory();
+        if (tab === 'hospital-network') renderHospitalNetwork();
+        if (tab === 'ai-assistant') renderAIAssistant();
+        if (tab === 'reports') renderReports();
+        if (tab === 'settings') renderSettings();
+        lucide.createIcons();
+      }
+
+      // --- TAB 1: OVERVIEW ---
+      function renderOverview() {
+        const beds = getBedStats();
+        const avgWait = getAvgWait();
+        const waiting = getTotalWaiting();
+        const pendingLabs = getPendingLabs();
+        const el = document.getElementById('tab-overview');
+
+        el.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h1 class="text-xl font-bold text-navy-900">Hospital Operations Overview</h1>
+              <p class="text-xs text-slate-500 mt-0.5">Active Role: <span class="font-semibold text-teal-700">${escapeHtml(state.role)}</span> • All metrics are synthetic demonstration data</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button data-action="switch-tab" data-tab="ai-assistant" class="px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-500 text-white text-xs font-semibold inline-flex items-center gap-1.5">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i><span>Ask AI Assistant</span>
+              </button>
+              <button data-action="switch-tab" data-tab="reports" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 text-navy-900 text-xs font-semibold inline-flex items-center gap-1.5">
+                <i data-lucide="file-text" class="w-3.5 h-3.5"></i><span>Daily Report</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 6 KPI Widgets -->
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div class="card-surface rounded-xl p-4">
+              <div class="text-[11px] font-medium text-slate-500">Registered Today</div>
+              <div class="text-2xl font-bold text-navy-900 mt-1">${state.totalRegisteredBase}</div>
+              <div class="text-[11px] text-teal-600 font-medium mt-1">+6.2% vs baseline</div>
+            </div>
+            <div class="card-surface rounded-xl p-4">
+              <div class="text-[11px] font-medium text-slate-500">Current Waiting</div>
+              <div class="text-2xl font-bold text-navy-900 mt-1">${waiting}</div>
+              <div class="text-[11px] text-amber-600 font-medium mt-1">18 in Emergency</div>
+            </div>
+            <div class="card-surface rounded-xl p-4">
+              <div class="text-[11px] font-medium text-slate-500">Avg Wait Time</div>
+              <div class="text-2xl font-bold text-navy-900 mt-1">${avgWait}m</div>
+              <div class="text-[11px] text-slate-500 mt-1">Target: &lt; 25m</div>
+            </div>
+            <div class="card-surface rounded-xl p-4">
+              <div class="text-[11px] font-medium text-slate-500">Available Beds</div>
+              <div class="text-2xl font-bold text-teal-600 mt-1">${beds.available} <span class="text-sm font-normal text-slate-400">/ ${beds.total}</span></div>
+              <div class="text-[11px] text-slate-500 mt-1">${beds.utilPct}% utilized</div>
+            </div>
+            <div class="card-surface rounded-xl p-4">
+              <div class="text-[11px] font-medium text-slate-500">Labs Pending</div>
+              <div class="text-2xl font-bold text-navy-900 mt-1">${pendingLabs}</div>
+              <div class="text-[11px] text-blue-600 font-medium mt-1">${state.labTests.filter(t => t.stage === 'Ready').length} ready to notify</div>
+            </div>
+            <div class="card-surface rounded-xl p-4">
+              <div class="text-[11px] font-medium text-slate-500">Dept Activity</div>
+              <div class="text-2xl font-bold text-navy-900 mt-1">5 / 5</div>
+              <div class="text-[11px] text-emerald-600 font-medium mt-1">All units online</div>
+            </div>
+          </div>
+
+          <!-- Charts Row -->
+          <div class="grid lg:grid-cols-12 gap-5">
+            <div class="lg:col-span-7 card-surface rounded-xl p-5">
+              <div class="flex items-center justify-between mb-3">
+                <div>
+                  <h3 class="text-sm font-bold text-navy-900">Patient Flow Trend (Actual vs. Predicted)</h3>
+                  <p class="text-[11px] text-slate-500">Dashed line represents AI estimates based on synthetic historical patterns</p>
+                </div>
+                <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">Forecast Estimate</span>
+              </div>
+              <div class="relative h-64"><canvas id="overviewFlowChart"></canvas></div>
+            </div>
+
+            <div class="lg:col-span-5 card-surface rounded-xl p-5">
+              <div class="flex items-center justify-between mb-3">
+                <div>
+                  <h3 class="text-sm font-bold text-navy-900">Department Wait &amp; Load</h3>
+                  <p class="text-[11px] text-slate-500">Average waiting minutes by clinical unit</p>
+                </div>
+              </div>
+              <div class="relative h-64"><canvas id="overviewDeptChart"></canvas></div>
+            </div>
+          </div>
+
+          <!-- Bottom Operational Row -->
+          <div class="grid lg:grid-cols-12 gap-5">
+            <div class="lg:col-span-4 card-surface rounded-xl p-5">
+              <h3 class="text-sm font-bold text-navy-900 mb-1">Bed Availability Mix</h3>
+              <p class="text-[11px] text-slate-500 mb-3">Live unit-level sample (${beds.total} tracked beds)</p>
+              <div class="relative h-52"><canvas id="overviewBedChart"></canvas></div>
+            </div>
+
+            <div class="lg:col-span-4 card-surface rounded-xl p-5 flex flex-col justify-between">
+              <div>
+                <h3 class="text-sm font-bold text-navy-900 mb-3">Laboratory Pipeline Snapshot</h3>
+                <div class="space-y-2.5 text-xs">
+                  ${['Registered', 'Collected', 'Processing', 'Ready', 'Notified'].map(stage => {
+                    const count = state.labTests.filter(t => t.stage === stage).length;
+                    return `<div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-100">
+                      <span class="font-medium text-slate-700">${stage}</span>
+                      <span class="font-bold text-navy-900">${count}</span>
+                    </div>`;
+                  }).join('')}
+                </div>
+              </div>
+              <button data-action="switch-tab" data-tab="laboratory" class="mt-4 text-xs font-semibold text-teal-600 hover:text-teal-700 inline-flex items-center gap-1">
+                <span>Manage Lab Notifications</span><i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+
+            <div class="lg:col-span-4 card-surface rounded-xl p-5 flex flex-col justify-between">
+              <div>
+                <h3 class="text-sm font-bold text-navy-900 mb-3">Live Operational Alerts &amp; AI Insights</h3>
+                <div class="space-y-2.5">
+                  <div class="p-3 rounded-lg bg-amber-50 border border-amber-200 text-xs">
+                    <div class="font-semibold text-amber-900 flex items-center gap-1.5"><i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Emergency Wait Exceeds SOP-01</div>
+                    <p class="text-amber-800 mt-1">Current wait is ${state.departments[0].waitMins}m (threshold 35m). Consider clearing ED-104.</p>
+                  </div>
+                  <div class="p-3 rounded-lg bg-teal-50 border border-teal-200 text-xs">
+                    <div class="font-semibold text-teal-900 flex items-center gap-1.5"><i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Network Capacity Available</div>
+                    <p class="text-teal-800 mt-1">Metro North General has 7 ICU beds available for load balancing.</p>
+                  </div>
+                </div>
+              </div>
+              <button data-action="switch-tab" data-tab="ai-assistant" class="mt-4 w-full py-2 rounded-lg bg-navy-900 hover:bg-navy-800 text-white text-xs font-semibold">
+                Review AI Recommendations
+              </button>
+            </div>
+          </div>
+        `;
+
+        // Render Overview Charts
+        destroyChart('overviewFlow');
+        const ctx1 = document.getElementById('overviewFlowChart').getContext('2d');
+        charts.overviewFlow = new Chart(ctx1, {
+          type: 'line',
+          data: {
+            labels: state.hourlyFlow.map(h => h.hour),
+            datasets: [
+              { label: 'Actual Arrivals', data: state.hourlyFlow.map(h => h.actual), borderColor: '#0B1528', backgroundColor: 'rgba(11,21,40,0.08)', fill: true, tension: 0.35, borderWidth: 2.5 },
+              { label: 'AI Predicted (Estimate)', data: state.hourlyFlow.map(h => h.predicted), borderColor: '#0D9488', borderDash: [6, 4], tension: 0.35, borderWidth: 2, fill: false }
+            ]
+          },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } }, scales: { y: { beginAtZero: true } } }
+        });
+
+        destroyChart('overviewDept');
+        const ctx2 = document.getElementById('overviewDeptChart').getContext('2d');
+        charts.overviewDept = new Chart(ctx2, {
+          type: 'bar',
+          data: {
+            labels: state.departments.map(d => d.name),
+            datasets: [{ label: 'Avg Wait (mins)', data: state.departments.map(d => d.waitMins), backgroundColor: state.departments.map(d => d.waitMins > 35 ? '#D97706' : '#2563EB'), borderRadius: 6 }]
+          },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+        });
+
+        destroyChart('overviewBed');
+        const ctx3 = document.getElementById('overviewBedChart').getContext('2d');
+        charts.overviewBed = new Chart(ctx3, {
+          type: 'doughnut',
+          data: {
+            labels: ['Available', 'Occupied', 'Maintenance'],
+            datasets: [{ data: [beds.available, beds.occupied, beds.maintenance], backgroundColor: ['#0D9488', '#0B1528', '#F59E0B'], borderWidth: 0 }]
+          },
+          options: { responsive: true, maintainAspectRatio: false, cutout: '68%', plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } } }
+        });
+      }
+
+      // --- TAB 2: PATIENT FLOW (MODULE 1) ---
+      function renderPatientFlow() {
+        const el = document.getElementById('tab-patient-flow');
+        const factor = 1 + state.surgePct / 100;
+        const simPredicted = state.hourlyFlow.map(h => Math.round(h.predicted * factor));
+        const peakVal = Math.max(...simPredicted);
+        const peakIdx = simPredicted.indexOf(peakVal);
+        const peakHour = state.hourlyFlow[peakIdx].hour;
+
+        el.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h1 class="text-xl font-bold text-navy-900">Module 1: AI Patient Flow Prediction</h1>
+              <p class="text-xs text-slate-500 mt-0.5">Predictions are statistical estimates based on synthetic historical and current intake data.</p>
+            </div>
+            <div class="flex items-center gap-3 bg-white px-4 py-2 rounded-xl border border-slate-200">
+              <label for="surge-slider" class="text-xs font-semibold text-navy-900">Surge Simulation:</label>
+              <input id="surge-slider" type="range" min="0" max="40" step="5" value="${state.surgePct}" class="accent-teal-600 cursor-pointer" />
+              <span class="text-xs font-bold text-teal-700 w-10">+${state.surgePct}%</span>
+            </div>
+          </div>
+
+          <div class="grid lg:grid-cols-12 gap-5">
+            <div class="lg:col-span-8 card-surface rounded-xl p-5">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-sm font-bold text-navy-900">Hourly Arrival Trends (Actual vs. Estimated Demand)</h3>
+                <span class="text-[11px] font-semibold px-2 py-0.5 rounded bg-teal-50 text-teal-700 border border-teal-200">Est. Peak: ${peakHour} (${peakVal} pts/hr)</span>
+              </div>
+              <div class="relative h-72"><canvas id="flowDetailChart"></canvas></div>
+            </div>
+
+            <div class="lg:col-span-4 card-surface rounded-xl p-5">
+              <h3 class="text-sm font-bold text-navy-900 mb-1">Log Patient Arrival (Triage)</h3>
+              <p class="text-xs text-slate-500 mb-4">Updates live registered counts and department wait queue.</p>
+              <form id="patient-intake-form" class="space-y-3">
+                <div>
+                  <label class="block text-xs font-medium text-slate-700 mb-1">Synthetic Alias</label>
+                  <input type="text" id="intake-alias" value="PT-SYN-${Math.floor(500 + Math.random()*400)}" required class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs focus:outline-none focus:border-teal-600" />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-slate-700 mb-1">Department</label>
+                  <select id="intake-dept" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white focus:outline-none focus:border-teal-600">
+                    ${state.departments.map(d => `<option value="${d.name}">${d.name}</option>`).join('')}
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-slate-700 mb-1">Acuity Level</label>
+                  <select id="intake-acuity" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white focus:outline-none focus:border-teal-600">
+                    <option value="Standard">Standard</option>
+                    <option value="Urgent">Urgent</option>
+                    <option value="Resuscitation">High Priority</option>
+                  </select>
+                </div>
+                <button type="submit" class="w-full py-2.5 rounded-lg bg-navy-900 hover:bg-navy-800 text-white text-xs font-semibold transition-colors">
+                  Register Arrival
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Bottleneck Table -->
+          <div class="card-surface rounded-xl overflow-hidden">
+            <div class="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between">
+              <h3 class="text-sm font-bold text-navy-900">Department-Wise Demand &amp; Bottleneck Status</h3>
+              <span class="text-xs text-slate-500">Live synthetic queue</span>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 text-slate-500 border-b border-slate-200">
+                  <tr>
+                    <th class="px-5 py-3 font-semibold">Department</th>
+                    <th class="px-5 py-3 font-semibold">Waiting Queue</th>
+                    <th class="px-5 py-3 font-semibold">Avg Wait (min)</th>
+                    <th class="px-5 py-3 font-semibold">Today Throughput</th>
+                    <th class="px-5 py-3 font-semibold">Capacity Load</th>
+                    <th class="px-5 py-3 font-semibold">Status</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  ${state.departments.map(d => {
+                    const adjLoad = Math.min(100, Math.round(d.loadPct * factor));
+                    const badge = adjLoad >= 85
+                      ? '<span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-semibold">Bottleneck Risk</span>'
+                      : '<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-semibold">Normal Flow</span>';
+                    return `<tr>
+                      <td class="px-5 py-3 font-semibold text-navy-900">${d.name}</td>
+                      <td class="px-5 py-3">${d.waiting} patients</td>
+                      <td class="px-5 py-3 font-medium">${d.waitMins} min</td>
+                      <td class="px-5 py-3">${d.throughput}</td>
+                      <td class="px-5 py-3 w-40">
+                        <div class="flex items-center gap-2">
+                          <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden"><div class="h-full ${adjLoad >= 85 ? 'bg-amber-500' : 'bg-teal-600'}" style="width:${adjLoad}%"></div></div>
+                          <span class="font-semibold">${adjLoad}%</span>
+                        </div>
+                      </td>
+                      <td class="px-5 py-3">${badge}</td>
+                    </tr>`;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+
+        destroyChart('flowDetail');
+        const ctx = document.getElementById('flowDetailChart').getContext('2d');
+        charts.flowDetail = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: state.hourlyFlow.map(h => h.hour),
+            datasets: [
+              { label: 'Actual Arrivals', data: state.hourlyFlow.map(h => h.actual), borderColor: '#0B1528', backgroundColor: 'rgba(11,21,40,0.08)', fill: true, tension: 0.35, borderWidth: 2.5 },
+              { label: `Predicted Demand (+${state.surgePct}% Sim Estimate)`, data: simPredicted, borderColor: '#0D9488', borderDash: [6, 4], tension: 0.35, borderWidth: 2.5 }
+            ]
+          },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { y: { beginAtZero: true } } }
+        });
+
+        document.getElementById('surge-slider').addEventListener('input', (e) => {
+          state.surgePct = Number(e.target.value);
+          renderPatientFlow();
+        });
+
+        document.getElementById('patient-intake-form').addEventListener('submit', (e) => {
+          e.preventDefault();
+          const deptName = document.getElementById('intake-dept').value;
+          const alias = document.getElementById('intake-alias').value.trim();
+          state.totalRegisteredBase += 1;
+          const dept = state.departments.find(d => d.name === deptName);
+          if (dept) {
+            dept.waiting += 1;
+            dept.throughput += 1;
+            dept.waitMins += 1;
+            dept.loadPct = Math.min(100, dept.loadPct + 2);
+          }
+          addAudit('Registered Patient Arrival', `${alias} triaged to ${deptName}`);
+          showToast('Arrival Logged', `${alias} added to ${deptName} queue.`);
+          renderPatientFlow();
+        });
+      }
+
+      // --- TAB 3: BED MANAGEMENT (MODULE 2) ---
+      function renderBedManagement() {
+        const stats = getBedStats();
+        const filtered = state.beds.filter(b => {
+          const matchDept = state.bedDeptFilter === 'All' || b.dept === state.bedDeptFilter;
+          const matchStatus = state.bedStatusFilter === 'All' || b.status === state.bedStatusFilter;
+          const matchSearch = !state.bedSearch || b.id.toLowerCase().includes(state.bedSearch.toLowerCase()) || b.ward.toLowerCase().includes(state.bedSearch.toLowerCase());
+          return matchDept && matchStatus && matchSearch;
+        });
+
+        const canEdit = state.role === 'Hospital Administrator' || state.role === 'Department Coordinator';
+        const el = document.getElementById('tab-bed-management');
+
+        el.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h1 class="text-xl font-bold text-navy-900">Module 2: Smart Bed Availability Dashboard</h1>
+              <p class="text-xs text-slate-500 mt-0.5">${canEdit ? 'Click any bed card to cycle its operational status (Available → Occupied → Maintenance).' : 'Read-only view for Network Coordinator role.'}</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <input id="bed-search-input" type="text" placeholder="Search Bed ID or Ward..." value="${escapeHtml(state.bedSearch)}" class="px-3 py-1.5 rounded-lg border border-slate-300 text-xs bg-white focus:outline-none focus:border-teal-600" />
+              <select id="bed-dept-filter" class="px-3 py-1.5 rounded-lg border border-slate-300 text-xs bg-white">
+                <option value="All">All Departments</option>
+                ${['Emergency', 'ICU', 'Cardiology', 'Orthopedics', 'Pediatrics', 'General Medicine'].map(d => `<option value="${d}" ${state.bedDeptFilter === d ? 'selected' : ''}>${d}</option>`).join('')}
+              </select>
+              <select id="bed-status-filter" class="px-3 py-1.5 rounded-lg border border-slate-300 text-xs bg-white">
+                <option value="All">All Statuses</option>
+                ${['Available', 'Occupied', 'Maintenance'].map(s => `<option value="${s}" ${state.bedStatusFilter === s ? 'selected' : ''}>${s}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="card-surface rounded-xl p-4"><div class="text-xs text-slate-500">Total Tracked Beds</div><div class="text-2xl font-bold text-navy-900 mt-1">${stats.total}</div></div>
+            <div class="card-surface rounded-xl p-4"><div class="text-xs text-slate-500">Available Beds</div><div class="text-2xl font-bold text-teal-600 mt-1">${stats.available}</div></div>
+            <div class="card-surface rounded-xl p-4"><div class="text-xs text-slate-500">Occupied Beds</div><div class="text-2xl font-bold text-navy-900 mt-1">${stats.occupied}</div></div>
+            <div class="card-surface rounded-xl p-4"><div class="text-xs text-slate-500">Under Maintenance</div><div class="text-2xl font-bold text-amber-600 mt-1">${stats.maintenance}</div></div>
+          </div>
+
+          <div class="grid lg:grid-cols-12 gap-5">
+            <div class="lg:col-span-8 card-surface rounded-xl p-5">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-sm font-bold text-navy-900">Unit-Level Bed Matrix (${filtered.length} shown)</h3>
+                <div class="flex items-center gap-3 text-[11px]">
+                  <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-teal-500"></span>Available</span>
+                  <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-navy-900"></span>Occupied</span>
+                  <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>Maintenance</span>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                ${filtered.length === 0 ? `<div class="col-span-full text-center py-8 text-xs text-slate-400">No beds match the selected filters.</div>` : filtered.map(b => {
+                  const style = b.status === 'Available'
+                    ? 'border-teal-300 bg-teal-50/70 text-teal-900'
+                    : b.status === 'Occupied'
+                    ? 'border-slate-300 bg-slate-100 text-navy-900'
+                    : 'border-amber-300 bg-amber-50 text-amber-900';
+                  const dot = b.status === 'Available' ? 'bg-teal-500' : b.status === 'Occupied' ? 'bg-navy-900' : 'bg-amber-500';
+                  return `
+                    <button data-action="cycle-bed" data-bed-id="${b.id}" class="text-left p-3 rounded-xl border ${style} transition-all hover:shadow-sm">
+                      <div class="flex items-center justify-between">
+                        <span class="font-bold text-xs">${b.id}</span>
+                        <span class="w-2 h-2 rounded-full ${dot}"></span>
+                      </div>
+                      <div class="text-[11px] font-medium mt-1 opacity-80">${b.dept}</div>
+                      <div class="text-[10px] opacity-70">${b.ward}</div>
+                      <div class="mt-2 text-[10px] font-bold uppercase tracking-wider">${b.status}</div>
+                    </button>`;
+                }).join('')}
+              </div>
+            </div>
+
+            <div class="lg:col-span-4 card-surface rounded-xl p-5">
+              <h3 class="text-sm font-bold text-navy-900 mb-1">Department Utilization (%)</h3>
+              <p class="text-[11px] text-slate-500 mb-4">Occupied share across tracked wards</p>
+              <div class="relative h-64"><canvas id="bedUtilChart"></canvas></div>
+            </div>
+          </div>
+        `;
+
+        const depts = ['Emergency', 'ICU', 'Cardiology', 'Orthopedics', 'Pediatrics', 'General Medicine'];
+        const utils = depts.map(d => {
+          const dBeds = state.beds.filter(b => b.dept === d);
+          return Math.round((dBeds.filter(b => b.status === 'Occupied').length / dBeds.length) * 100);
+        });
+
+        destroyChart('bedUtil');
+        const ctx = document.getElementById('bedUtilChart').getContext('2d');
+        charts.bedUtil = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: depts,
+            datasets: [{ label: 'Utilization %', data: utils, backgroundColor: '#0D9488', borderRadius: 6 }]
+          },
+          options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { max: 100, beginAtZero: true } } }
+        });
+
+        document.getElementById('bed-search-input').addEventListener('input', (e) => {
+          state.bedSearch = e.target.value;
+          renderBedManagement();
+        });
+        document.getElementById('bed-dept-filter').addEventListener('change', (e) => {
+          state.bedDeptFilter = e.target.value;
+          renderBedManagement();
+        });
+        document.getElementById('bed-status-filter').addEventListener('change', (e) => {
+          state.bedStatusFilter = e.target.value;
+          renderBedManagement();
+        });
+      }
+
+      // --- TAB 4: LABORATORY (MODULE 3) ---
+      function renderLaboratory() {
+        const stages = ['Registered', 'Collected', 'Processing', 'Ready', 'Notified'];
+        const filtered = state.labTests.filter(t => {
+          const mStage = state.labStageFilter === 'All' || t.stage === state.labStageFilter;
+          const mSearch = !state.labSearch || t.id.toLowerCase().includes(state.labSearch.toLowerCase()) || t.test.toLowerCase().includes(state.labSearch.toLowerCase()) || t.alias.toLowerCase().includes(state.labSearch.toLowerCase());
+          return mStage && mSearch;
+        });
+
+        const el = document.getElementById('tab-laboratory');
+        el.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h1 class="text-xl font-bold text-navy-900">Module 3: Laboratory Report Readiness Notifications</h1>
+              <p class="text-xs text-slate-500 mt-0.5">5-stage coordination workflow with simulated patient &amp; department notifications.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <input id="lab-search-input" type="text" placeholder="Search Order ID or Test..." value="${escapeHtml(state.labSearch)}" class="px-3 py-1.5 rounded-lg border border-slate-300 text-xs bg-white" />
+              <select id="lab-stage-filter" class="px-3 py-1.5 rounded-lg border border-slate-300 text-xs bg-white">
+                <option value="All">All Stages</option>
+                ${stages.map(s => `<option value="${s}" ${state.labStageFilter === s ? 'selected' : ''}>${s}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+            ${stages.map((s, idx) => `
+              <div class="card-surface rounded-xl p-3.5">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Stage ${idx + 1}</div>
+                <div class="text-sm font-bold text-navy-900 mt-0.5">${s}</div>
+                <div class="text-xl font-extrabold text-teal-600 mt-1">${state.labTests.filter(t => t.stage === s).length}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="grid lg:grid-cols-12 gap-5">
+            <div class="lg:col-span-8 card-surface rounded-xl overflow-hidden">
+              <div class="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between">
+                <h3 class="text-sm font-bold text-navy-900">Active Laboratory Orders</h3>
+                <span class="text-[11px] text-slate-500">Click Advance Stage to progress workflow</span>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                  <thead class="bg-slate-50 text-slate-500 border-b border-slate-200">
+                    <tr>
+                      <th class="px-4 py-3 font-semibold">Order / Alias</th>
+                      <th class="px-4 py-3 font-semibold">Test &amp; Dept</th>
+                      <th class="px-4 py-3 font-semibold">Priority</th>
+                      <th class="px-4 py-3 font-semibold">Current Stage</th>
+                      <th class="px-4 py-3 font-semibold">ETA</th>
+                      <th class="px-4 py-3 font-semibold">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100">
+                    ${filtered.map(t => {
+                      const nextIdx = stages.indexOf(t.stage) + 1;
+                      const nextStage = nextIdx < stages.length ? stages[nextIdx] : null;
+                      const prioBadge = t.priority === 'STAT' ? 'bg-red-100 text-red-700' : t.priority === 'Urgent' ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-700';
+                      return `<tr>
+                        <td class="px-4 py-3"><div class="font-bold text-navy-900">${t.id}</div><div class="text-[11px] text-slate-500">${t.alias}</div></td>
+                        <td class="px-4 py-3"><div class="font-medium text-navy-900">${escapeHtml(t.test)}</div><div class="text-[11px] text-slate-500">${t.dept}</div></td>
+                        <td class="px-4 py-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${prioBadge}">${t.priority}</span></td>
+                        <td class="px-4 py-3"><span class="font-semibold text-teal-700">${t.stage}</span><div class="text-[10px] text-slate-400">${escapeHtml(t.note)}</div></td>
+                        <td class="px-4 py-3">${t.estMins === 0 ? '<span class="text-emerald-600 font-semibold">Complete</span>' : t.estMins + ' min'}</td>
+                        <td class="px-4 py-3">
+                          ${nextStage
+                            ? `<button data-action="advance-lab" data-lab-id="${t.id}" class="px-2.5 py-1.5 rounded-lg bg-navy-900 hover:bg-navy-800 text-white text-[11px] font-semibold">→ ${nextStage}</button>`
+                            : `<span class="inline-flex items-center gap-1 text-[11px] text-emerald-600 font-semibold"><i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Notified</span>`}
+                        </td>
+                      </tr>`;
+                    }).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="lg:col-span-4 card-surface rounded-xl p-5">
+              <h3 class="text-sm font-bold text-navy-900 mb-1">Register New Lab Test</h3>
+              <p class="text-xs text-slate-500 mb-4">Enters Stage 1 (Registered) with automated ETA.</p>
+              <form id="lab-create-form" class="space-y-3">
+                <div>
+                  <label class="block text-xs font-medium text-slate-700 mb-1">Patient Alias (Synthetic)</label>
+                  <input id="lab-alias" type="text" required value="PT-SYN-${Math.floor(600 + Math.random()*300)}" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs" />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-slate-700 mb-1">Ordering Department</label>
+                  <select id="lab-dept" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white">
+                    ${state.departments.map(d => `<option value="${d.name}">${d.name}</option>`).join('')}
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-slate-700 mb-1">Test Name</label>
+                  <input id="lab-test-name" type="text" required placeholder="e.g. D-Dimer & CBC" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs" />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-slate-700 mb-1">Priority</label>
+                  <select id="lab-priority" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white">
+                    <option value="Routine">Routine</option>
+                    <option value="Urgent">Urgent</option>
+                    <option value="STAT">STAT</option>
+                  </select>
+                </div>
+                <button type="submit" class="w-full py-2.5 rounded-lg bg-teal-600 hover:bg-teal-500 text-white text-xs font-semibold">Register Lab Order</button>
+              </form>
+            </div>
+          </div>
+        `;
+
+        document.getElementById('lab-search-input').addEventListener('input', (e) => {
+          state.labSearch = e.target.value;
+          renderLaboratory();
+        });
+        document.getElementById('lab-stage-filter').addEventListener('change', (e) => {
+          state.labStageFilter = e.target.value;
+          renderLaboratory();
+        });
+        document.getElementById('lab-create-form').addEventListener('submit', (e) => {
+          e.preventDefault();
+          const id = 'LAB-' + Math.floor(8830 + Math.random() * 900);
+          const priority = document.getElementById('lab-priority').value;
+          const newOrder = {
+            id,
+            alias: document.getElementById('lab-alias').value.trim(),
+            dept: document.getElementById('lab-dept').value,
+            test: document.getElementById('lab-test-name').value.trim(),
+            priority,
+            stage: 'Registered',
+            estMins: priority === 'STAT' ? 20 : priority === 'Urgent' ? 35 : 55,
+            notified: false,
+            note: 'Order queued for phlebotomy'
+          };
+          state.labTests.unshift(newOrder);
+          addAudit('Registered Lab Order', `${id} (${newOrder.test}) for ${newOrder.dept}`);
+          showToast('Lab Order Registered', `${id} added to Stage 1.`);
+          renderLaboratory();
+        });
+      }
+
+      // --- TAB 5: HOSPITAL NETWORK (MODULE 4) ---
+      function renderHospitalNetwork() {
+        const el = document.getElementById('tab-hospital-network');
+        const canApprove = state.role === 'Network Coordinator' || state.role === 'Hospital Administrator';
+
+        el.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h1 class="text-xl font-bold text-navy-900">Module 4: Cross-Hospital Resource Coordination</h1>
+              <p class="text-xs text-slate-500 mt-0.5">Regional synthetic demo network. Confidential patient PHI is never automatically shared between hospitals.</p>
+            </div>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold">
+              <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Zero-PHI Capacity Protocol
+            </span>
+          </div>
+
+          <div class="grid lg:grid-cols-12 gap-5">
+            <!-- Leaflet Map -->
+            <div class="lg:col-span-7 card-surface rounded-xl p-4">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-sm font-bold text-navy-900">Regional Hospital Capacity Map (Bengaluru Demo Network)</h3>
+                <span class="text-[11px] text-slate-400">ArcGIS Light Gray Basemap</span>
+              </div>
+              <div id="network-leaflet-map" class="w-full rounded-lg border border-slate-200" style="height: 360px;"></div>
+            </div>
+
+            <!-- Resource Request Form -->
+            <div class="lg:col-span-5 card-surface rounded-xl p-5">
+              <h3 class="text-sm font-bold text-navy-900 mb-1">Submit Cross-Hospital Resource Request</h3>
+              <p class="text-xs text-slate-500 mb-4">Requires Network Coordinator or Hospital Administrator approval.</p>
+              <form id="network-request-form" class="space-y-3">
+                <div>
+                  <label class="block text-xs font-medium text-slate-700 mb-1">Partner Hospital</label>
+                  <select id="req-target-hosp" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white">
+                    ${state.hospitals.filter(h => h.id !== 'HOSP-01').map(h => `<option value="${h.id}">${h.name} (${h.icuAvailable} ICU avail)</option>`).join('')}
+                  </select>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Resource Type</label>
+                    <select id="req-resource" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white">
+                      <option value="ICU Overflow Beds">ICU Overflow Beds</option>
+                      <option value="Transport Ventilators">Transport Ventilators</option>
+                      <option value="General Ward Beds">General Ward Beds</option>
+                      <option value="O-Negative Blood Units">O-Negative Blood Units</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Quantity</label>
+                    <input id="req-qty" type="number" min="1" max="20" value="2" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs" />
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-slate-700 mb-1">Urgency</label>
+                  <select id="req-urgency" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white">
+                    <option value="High">High</option>
+                    <option value="Critical">Critical</option>
+                    <option value="Standard">Standard</option>
+                  </select>
+                </div>
+                <button type="submit" class="w-full py-2.5 rounded-lg bg-navy-900 hover:bg-navy-800 text-white text-xs font-semibold">Submit Anonymized Request</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Hospital Comparison & Active Requests -->
+          <div class="grid lg:grid-cols-12 gap-5">
+            <div class="lg:col-span-7 card-surface rounded-xl overflow-hidden">
+              <div class="px-5 py-3.5 border-b border-slate-200"><h3 class="text-sm font-bold text-navy-900">Hospital-Wise Resource Availability</h3></div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                  <thead class="bg-slate-50 text-slate-500 border-b border-slate-200">
+                    <tr>
+                      <th class="px-4 py-2.5 font-semibold">Hospital</th>
+                      <th class="px-4 py-2.5 font-semibold">Avail Beds</th>
+                      <th class="px-4 py-2.5 font-semibold">ICU Avail</th>
+                      <th class="px-4 py-2.5 font-semibold">Ventilators</th>
+                      <th class="px-4 py-2.5 font-semibold">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100">
+                    ${state.hospitals.map(h => `
+                      <tr>
+                        <td class="px-4 py-2.5"><div class="font-semibold text-navy-900">${h.name}</div><div class="text-[10px] text-slate-400">${h.tier}</div></td>
+                        <td class="px-4 py-2.5 font-bold text-teal-700">${h.availableBeds} / ${h.totalBeds}</td>
+                        <td class="px-4 py-2.5 font-semibold">${h.icuAvailable}</td>
+                        <td class="px-4 py-2.5">${h.ventilators}</td>
+                        <td class="px-4 py-2.5"><span class="px-2 py-0.5 rounded-full text-[10px] font-semibold ${h.status === 'Critical' ? 'bg-red-100 text-red-700' : h.status === 'High Load' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-700'}">${h.status}</span></td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="lg:col-span-5 card-surface rounded-xl p-5 space-y-3">
+              <h3 class="text-sm font-bold text-navy-900">Coordination Request Queue</h3>
+              ${state.networkRequests.map(r => {
+                const target = state.hospitals.find(h => h.id === r.to);
+                return `
+                  <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-2">
+                    <div class="flex items-center justify-between">
+                      <span class="font-bold text-navy-900">${r.id}: ${r.qty}x ${escapeHtml(r.resource)}</span>
+                      <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold ${r.status === 'Approved' ? 'bg-emerald-100 text-emerald-700' : r.status === 'Declined' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-800'}">${r.status}</span>
+                    </div>
+                    <div class="text-slate-600">Partner: ${target ? target.name : r.to} • Urgency: <span class="font-semibold">${r.urgency}</span></div>
+                    ${r.status === 'Pending Approval' && canApprove ? `
+                      <div class="flex gap-2 pt-1">
+                        <button data-action="approve-net-req" data-req-id="${r.id}" class="px-3 py-1 rounded bg-teal-600 hover:bg-teal-500 text-white font-semibold text-[11px]">Approve</button>
+                        <button data-action="decline-net-req" data-req-id="${r.id}" class="px-3 py-1 rounded bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 font-semibold text-[11px]">Decline</button>
+                      </div>
+                    ` : ''}
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+
+        // Initialize Leaflet Map cleanly
+        setTimeout(() => {
+          const mapEl = document.getElementById('network-leaflet-map');
+          if (!mapEl || typeof L === 'undefined') return;
+          if (networkMap) {
+            networkMap.remove();
+            networkMap = null;
+          }
+          networkMap = L.map(mapEl).setView([12.9716, 77.5946], 12);
+          L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri',
+            maxZoom: 18
+          }).addTo(networkMap);
+
+          state.hospitals.forEach(h => {
+            const color = h.status === 'Critical' ? '#DC2626' : h.status === 'High Load' ? '#D97706' : '#0D9488';
+            L.circleMarker([h.lat, h.lng], {
+              radius: 10,
+              fillColor: color,
+              color: '#0B1528',
+              weight: 2,
+              opacity: 1,
+              fillOpacity: 0.85
+            }).addTo(networkMap).bindPopup(
+              `<strong>${h.name}</strong><br/>Status: ${h.status}<br/>Beds Avail: ${h.availableBeds}/${h.totalBeds}<br/>ICU Avail: ${h.icuAvailable}`
+            );
+          });
+        }, 50);
+
+        document.getElementById('network-request-form').addEventListener('submit', (e) => {
+          e.preventDefault();
+          const id = 'REQ-' + Math.floor(305 + Math.random() * 600);
+          const req = {
+            id,
+            from: 'HOSP-01',
+            to: document.getElementById('req-target-hosp').value,
+            resource: document.getElementById('req-resource').value,
+            qty: Number(document.getElementById('req-qty').value),
+            urgency: document.getElementById('req-urgency').value,
+            status: 'Pending Approval',
+            notes: 'Zero-PHI anonymized capacity request'
+          };
+          state.networkRequests.unshift(req);
+          addAudit('Created Network Request', `${id}: ${req.qty}x ${req.resource} to ${req.to}`);
+          addNotification('New Network Request', `${id} awaiting Network Coordinator approval.`);
+          showToast('Request Submitted', `${id} queued for human approval.`);
+          renderHospitalNetwork();
+        });
+      }
+
+      // --- TAB 6: AGENTIC AI ASSISTANT (MODULE 5) ---
+      function renderAIAssistant() {
+        const agents = [
+          'Auto-Route',
+          'Patient Flow Analyst Agent',
+          'Bed Availability Analyst Agent',
+          'Laboratory Coordination Agent',
+          'Resource Coordination Agent',
+          'Operations Reporting Agent'
+        ];
+        const el = document.getElementById('tab-ai-assistant');
+        el.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h1 class="text-xl font-bold text-navy-900">Module 5: Agentic AI Hospital Operations Assistant</h1>
+              <p class="text-xs text-slate-500 mt-0.5">Grounded in the current synthetic dashboard snapshot &amp; retrieved SOPs. Gemini runs through the server when configured; no clinical decisions.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <label class="text-xs font-semibold text-slate-600">Agent:</label>
+              <select id="ai-agent-select" class="px-3 py-1.5 rounded-lg border border-slate-300 text-xs bg-white font-medium">
+                ${agents.map(a => `<option value="${a}" ${state.selectedAgent === a ? 'selected' : ''}>${a}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+
+          <div class="grid lg:grid-cols-12 gap-5">
+            <!-- Chat Workspace -->
+            <div class="lg:col-span-8 card-surface rounded-xl flex flex-col" style="min-height: 500px;">
+              <div class="px-5 py-3 border-b border-slate-200 bg-slate-50 flex flex-wrap gap-2">
+                <button data-action="ai-quick-prompt" data-prompt="Where is our biggest bottleneck right now?" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 hover:border-teal-500 text-[11px] font-medium text-navy-900">Biggest bottleneck?</button>
+                <button data-action="ai-quick-prompt" data-prompt="Summarize bed availability and maintenance units" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 hover:border-teal-500 text-[11px] font-medium text-navy-900">Bed availability summary</button>
+                <button data-action="ai-quick-prompt" data-prompt="Which lab reports are ready for notification?" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 hover:border-teal-500 text-[11px] font-medium text-navy-900">Pending lab notifications</button>
+                <button data-action="ai-quick-prompt" data-prompt="What is our SOP for Code Surge Level 2?" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 hover:border-teal-500 text-[11px] font-medium text-navy-900">SOP-01 Code Surge</button>
+              </div>
+
+              <div id="ai-chat-feed" class="flex-1 p-5 space-y-4 overflow-y-auto max-h-[420px]">
+                ${state.aiMessages.map((m, idx) => {
+                  if (m.sender === 'user') {
+                    return `<div class="flex justify-end"><div class="max-w-lg px-4 py-2.5 rounded-xl bg-navy-900 text-white text-xs">${escapeHtml(m.text)}</div></div>`;
+                  }
+                  return `
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5 text-xs">
+                      <div class="flex items-center justify-between">
+                        <span class="font-bold text-teal-700 inline-flex items-center gap-1.5"><i data-lucide="bot" class="w-3.5 h-3.5"></i> ${escapeHtml(m.agent)}</span>
+                        ${m.sops && m.sops.length ? `<span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">RAG: ${m.sops.join(', ')}</span>` : ''}
+                      </div>
+                      <p class="text-slate-800 leading-relaxed">${escapeHtml(m.text)}</p>
+                      ${m.reasoning ? `<div class="text-[11px] text-slate-500 bg-white p-2.5 rounded-lg border border-slate-200"><span class="font-semibold text-slate-700">Reasoning:</span> ${escapeHtml(m.reasoning)}</div>` : ''}
+                      ${m.proposedAction ? `
+                        <div class="p-3 rounded-lg bg-teal-50 border border-teal-200 flex flex-wrap items-center justify-between gap-2">
+                          <div>
+                            <div class="font-semibold text-navy-900">Proposed Action (Human Approval Required)</div>
+                            <div class="text-slate-700">${escapeHtml(m.proposedAction.label)}</div>
+                          </div>
+                          ${m.proposedAction.status === 'pending' ? `
+                            <div class="flex gap-2">
+                              <button data-action="approve-ai-action" data-msg-idx="${idx}" class="px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-500 text-white font-semibold text-[11px]">Approve &amp; Execute</button>
+                              <button data-action="dismiss-ai-action" data-msg-idx="${idx}" class="px-3 py-1.5 rounded-lg bg-white border border-slate-300 text-slate-700 font-semibold text-[11px]">Dismiss</button>
+                            </div>
+                          ` : `<span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${m.proposedAction.status === 'approved' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600'}">${m.proposedAction.status}</span>`}
+                        </div>
+                      ` : ''}
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+
+              <form id="ai-query-form" class="p-4 border-t border-slate-200 flex gap-2">
+                <input id="ai-query-input" type="text" required placeholder="Ask about bottlenecks, bed capacity, lab delays, or hospital SOPs..." class="flex-1 px-3.5 py-2.5 rounded-lg border border-slate-300 text-xs focus:outline-none focus:border-teal-600" />
+                <button type="submit" class="px-4 py-2.5 rounded-lg bg-navy-900 hover:bg-navy-800 text-white text-xs font-semibold inline-flex items-center gap-1.5">
+                  <span>Analyze</span><i data-lucide="send" class="w-3.5 h-3.5"></i>
+                </button>
+              </form>
+            </div>
+
+            <!-- SOP RAG Knowledge Base Panel -->
+            <div class="lg:col-span-4 card-surface rounded-xl p-5 space-y-3">
+              <div class="flex items-center justify-between">
+                <h3 class="text-sm font-bold text-navy-900">Hospital SOP RAG Knowledge Base</h3>
+                <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-teal-50 text-teal-700">${state.sops.length} Docs</span>
+              </div>
+              <p class="text-xs text-slate-500">Retrieved by the AI assistant to ground operational recommendations.</p>
+              <div class="space-y-3">
+                ${state.sops.map(s => `
+                  <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs">
+                    <div class="font-bold text-navy-900">${s.id}: ${escapeHtml(s.title)}</div>
+                    <div class="text-[10px] font-semibold text-teal-700 mt-0.5">${escapeHtml(s.category)}</div>
+                    <p class="text-slate-600 mt-1.5 leading-relaxed">${escapeHtml(s.content)}</p>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+
+        document.getElementById('ai-agent-select').addEventListener('change', (e) => {
+          state.selectedAgent = e.target.value;
+        });
+
+        document.getElementById('ai-query-form').addEventListener('submit', (e) => {
+          e.preventDefault();
+          const input = document.getElementById('ai-query-input');
+          const q = input.value.trim();
+          if (!q) return;
+          input.value = '';
+          runAIQuery(q);
+        });
+      }
+
+      async function runAIQuery(query) {
+        const cleanQuery = String(query || '').trim();
+        if (!cleanQuery) return;
+        state.aiMessages.push({ sender: 'user', text: cleanQuery });
+        state.aiMessages.push({ sender: 'ai', agent: 'FlowMed AI', text: 'Analyzing the current synthetic operations snapshot…', reasoning: 'Connecting to the FlowMed FastAPI service.', sops: [], proposedAction: null, loading: true });
+        renderAIAssistant();
+        const feed = document.getElementById('ai-chat-feed');
+        if (feed) feed.scrollTop = feed.scrollHeight;
+        const responseIndex = state.aiMessages.length - 1;
+        const liveState = {
+          totalRegisteredBase: state.totalRegisteredBase,
+          departments: state.departments,
+          beds: state.beds,
+          labTests: state.labTests,
+          hospitals: state.hospitals,
+          networkRequests: state.networkRequests
+        };
+        try {
+          const response = await fetch(`${API_BASE}/api/ai/query`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query: cleanQuery, agent: state.selectedAgent, role: state.role, live_state: liveState })
+          });
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.detail || `API error ${response.status}`);
+          state.aiMessages[responseIndex] = {
+            sender: 'ai', agent: data.agent || 'Operations Reporting Agent',
+            text: data.answer || 'The AI service returned an empty answer.',
+            reasoning: `${data.reasoning || ''} [Provider: ${data.mode || 'unknown'}]`,
+            sops: data.sops_cited || [], proposedAction: data.proposed_action || null,
+            mode: data.mode, loading: false
+          };
+        } catch (error) {
+          state.aiMessages[responseIndex] = {
+            sender: 'ai', agent: 'Backend Connection',
+            text: `I couldn't reach the FlowMed backend. Start the API with “uvicorn backend.main:app --reload --port 8000” from the project folder, then open http://127.0.0.1:8000. Details: ${error.message}`,
+            reasoning: 'No local AI answer was fabricated. The frontend requires the backend for this assistant.',
+            sops: [], proposedAction: null, loading: false
+          };
+        }
+        renderAIAssistant();
+        const updatedFeed = document.getElementById('ai-chat-feed');
+        if (updatedFeed) updatedFeed.scrollTop = updatedFeed.scrollHeight;
+      }
+
+      async function submitAIActionDecision(msgIdx, approved) {
+        const msg = state.aiMessages[msgIdx];
+        if (!msg || !msg.proposedAction) return;
+        const act = msg.proposedAction;
+        try {
+          const response = await fetch(`${API_BASE}/api/actions/${encodeURIComponent(act.id)}/decision`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ approved, role: state.role })
+          });
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.detail || `API error ${response.status}`);
+          act.status = approved ? 'approved' : 'dismissed';
+          if (approved && act.type === 'clear-bed') {
+            const bed = state.beds.find(b => b.id === act.target);
+            if (bed) bed.status = 'Available';
+          } else if (approved && act.type === 'notify-lab') {
+            const lab = state.labTests.find(t => t.id === act.target);
+            if (lab) { lab.stage = 'Notified'; lab.notified = true; lab.estMins = 0; lab.note = 'Simulated notification recorded; no message was sent'; }
+          }
+          addAudit(approved ? 'Approved AI Recommendation (Simulated)' : 'Dismissed AI Recommendation', act.label);
+          showToast(approved ? 'Approval Recorded' : 'Recommendation Dismissed', data.message || 'Recorded in demo audit log.');
+          renderAIAssistant();
+        } catch (error) {
+          showToast('Action Not Recorded', error.message, 'red');
+        }
+      }
+
+      // --- TAB 7: REPORTS ---
+      function renderReports() {
+        const beds = getBedStats();
+        const el = document.getElementById('tab-reports');
+        el.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-3 no-print">
+            <div>
+              <h1 class="text-xl font-bold text-navy-900">Operational Reports &amp; Governance Audit Log</h1>
+              <p class="text-xs text-slate-500 mt-0.5">Live-grounded executive briefing and immutable human-approval trail.</p>
+            </div>
+            <div class="flex gap-2">
+              <button data-action="export-report-csv" class="px-3 py-1.5 rounded-lg bg-white border border-slate-300 hover:bg-slate-50 text-xs font-semibold text-navy-900">Export CSV</button>
+              <button data-action="print-report" class="px-3 py-1.5 rounded-lg bg-navy-900 hover:bg-navy-800 text-white text-xs font-semibold">Print Briefing</button>
+            </div>
+          </div>
+
+          <div class="card-surface rounded-xl p-6 space-y-5">
+            <div class="flex items-start justify-between border-b border-slate-200 pb-4">
+              <div>
+                <div class="text-xs font-bold uppercase tracking-wider text-teal-600">Daily Operational Briefing (Synthetic Demo)</div>
+                <h2 class="text-lg font-bold text-navy-900 mt-0.5">FlowMed Central Medical Center — Executive Summary</h2>
+              </div>
+              <div class="text-right text-xs text-slate-500">Generated by: ${escapeHtml(state.role)}</div>
+            </div>
+            <div class="grid sm:grid-cols-4 gap-4 text-xs">
+              <div class="p-3 rounded-lg bg-slate-50 border border-slate-200"><div class="text-slate-500">Registered Today</div><div class="text-lg font-bold text-navy-900 mt-0.5">${state.totalRegisteredBase}</div></div>
+              <div class="p-3 rounded-lg bg-slate-50 border border-slate-200"><div class="text-slate-500">Avg Wait Time</div><div class="text-lg font-bold text-navy-900 mt-0.5">${getAvgWait()} min</div></div>
+              <div class="p-3 rounded-lg bg-slate-50 border border-slate-200"><div class="text-slate-500">Bed Utilization</div><div class="text-lg font-bold text-navy-900 mt-0.5">${beds.utilPct}% (${beds.available} avail)</div></div>
+              <div class="p-3 rounded-lg bg-slate-50 border border-slate-200"><div class="text-slate-500">Labs Pending</div><div class="text-lg font-bold text-navy-900 mt-0.5">${getPendingLabs()}</div></div>
+            </div>
+            <div class="text-xs text-slate-700 leading-relaxed">
+              <strong>Key Operational Observation:</strong> Emergency Department currently carries ${state.departments[0].waiting} waiting patients at ${state.departments[0].waitMins}m average wait. Partner network holds ${state.hospitals.reduce((a, h) => a + h.icuAvailable, 0)} total regional ICU beds available for coordinated load balancing.
+            </div>
+          </div>
+
+          <div class="card-surface rounded-xl overflow-hidden">
+            <div class="px-5 py-3.5 border-b border-slate-200"><h3 class="text-sm font-bold text-navy-900">Human-in-the-Loop Audit Trail</h3></div>
+            <div class="divide-y divide-slate-100 text-xs">
+              ${state.auditLogs.map(l => `
+                <div class="px-5 py-3 flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <span class="font-bold text-navy-900">${escapeHtml(l.action)}</span>
+                    <span class="text-slate-500 ml-2">${escapeHtml(l.details)}</span>
+                  </div>
+                  <div class="text-slate-400">${escapeHtml(l.role)} • ${escapeHtml(l.time)}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      // --- TAB 8: SETTINGS ---
+      function renderSettings() {
+        const el = document.getElementById('tab-settings');
+        el.innerHTML = `
+          <div>
+            <h1 class="text-xl font-bold text-navy-900">Platform Settings &amp; Security Governance</h1>
+            <p class="text-xs text-slate-500 mt-0.5">Role-based access matrix, optional Gemini API configuration, and demo data controls.</p>
+          </div>
+
+          <div class="grid lg:grid-cols-2 gap-5">
+            <div class="card-surface rounded-xl p-5 space-y-4">
+              <h3 class="text-sm font-bold text-navy-900">Role-Based Access Control (RBAC)</h3>
+              <table class="w-full text-left text-xs border border-slate-200 rounded-lg overflow-hidden">
+                <thead class="bg-slate-50 text-slate-600">
+                  <tr><th class="p-2.5">Capability</th><th class="p-2.5">Hospital Admin</th><th class="p-2.5">Dept Coord</th><th class="p-2.5">Network Coord</th></tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  <tr><td class="p-2.5 font-medium">View Analytics &amp; AI Insights</td><td class="p-2.5 text-teal-600 font-bold">Yes</td><td class="p-2.5 text-teal-600 font-bold">Yes</td><td class="p-2.5 text-teal-600 font-bold">Yes</td></tr>
+                  <tr><td class="p-2.5 font-medium">Update Bed &amp; Lab Status</td><td class="p-2.5 text-teal-600 font-bold">Yes</td><td class="p-2.5 text-teal-600 font-bold">Yes</td><td class="p-2.5 text-slate-400">Read-Only</td></tr>
+                  <tr><td class="p-2.5 font-medium">Approve Network Transfers</td><td class="p-2.5 text-teal-600 font-bold">Yes</td><td class="p-2.5 text-slate-400">Request Only</td><td class="p-2.5 text-teal-600 font-bold">Yes</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="card-surface rounded-xl p-5 space-y-4">
+              <h3 class="text-sm font-bold text-navy-900">Demo Data &amp; Governance Controls</h3>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                This prototype operates in <strong>State-Grounded Deterministic Mode</strong> by default so all 5 AI agents work offline without exposing API keys. For production deployments, configure <code class="px-1.5 py-0.5 bg-slate-100 rounded">GEMINI_API_KEY</code> in the FastAPI backend.
+              </p>
+              <button data-action="reset-demo-data" class="px-4 py-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-semibold">
+                Reset All Synthetic Demo Data
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      // --- GLOBAL EVENT DELEGATION ---
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-action]');
+        if (!btn) return;
+        const action = btn.dataset.action;
+
+        if (action === 'enter-dashboard') {
+          setView('dashboard', btn.dataset.tab || 'overview');
+        } else if (action === 'go-landing') {
+          setView('landing');
+        } else if (action === 'switch-tab') {
+          switchTab(btn.dataset.tab);
+        } else if (action === 'preview-dept') {
+          state.previewDept = btn.dataset.dept;
+          renderHeroPreview();
+        } else if (action === 'open-notif-drawer') {
+          document.getElementById('notif-drawer').classList.remove('hidden');
+        } else if (action === 'close-notif-drawer') {
+          document.getElementById('notif-drawer').classList.add('hidden');
+        } else if (action === 'mark-all-read') {
+          state.notifications.forEach(n => { n.read = true; });
+          renderNotifications();
+        } else if (action === 'cycle-bed') {
+          if (state.role === 'Network Coordinator') {
+            showToast('Permission Restricted', 'Switch to Hospital Admin or Dept Coordinator to update bed status.', 'amber');
+            return;
+          }
+          const bed = state.beds.find(b => b.id === btn.dataset.bedId);
+          if (!bed) return;
+          const order = ['Available', 'Occupied', 'Maintenance'];
+          bed.status = order[(order.indexOf(bed.status) + 1) % order.length];
+          addAudit('Updated Bed Status', `${bed.id} (${bed.dept}) set to ${bed.status}`);
+          showToast('Bed Updated', `${bed.id} is now ${bed.status}.`);
+          renderBedManagement();
+        } else if (action === 'advance-lab') {
+          const stages = ['Registered', 'Collected', 'Processing', 'Ready', 'Notified'];
+          const lab = state.labTests.find(t => t.id === btn.dataset.labId);
+          if (!lab) return;
+          const idx = stages.indexOf(lab.stage);
+          if (idx < stages.length - 1) {
+            lab.stage = stages[idx + 1];
+            if (lab.stage === 'Ready') {
+              lab.estMins = 0;
+              lab.note = 'Report ready — dispatch notification';
+              addNotification(`Lab Report Ready (${lab.id})`, `${lab.test} for ${lab.alias} is ready.`);
+            } else if (lab.stage === 'Notified') {
+              lab.notified = true;
+              lab.estMins = 0;
+              lab.note = 'Simulated SMS + Portal alert sent';
+              addNotification(`Patient Notified (${lab.id})`, `Simulated readiness alert sent to ${lab.alias}.`);
+            } else {
+              lab.estMins = Math.max(10, lab.estMins - 15);
+              lab.note = `Progressed to ${lab.stage}`;
+            }
+            addAudit('Advanced Lab Stage', `${lab.id} moved to ${lab.stage}`);
+            showToast('Lab Workflow Updated', `${lab.id} → ${lab.stage}`);
+            renderLaboratory();
+          }
+        } else if (action === 'approve-net-req' || action === 'decline-net-req') {
+          const req = state.networkRequests.find(r => r.id === btn.dataset.reqId);
+          if (!req) return;
+          req.status = action === 'approve-net-req' ? 'Approved' : 'Declined';
+          addAudit(`${req.status} Network Request`, `${req.id}: ${req.qty}x ${req.resource}`);
+          showToast(`Request ${req.status}`, `${req.id} marked as ${req.status}.`);
+          renderHospitalNetwork();
+        } else if (action === 'ai-quick-prompt') {
+          runAIQuery(btn.dataset.prompt);
+        } else if (action === 'approve-ai-action') {
+          submitAIActionDecision(Number(btn.dataset.msgIdx), true);
+        } else if (action === 'dismiss-ai-action') {
+          submitAIActionDecision(Number(btn.dataset.msgIdx), false);
+        } else if (action === 'export-report-csv') {
+          const rows = [['Department', 'Waiting', 'AvgWaitMins', 'Throughput', 'LoadPct'], ...state.departments.map(d => [d.name, d.waiting, d.waitMins, d.throughput, d.loadPct])];
+          const csv = rows.map(r => r.join(',')).join('\n');
+          const blob = new Blob([csv], { type: 'text/csv' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'flowmed-nexus-report.csv';
+          a.click();
+          URL.revokeObjectURL(url);
+          showToast('CSV Exported', 'Downloaded flowmed-nexus-report.csv');
+        } else if (action === 'print-report') {
+          window.print();
+        } else if (action === 'reset-demo-data') {
+          state = JSON.parse(JSON.stringify(INITIAL_STATE));
+          state.view = 'dashboard';
+          state.activeTab = 'settings';
+          renderNotifications();
+          switchTab('settings');
+          showToast('Demo Reset', 'All synthetic hospital records restored.');
+        }
+      });
+
+      document.getElementById('role-switcher').addEventListener('change', (e) => {
+        state.role = e.target.value;
+        showToast('Role Switched', `Active role: ${state.role}`);
+        switchTab(state.activeTab);
+      });
+
+      // --- INIT ---
+      renderHeroPreview();
+      renderNotifications();
+      lucide.createIcons();
+      loadFirebaseDashboardData();
+    })();
+  </script>
+</body>
+</html>
