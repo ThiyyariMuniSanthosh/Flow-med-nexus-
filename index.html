@@ -93,30 +93,14 @@
 <section class="page" id="page-account">
   <div class="section-head"><div><h2>Account & security</h2><p>Firebase Authentication connection for the prototype</p></div><span class="hint">ACCOUNT SETTINGS</span></div>
   <div class="auth-layout">
-    <div class="card auth-card"><h3>Sign in or create an account</h3><p>Use your demo email and password. Passwords are handled by Firebase Authentication.</p><div class="auth-form"><input id="email" class="field" type="email" placeholder="Email address" autocomplete="email"><input id="password" class="field" type="password" placeholder="Password (minimum 6 characters)" autocomplete="current-password"><div class="auth-actions"><button class="btn btn-primary" onclick="createAccount()">Create account</button><button class="btn btn-soft" onclick="signIn()">Sign in</button><button class="btn btn-soft" onclick="signOutUser()">Sign out</button></div></div><div id="authMessage" class="message">Checking Fir</button>
-<button data-page="labs"><span class="nav-icon">⚗</span>Lab Reports</button>
-<button data-page="assistant"><span class="nav-icon">✧</span>AI Assistant</button>
-<button data-page="account"><span class="nav-icon">◉</span>Account</button></nav>
-<div class="sidebar-bottom"><div class="secure-note"><b>✦ Demo environment</b>Use fictional sample data only. Not for real patient care or clinical decisions.</div></div></aside>
-<main class="main"><header class="topbar"><div><div class="eyebrow">FLOWMED NEXUS 2.0</div><h1 id="pageTitle">Dashboard overview</h1></div><div class="top-right"><span class="date" id="date"></span><span class="status" id="systemStatus">● Connecting</span></div></header>
-<!-- DASHBOARD -->
-<section class="page active" id="page-dashboard"><div class="hero"><div class="hero-copy"><h2>Healthcare operations, made clearer.</h2><p>A unified workspace concept for patient flow, appointments, bed capacity and laboratory updates. Explore each module from the left navigation.</p></div><button class="hero-tag" onclick="showPage('patients')">Explore workspace →</button></div>
-<div class="section-head"><div><h2>Today's snapshot</h2><p>Illustrative demo indicators across the hospital workspace</p></div><span class="hint">DEMO DATA</span></div>
-<div class="stats"><div class="card"><div class="stat-head"><span class="stat-icon mint">♙</span><span class="badge">+8.2%</span></div><div class="stat-value">120</div><div class="stat-label">Patient records</div><div class="stat-foot">↗ Sample total</div></div><div class="card"><div class="stat-head"><span class="stat-icon lav">▦</span><span class="badge purple">Today</span></div><div class="stat-value">18</div><div class="stat-label">Appointments</div><div class="stat-foot">↗ Scheduled demo count</div></div><div class="card"><div class="stat-head"><span class="stat-icon yellow">▤</span><span class="badge">75% free</span></div><div class="stat-value">24</div><div class="stat-label">Beds available</div><div class="stat-foot">↗ Sample capacity</div></div><div class="card"><div class="stat-head"><span class="stat-icon peach">⚗</span><span class="badge orange">6 pending</span></div><div class="stat-value">32</div><div class="stat-label">Lab reports</div><div class="stat-foot">↗ Sample reports</div></div></div>
-<div class="grid-two"><div class="card"><div class="panel-title">Operational overview</div><div class="metric"><span>Patient flow capacity</span><strong>78%</strong></div><div class="bar"><span style="width:78%"></span></div><div class="metric"><span>Bed occupancy</span><strong>25%</strong></div><div class="bar"><span style="width:25%"></span></div><div class="metric"><span>Lab report completion</span><strong>81%</strong></div><div class="bar"><span style="width:81%"></span></div></div><div class="card"><div class="panel-title">Quick navigation</div><div class="metric"><span>Patient directory</span><button class="btn btn-soft" onclick="showPage('patients')">Open →</button></div><div class="metric"><span>Today's appointments</span><button class="btn btn-soft" onclick="showPage('appointments')">Open →</button></div><div class="metric"><span>Bed availability</span><button class="btn btn-soft" onclick="showPage('beds')">Open →</button></div><div class="metric"><span>Laboratory reports</span><button class="btn btn-soft" onclick="showPage('labs')">Open →</button></div></div></div></section>
-<!-- PATIENTS -->
-<section class="page" id="page-patients"><div class="section-head"><div><h2>Patient directory</h2><p>Search and review fictional patient profiles for the prototype</p></div><span class="hint">SAMPLE RECORDS</span></div><div class="toolbar"><input id="patientSearch" class="field search" placeholder="Search by patient name or ID…" oninput="filterTable('patientSearch','patientRows')"><button class="btn btn-primary" onclick="alert('Patient creation form can be connected to Firestore in the next development step.')">＋ Add patient</button></div><div class="table-wrap"><table><thead><tr><th>Patient</th><th>Patient ID</th><th>Department</th><th>Visit status</th></tr></thead><tbody id="patientRows"><tr><td><div class="person"><span class="avatar">AR</span>Alex Rivera</div></td><td>FM-1001</td><td>Cardiology</td><td><span class="badge">Checked in</span></td></tr><tr><td><div class="person"><span class="avatar">SM</span>Sara Morgan</div></td><td>FM-1002</td><td>Neurology</td><td><span class="badge purple">Scheduled</span></td></tr><tr><td><div class="person"><span class="avatar">JK</span>Jordan Kim</div></td><td>FM-1003</td><td>General Medicine</td><td><span class="badge orange">Under review</span></td></tr><tr><td><div class="person"><span class="avatar">DP</span>Devi Patel</div></td><td>FM-1004</td><td>Orthopaedics</td><td><span class="badge">Completed</span></td></tr></tbody></table></div><p class="message">These are fictional demonstration records, not real patient information.</p></section>
-<!-- APPOINTMENTS -->
-<section class="page" id="page-appointments"><div class="section-head"><div><h2>Appointment schedule</h2><p>View the sample schedule and appointment status</p></div><span class="hint">TODAY · DEMO</span></div><div class="toolbar"><input id="appointmentSearch" class="field search" placeholder="Search appointments…" oninput="filterTable('appointmentSearch','appointmentRows')"><button class="btn btn-primary" onclick="alert('Appointment booking can be connected to Firestore next.')">＋ New appointment</button></div><div class="table-wrap"><table><thead><tr><th>Time</th><th>Patient</th><th>Department</th><th>Consultant</th><th>Status</th></tr></thead><tbody id="appointmentRows"><tr><td>09:00 AM</td><td>Alex Rivera</td><td>Cardiology</td><td>Dr. Wilson</td><td><span class="badge">Checked in</span></td></tr><tr><td>10:30 AM</td><td>Sara Morgan</td><td>Neurology</td><td>Dr. Chen</td><td><span class="badge purple">Upcoming</span></td></tr><tr><td>11:15 AM</td><td>Jordan Kim</td><td>General Medicine</td><td>Dr. Rao</td><td><span class="badge orange">Waiting</span></td></tr><tr><td>02:00 PM</td><td>Devi Patel</td><td>Orthopaedics</td><td>Dr. Thomas</td><td><span class="badge purple">Upcoming</span></td></tr></tbody></table></div></section>
-<!-- BEDS -->
-<section class="page" id="page-beds"><div class="section-head"><div><h2>Smart bed management</h2><p>Sample capacity by ward; live availability is not connected yet</p></div><span class="hint">CAPACITY VIEW</span></div><div class="bed-grid"><div class="card bed-card"><span class="stat-icon mint">▤</span><h3>General Ward</h3><div class="bed-number">12 / 16</div><p>Available beds</p><div class="bar"><span style="width:25%"></span></div></div><div class="card bed-card"><span class="stat-icon lav">▤</span><h3>ICU</h3><div class="bed-number">4 / 8</div><p>Available beds</p><div class="bar"><span style="width:50%"></span></div></div><div class="card bed-card"><span class="stat-icon yellow">▤</span><h3>Paediatrics</h3><div class="bed-number">5 / 6</div><p>Available beds</p><div class="bar"><span style="width:17%"></span></div></div><div class="card bed-card"><span class="stat-icon peach">▤</span><h3>Emergency</h3><div class="bed-number">3 / 6</div><p>Available beds</p><div class="bar"><span style="width:50%"></span></div></div></div><div class="card" style="margin-top:14px"><div class="panel-title">Capacity note</div><p style="font-size:11px;color:var(--muted);line-height:1.7;margin:0">The figures above are static prototype values to demonstrate the interface. Real-time bed updates require a secured Firestore data model and authorized staff access.</p></div></section>
-<!-- LABS -->
-<section class="page" id="page-labs"><div class="section-head"><div><h2>Laboratory reports</h2><p>Sample report workflow and readiness indicators</p></div><span class="hint">DEMO REPORTS</span></div><div class="lab-grid"><div class="card lab-card"><span class="stat-icon mint">⚗</span><h3>Blood Panel</h3><p>Sample record · LAB-2041<br>Requested: 08:30 AM</p><span class="badge">Completed</span></div><div class="card lab-card"><span class="stat-icon lav">⚗</span><h3>Thyroid Profile</h3><p>Sample record · LAB-2042<br>Requested: 09:10 AM</p><span class="badge orange">Processing</span></div><div class="card lab-card"><span class="stat-icon yellow">⚗</span><h3>Lipid Profile</h3><p>Sample record · LAB-2043<br>Requested: 10:00 AM</p><span class="badge purple">Awaiting review</span></div></div><div class="card" style="margin-top:14px"><div class="panel-title">Report handling</div><p style="font-size:11px;color:var(--muted);line-height:1.7;margin:0">This prototype displays workflow status only. It does not store, interpret or validate medical test results.</p></div></section>
-<!-- AI -->
-<section class="page" id="page-assistant"><div class="section-head"><div><h2>AI operations assistant</h2><p>Concept interface for operational questions—not clinical diagnosis</p></div><span class="hint">AI PREVIEW</span></div><div class="ai-panel"><h3>✧ How can I help with hospital operations?</h3><p>Ask a general workflow question, such as how to organize appointment queues or improve bed coordination. Gemini is not connected yet; this is a safe preview interface.</p><div class="ai-input"><input id="question" placeholder="Ask about workflow, scheduling or coordination…"><button class="btn btn-purple" onclick="askAI()">Send question ↗</button></div><div id="reply" class="ai-reply">Your response will appear here. This preview does not provide diagnosis or treatment recommendations.</div></div></section>
-<!-- ACCOUNT -->
-<section class="page" id="page-account"><div class="section-head"><div><h2>Account & security</h2><p>Firebase Authentication connection for the prototype</p></div><span class="hint">ACCOUNT SETTINGS</span></div><div class="auth-layout"><div class="card auth-card"><h3>Sign in or create an account</h3><p>Use your demo email and password. Passwords are handled by Firebase Authentication.</p><div class="auth-form"><input id="email" class="field" type="email" placeholder="Email address" autocomplete="email"><input id="password" class="field" type="password" placeholder="Password (minimum 6 characters)" autocomplete="current-password"><div class="auth-actions"><button class="btn btn-primary" onclick="createAccount()">Create account</button><button class="btn btn-soft" onclick="signIn()">Sign in</button><button class="btn btn-soft" onclick="signOutUser()">Sign out</button></div></div><div id="authMessage" class="message">Checking Firebase connection…</div></div><div class="card auth-card"><h3>Current session</h3><p>Authentication state for this browser session.</p><div class="metric"><span>Signed-in user</span><strong id="userStatus">Not signed in</strong></div><div class="metric"><span>Authentication</span><strong id="authState">Checking…</strong></div><div class="metric"><span>Database</span><strong id="dbState">Initializing…</strong></div><p class="message">Firestore is initialized, but patient, appointment, bed and lab data are still sample-only in this frontend.</p></div></div></section>
-<div class="footer">FLOWMED NEXUS 2.0 · STUDENT INNOVATION PROTOTYPE · FICTIONAL DEMO DATA ONLY</div></main></div>
+    <div class="card auth-card"><h3>Sign in or create an account</h3><p>Use your demo email and password. Passwords are handled by Firebase Authentication.</p><div class="auth-form"><input id="email" class="field" type="email" placeholder="Email address" autocomplete="email"><input id="password" class="field" type="password" placeholder="Password (minimum 6 characters)" autocomplete="current-password"><div class="auth-actions"><button class="btn btn-primary" onclick="createAccount()">Create account</button><button class="btn btn-soft" onclick="signIn()">Sign in</button><button class="btn btn-soft" onclick="signOutUser()">Sign out</button></div></div><div id="authMessage" class="message">Checking Firebase connection…</div></div>
+    <div class="card auth-card"><h3>Current session</h3><p>Authentication state for this browser session.</p><div class="metric"><span>Signed-in user</span><strong id="userStatus">Not signed in</strong></div><div class="metric"><span>Authentication</span><strong id="authState">Checking…</strong></div><div class="metric"><span>Database</span><strong id="dbState">Initializing…</strong></div><p class="message">Only ward capacity is connected to Firestore in this version. Patient, appointment and lab sections remain fictional samples.</p></div>
+  </div>
+</section>
+<div class="footer">FLOWMED NEXUS 2.0 · STUDENT INNOVATION PROTOTYPE · FICTIONAL DEMO DATA ONLY</div>
+</main>
+</div>
+
 <script>
 const titles={dashboard:'Dashboard overview',patients:'Patient directory',appointments:'Appointment schedule',beds:'Bed management',labs:'Laboratory reports',assistant:'AI operations assistant',account:'Account & security'};
 function showPage(name){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+name));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===name));document.getElementById('pageTitle').textContent=titles[name]||'FlowMed Nexus';window.scrollTo({top:0,behavior:'smooth'});}
@@ -125,29 +109,127 @@ function filterTable(inputId,rowsId){const q=document.getElementById(inputId).va
 function askAI(){const q=document.getElementById('question').value.trim();document.getElementById('reply').textContent=q?'Preview only: Your question has been received. Gemini AI is not connected yet. A secure backend is required before enabling AI responses. Do not enter personal or patient information.':'Please enter a question first.';}
 document.getElementById('date').textContent=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
 </script>
+
 <script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
-import { getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
-import { getFirestore } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
-const firebaseConfig = {
-  apiKey: "AIzaSyDaGqCp7gomqV5EsQhquoRjaWmcQSUIbLU",
-  authDomain: "flowmednexus2.firebaseapp.com",
-  projectId: "flowmednexus2",
-  storageBucket: "flowmednexus2.firebasestorage.app",
-  messagingSenderId: "456773833637",
-  appId: "1:456773833637:web:29c714414814ddea7c8e4c",
-  measurementId: "G-HTSJXJWJBN"
+import {initializeApp} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
+import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
+import {getFirestore,collection,onSnapshot} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
+
+const firebaseConfig={
+  apiKey:"AIzaSyDaGqCp7gomqV5EsQhquoRjaWmcQSUIbLU",
+  authDomain:"flowmednexus2.firebaseapp.com",
+  projectId:"flowmednexus2",
+  storageBucket:"flowmednexus2.firebasestorage.app",
+  messagingSenderId:"456773833637",
+  appId:"1:456773833637:web:29c714414814ddea7c8e4c",
+  measurementId:"G-HTSJXJWJBN"
 };
+
+const statusEl=document.getElementById('systemStatus');
+const msg=document.getElementById('authMessage');
+const wardGrid=document.getElementById('wardGrid');
+const wardNote=document.getElementById('wardNote');
+let stopWardListener=null;
+
+function showWardMessage(message){
+  wardGrid.replaceChildren();
+  const note=document.createElement('div');
+  note.className='card empty-note';
+  note.style.gridColumn='1/-1';
+  note.textContent=message;
+  wardGrid.appendChild(note);
+}
+function updateDashboardBeds(available,total){
+  document.getElementById('dashboardBeds').textContent=String(available);
+  document.getElementById('bedAvailabilityBadge').textContent=total?Math.round(available/total*100)+'% available':'No ward data';
+  document.getElementById('dashboardBedFoot').textContent=total?available+' of '+total+' beds available':'No ward records found';
+  const occupancy=total?Math.round((total-available)/total*100):0;
+  document.getElementById('dashboardOccupancy').textContent=total?occupancy+'%':'—';
+  document.getElementById('dashboardOccupancyBar').style.width=occupancy+'%';
+}
+function renderWards(snapshot){
+  wardGrid.replaceChildren();
+  let totalBeds=0,availableBeds=0,validCount=0;
+  const colors=['mint','lav','yellow','peach'];
+  const icons=['▤','▤','▤','▤'];
+  snapshot.forEach((doc,index)=>{
+    const data=doc.data();
+    const name=String(data.ward_name||doc.id);
+    const total=Number(data.total_beds);
+    const available=Number(data.available_beds);
+    const active=String(data.status||'Active');
+    if(!Number.isFinite(total)||!Number.isFinite(available)||total<0||available<0||available>total)return;
+    validCount++;totalBeds+=total;availableBeds+=available;
+    const occupied=total?Math.round((total-available)/total*100):0;
+    const card=document.createElement('div');card.className='card bed-card';
+    const icon=document.createElement('span');icon.className='stat-icon '+colors[index%colors.length];icon.textContent=icons[index%icons.length];
+    const heading=document.createElement('h3');heading.textContent=name;
+    const number=document.createElement('div');number.className='bed-number';number.textContent=available+' / '+total;
+    const label=document.createElement('p');label.textContent='Available beds';
+    const bar=document.createElement('div');bar.className='bar';
+    const fill=document.createElement('span');fill.style.width=occupied+'%';bar.appendChild(fill);
+    const status=document.createElement('p');status.style.marginTop='9px';status.textContent='Status: '+active+' · '+occupied+'% occupied';
+    card.append(icon,heading,number,label,bar,status);wardGrid.appendChild(card);
+  });
+  if(!validCount){showWardMessage('No valid ward records found. Check the wards collection fields.');updateDashboardBeds(0,0);wardNote.textContent='No valid ward records were found.';return;}
+  updateDashboardBeds(availableBeds,totalBeds);
+  wardNote.textContent='Live Firestore update received. Total: '+availableBeds+' of '+totalBeds+' beds available across '+validCount+' wards. Demo values only; not for real patient care.';
+}
 try{
- const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
- window.flowmedAuth=auth;window.flowmedDb=db;
- document.getElementById('systemStatus').textContent='● Firebase connected';
- document.getElementById('authState').textContent='Connected';document.getElementById('dbState').textContent='Initialized';
- const msg=document.getElementById('authMessage');
- onAuthStateChanged(auth,user=>{document.getElementById('userStatus').textContent=user?user.email:'Not signed in';msg.textContent=user?'Signed in successfully. Firestore is initialized; app data integration is the next step.':'Firebase is ready. Sign in with your demo account.';});
- function credentials(){const email=document.getElementById('email').value.trim(),password=document.getElementById('password').value;if(!email||!password)throw new Error('Enter both email and password.');if(password.length<6)throw new Error('Password must be at least 6 characters.');return{email,password};}
- window.createAccount=async()=>{try{msg.textContent='Creating account…';const{email,password}=credentials();await createUserWithEmailAndPassword(auth,email,password);msg.textContent='Account created successfully.';}catch(e){msg.textContent=e.message;}};
- window.signIn=async()=>{try{msg.textContent='Signing in…';const{email,password}=credentials();await signInWithEmailAndPassword(auth,email,password);msg.textContent='Signed in successfully.';}catch(e){msg.textContent=e.message;}};
- window.signOutUser=async()=>{try{await signOut(auth);msg.textContent='Signed out.';}catch(e){msg.textContent=e.message;}};
-}catch(error){document.getElementById('systemStatus').textContent='● Firebase error';document.getElementById('authMessage').textContent='Firebase setup error: '+error.message;document.getElementById('authState').textContent='Error';document.getElementById('dbState').textContent='Unavailable';}
-</script></body></html>
+  const app=initializeApp(firebaseConfig);
+  const auth=getAuth(app);
+  const db=getFirestore(app);
+  window.flowmedAuth=auth;
+  window.flowmedDb=db;
+  statusEl.textContent='● Firebase connected';
+  document.getElementById('authState').textContent='Connected';
+  document.getElementById('dbState').textContent='Initialized';
+
+  function credentials(){
+    const email=document.getElementById('email').value.trim();
+    const password=document.getElementById('password').value;
+    if(!email||!password)throw new Error('Enter both email and password.');
+    if(password.length<6)throw new Error('Password must be at least 6 characters.');
+    return{email,password};
+  }
+  window.createAccount=async()=>{
+    try{msg.textContent='Creating account…';const{email,password}=credentials();await createUserWithEmailAndPassword(auth,email,password);msg.textContent='Account created successfully.';}
+    catch(e){msg.textContent=e.message;}
+  };
+  window.signIn=async()=>{
+    try{msg.textContent='Signing in…';const{email,password}=credentials();await signInWithEmailAndPassword(auth,email,password);msg.textContent='Signed in successfully.';}
+    catch(e){msg.textContent=e.message;}
+  };
+  window.signOutUser=async()=>{
+    try{await signOut(auth);msg.textContent='Signed out.';}
+    catch(e){msg.textContent=e.message;}
+  };
+
+  onAuthStateChanged(auth,user=>{
+    document.getElementById('userStatus').textContent=user?user.email:'Not signed in';
+    if(stopWardListener){stopWardListener();stopWardListener=null;}
+    if(user){
+      msg.textContent='Signed in successfully. Loading live ward data…';
+      showWardMessage('Loading live ward data from Firestore…');
+      stopWardListener=onSnapshot(collection(db,'wards'),renderWards,error=>{
+        console.error('Ward listener error:',error);
+        showWardMessage('Could not load ward data: '+error.message);
+        wardNote.textContent='Check your Firestore rules and the wards collection.';
+      });
+    }else{
+      msg.textContent='Firebase is ready. Sign in with your demo account to load ward data.';
+      showWardMessage('Sign in to Firebase to load live ward data.');
+      updateDashboardBeds(0,0);
+    }
+  });
+}catch(error){
+  console.error(error);
+  statusEl.textContent='● Firebase error';
+  document.getElementById('authMessage').textContent='Firebase setup error: '+error.message;
+  document.getElementById('authState').textContent='Error';
+  document.getElementById('dbState').textContent='Unavailable';
+  showWardMessage('Firebase could not start. Check the Firebase configuration and browser console.');
+}
+</script>
+</body>
+</html>
