@@ -1,1 +1,0 @@
-"""FlowMed Nexus backend package."""
