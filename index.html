@@ -68,12 +68,12 @@
  <div class="section-head"><div><h2>Admin control centre</h2><p>Manage demonstration ward records and review administrative activity.</p></div><span class="hint">ADMIN ONLY</span></div>
  <div class="admin-grid">
   <div class="card"><div class="panel-title">Add / edit ward</div><input id="wardDocPath" type="hidden"><div class="form-grid">
-   <input id="parentSopId" class="field wide" placeholder="Parent SOP document ID (required for new ward)">
+   <input id="parentSopId" class="field wide" value="5IYKym6V92vydn5w1CTg" placeholder="Parent SOP document ID (default: 5IYKym6V92vydn5w1CTg)">
    <input id="wardName" class="field wide" placeholder="Ward name (e.g. ICU)">
    <input id="totalBeds" class="field" type="number" min="0" step="1" placeholder="Total beds">
    <input id="availableBeds" class="field" type="number" min="0" step="1" placeholder="Available beds">
    <select id="wardStatus" class="field wide"><option>Active</option><option>Maintenance</option><option>Inactive</option></select>
-  </div><div class="toolbar"><button class="btn btn-primary" onclick="saveWard()">Save ward</button><button class="btn btn-soft" onclick="clearWardForm()">Clear form</button></div><div id="adminMessage" class="message"></div><p class="small">New ward documents are added under /sop_documents/{parent ID}/Wards. Use the exact parent SOP document ID from Firestore.</p></div>
+  </div><div class="toolbar"><button class="btn btn-primary" onclick="saveWard()">Save ward</button><button class="btn btn-soft" onclick="clearWardForm()">Clear form</button></div><div id="adminMessage" class="message"></div><p class="small">New ward documents are added under your nested SOP document's Wards subcollection.</p></div>
   <div class="card"><div class="panel-title">Admin account</div><div class="metric">Signed in as <b id="adminEmail">—</b></div><div class="metric">Permission <b>Ward management</b></div><p class="small">Changes are recorded in the audit log. Use fictional demonstration values only.</p></div>
  </div>
  <div class="section-head"><div><h2>Ward records</h2><p>Select Edit to load a ward into the form.</p></div></div><div class="table-wrap"><table><thead><tr><th>Ward</th><th>Total</th><th>Available</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminWardRows"><tr><td colspan="5">Loading…</td></tr></tbody></table></div>
@@ -96,6 +96,9 @@ const firebaseConfig = {
   measurementId: "G-HTSJXJWJBN"
 };
 const ADMIN_EMAIL = "santhoshthiyyari@gmail.com";
+const DEFAULT_SOP_ID = "5IYKym6V92vydn5w1CTg";
+const BASE_SOP_PATH = ["hospitals","Sf9DaLwZmQSwcBxpxiUR","beds","qqNKoCdSrPIdGW5V6Rdm","lab_test","hfsPd18cTkSPB0tQrkH4","request_id","ei09rQXz9FZEvAs2XBJT","sop_documents"];
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -138,18 +141,22 @@ function updateDashboardBeds(available,total){
   $("dashboardOccupancyBar").style.width=occupancy+"%";
 }
 function pick(data,keys){
-  for(const key of keys){if(data[key]!==undefined&&data[key]!==null&&data[key]!=="")return data[key];}
+  const lowerMap=Object.fromEntries(Object.entries(data).map(([k,v])=>[k.toLowerCase(),v]));
+  for(const key of keys){
+    const val=lowerMap[key.toLowerCase()];
+    if(val!==undefined&&val!==null&&val!=="")return val;
+  }
   return undefined;
 }
 function normalizeWard(docSnap){
   const d=docSnap.data();
-  const name=String(pick(d,["ward_name","wardName","name","ward","title"])??docSnap.id);
-  const totalRaw=pick(d,["total_beds","totalBeds","total_bed","total","bed_capacity","bedCapacity"]);
-  const freeRaw=pick(d,["available_beds","availableBeds","available","free_beds","freeBeds"]);
-  const occupiedRaw=pick(d,["occupied_beds","occupiedBeds","occupied","used_beds","usedBeds"]);
+  const name=String(pick(d,["ward_name","wardname","name","ward","title"])??docSnap.id);
+  const totalRaw=pick(d,["total_beds","totalbeds","total_bed","total","bed_capacity","bedcapacity"]);
+  const freeRaw=pick(d,["available_beds","availablebeds","available","free_beds","freebeds"]);
+  const occupiedRaw=pick(d,["occupied_beds","occupiedbeds","occupied","used_beds","usedbeds"]);
   const total=Number(totalRaw);
   const free=freeRaw!==undefined?Number(freeRaw):(occupiedRaw!==undefined?total-Number(occupiedRaw):NaN);
-  const status=String(pick(d,["status","ward_status","wardStatus"])??"Active");
+  const status=String(pick(d,["status","ward_status","wardstatus"])??"Active");
   if(totalRaw===undefined||(freeRaw===undefined&&occupiedRaw===undefined)||!Number.isInteger(total)||!Number.isInteger(free)||total<0||free<0||free>total)return null;
   return {id:docSnap.id,path:docSnap.ref.path,ref:docSnap.ref,parentId:docSnap.ref.parent.parent?.id||"",name,total,free,status};
 }
@@ -191,7 +198,7 @@ function showAuditWarning(message){
   const tr=document.createElement("tr"),td=safeText("td",message);td.colSpan=4;tr.appendChild(td);$("auditRows").appendChild(tr);
 }
 window.clearWardForm=(keepMessage=false)=>{
-  $("wardDocPath").value="";$("parentSopId").disabled=false;$("parentSopId").value="";
+  $("wardDocPath").value="";$("parentSopId").disabled=false;$("parentSopId").value=DEFAULT_SOP_ID;
   $("wardName").value="";$("totalBeds").value="";$("availableBeds").value="";
   $("wardStatus").value="Active";if(!keepMessage)$("adminMessage").textContent="";
 };
@@ -203,12 +210,11 @@ function editWard(path){
 }
 window.saveWard=async()=>{
   if(!isAdmin()){$("adminMessage").textContent="Administrator access required.";return;}
-  const path=$("wardDocPath").value,parentId=$("parentSopId").value.trim(),name=$("wardName").value.trim();
+  const path=$("wardDocPath").value,parentId=$("parentSopId").value.trim()||DEFAULT_SOP_ID,name=$("wardName").value.trim();
   const totalText=$("totalBeds").value,freeText=$("availableBeds").value,total=Number(totalText),free=Number(freeText),status=$("wardStatus").value;
   if(!name||totalText===""||freeText===""||!Number.isInteger(total)||!Number.isInteger(free)||total<0||free<0||free>total){
     $("adminMessage").textContent="Enter a ward name and valid whole-number bed counts. Available beds cannot exceed total beds.";return;
   }
-  if(!path&&!parentId){$("adminMessage").textContent="Enter the parent SOP document ID from Firestore before creating a ward.";return;}
   const payload={ward_name:name,total_beds:total,available_beds:free,status};
   try{
     $("adminMessage").textContent="Saving ward…";
@@ -217,7 +223,7 @@ window.saveWard=async()=>{
       if(!existing)throw new Error("Ward is not in the current loaded list. Refresh and try again.");
       await updateDoc(existing.ref,payload);
     }else{
-      await addDoc(collection(db,"sop_documents",parentId,"Wards"),payload);
+      await addDoc(collection(db,...BASE_SOP_PATH,parentId,"Wards"),payload);
     }
     $("adminMessage").textContent="Ward saved successfully. Writing audit entry…";
     try{
