@@ -1,177 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#087f5b">
-<title>FlowMed Nexus 2.0</title>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#087f5b"><title>FlowMed Nexus 2.0 | Smart Healthcare Operations</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
-:root{--green:#087f5b;--lime:#c5f36b;--white:#f7faf7;--violet:#a78bfa;--dark:#20332c;--muted:#78877f}
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:'DM Sans',sans-serif;background:var(--white);color:var(--dark)}
-.layout{display:flex;min-height:100vh}
-.sidebar{width:245px;background:#fff;padding:26px 17px;border-right:1px solid #e8eee9;position:fixed;left:0;top:0;height:100vh;display:flex;flex-direction:column;z-index:100;overflow-y:auto}
-.logo{font-size:22px;font-weight:800;color:var(--green)}.logo span{color:#9bcf37}
-.tagline{font-size:9px;color:var(--muted);margin-top:6px;letter-spacing:1px}
-.nav-title{font-size:10px;color:#a1aaa5;margin:34px 10px 12px;font-weight:700;letter-spacing:1.5px}
-.nav{display:flex;flex-direction:column;gap:5px}
-.nav a{display:flex;align-items:center;gap:11px;text-decoration:none;color:#718078;padding:13px 12px;border-radius:12px;font-size:13px;font-weight:600;transition:.25s}
-.nav a:hover{background:#eff8f1;color:var(--green);transform:translateX(3px)}
-.nav a.active{background:#e4f5eb;color:var(--green);box-shadow:inset 3px 0 var(--green)}
-.nav-icon{width:22px;text-align:center;font-size:17px}
-.profile{margin-top:auto;background:#eff8f1;padding:13px;border-radius:15px;font-size:11px}
-.avatar{background:var(--green);color:white;width:36px;height:36px;border-radius:12px;display:grid;place-items:center;font-weight:800}
-.profile-row{display:flex;gap:10px;align-items:center}
-.main{margin-left:245px;width:calc(100% - 245px);padding:30px 36px;min-width:0}
-.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;gap:12px}
-.welcome h1{font-size:27px;font-weight:800}.welcome p{color:var(--muted);font-size:13px;margin-top:6px}
-.top-actions{display:flex;gap:10px;align-items:center}.status{background:#e6f7e9;color:var(--green);padding:9px 13px;border-radius:30px;font-size:11px;font-weight:700}.date{font-size:12px;color:var(--muted)}
-.hero{background:linear-gradient(115deg,#087f5b,#12a879);color:white;padding:29px;border-radius:23px;display:flex;justify-content:space-between;align-items:center;position:relative;overflow:hidden;margin-bottom:25px}
-.hero:after{content:"";position:absolute;width:230px;height:230px;border:35px solid #ffffff17;border-radius:50%;right:8%;top:-115px;pointer-events:none}
-.hero-content{position:relative;z-index:1}.hero h2{font-size:24px;max-width:480px}.hero p{font-size:13px;color:#d8f5e7;margin-top:10px;max-width:460px;line-height:1.7}
-button{cursor:pointer;font-family:inherit;transition:.2s}button:hover{filter:brightness(.96)}button:active{transform:scale(.98)}
-.hero button{background:var(--lime);color:#23432e;border:0;padding:13px 19px;border-radius:12px;font-weight:800;position:relative;z-index:2}
-.section-head{display:flex;justify-content:space-between;align-items:center;margin:27px 0 15px}.section-head h3{font-size:17px}.section-head span{font-size:11px;color:var(--muted)}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
-.card{background:white;border:1px solid #eaf0eb;border-radius:18px;padding:19px;box-shadow:0 5px 20px #173c2510;transition:.25s}
-.card:hover{transform:translateY(-3px);box-shadow:0 10px 25px #173c2518}
-.stat-top{display:flex;justify-content:space-between;align-items:center}.icon{width:39px;height:39px;border-radius:13px;display:grid;place-items:center;font-size:19px}
-.i1{background:#e5f7ed}.i2{background:#f0ebff}.i3{background:#f1f8d9}.i4{background:#fff0e5}
-.number{font-size:28px;font-weight:800;margin-top:15px}.stat-name{font-size:12px;color:var(--muted);margin-top:4px}.change{font-size:10px;color:var(--green);margin-top:12px;font-weight:700}
-.pill{padding:5px 9px;border-radius:20px;background:#e7f7eb;color:var(--green);font-size:10px;font-weight:700}.violet{background:#f0ebff;color:#7957ca}.orange{background:#fff0e5;color:#bb7137}
-.content-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:17px}.panel-title{font-size:15px;font-weight:800;margin-bottom:17px}
-.metric{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid #edf1ed;font-size:12px;gap:8px}.metric:last-child{border:0}
-.progress{height:8px;background:#edf2ed;border-radius:20px;margin-top:9px;overflow:hidden}.progress div{height:100%;border-radius:20px;background:linear-gradient(90deg,#087f5b,#b7e85c)}
-.ai-box{background:linear-gradient(135deg,#f0ebff,#f5f2ff);border:1px solid #e9e0ff}.ai-box p{font-size:12px;color:#6f628f;line-height:1.7;margin:10px 0 15px}
-.ai-input{display:flex;gap:8px}.ai-input input,.auth-form input{min-width:0;flex:1;border:1px solid #e5def5;border-radius:11px;padding:12px;font:inherit;font-size:12px;outline:none;background:#fff}
-.ai-input button{border:0;background:#8c6be0;color:white;border-radius:11px;padding:0 15px;font-weight:700}
-#reply{font-size:12px;color:#5c4b88;margin-top:12px;line-height:1.6;overflow-wrap:anywhere}
-.auth-card{margin-top:18px}.auth-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.auth-form{display:flex;flex-direction:column;gap:9px}.auth-form input{border-color:#e4ebe5}.auth-buttons{display:flex;gap:8px;flex-wrap:wrap}
-.primary-btn,.secondary-btn{border:0;border-radius:10px;padding:11px 14px;font-size:12px;font-weight:700}
-.primary-btn{background:var(--green);color:white}.secondary-btn{background:#eaf5ed;color:var(--green)}
-#authMessage{font-size:12px;color:var(--green);margin-top:12px;line-height:1.5}
-.user-line{font-size:12px;color:var(--muted);margin:8px 0}
-.bottom-note{margin-top:25px;text-align:center;color:#9aa69e;font-size:10px}
-@media(max-width:950px){.sidebar{width:200px}.main{margin-left:200px;width:calc(100% - 200px);padding:23px 17px}.stats{grid-template-columns:repeat(2,1fr)}.content-grid{grid-template-columns:1fr}}
-@media(max-width:650px){
- .layout{display:flex;min-height:100vh}
- .sidebar{position:fixed;left:0;top:0;width:140px;height:100vh;padding:17px 9px;display:flex;flex-direction:column;overflow-y:auto;z-index:100}
- .logo{font-size:17px}.tagline{font-size:7px;letter-spacing:.5px}
- .nav-title{display:block;margin:25px 5px 10px;font-size:9px}
- .nav{display:flex;flex-direction:column;gap:4px}
- .nav a{font-size:10px;padding:12px 6px;gap:6px;white-space:normal}
- .nav-icon{width:19px;font-size:15px}.profile{display:block;margin-top:auto;padding:9px}
- .profile-row{gap:6px}.avatar{width:29px;height:29px;font-size:10px}
- .profile strong{font-size:9px}.profile span{font-size:8px}
- .main{margin-left:140px;width:calc(100% - 140px);min-width:0;padding:18px 10px}
- .topbar{align-items:flex-start;margin-bottom:20px}.welcome h1{font-size:17px}.welcome p{font-size:10px;line-height:1.5}
- .top-actions{display:block}.status{font-size:8px;padding:7px}.date{display:none}
- .hero{display:block;padding:17px;margin-bottom:18px}.hero h2{font-size:17px;line-height:1.4}.hero p{font-size:10px;line-height:1.6}
- .hero button{margin-top:14px;font-size:10px;padding:10px}
- .section-head{margin:20px 0 12px}.section-head h3{font-size:13px}.section-head span{font-size:8px}
- .stats{grid-template-columns:1fr;gap:9px}.card{padding:12px;border-radius:14px}
- .number{font-size:23px;margin-top:10px}.stat-name{font-size:11px}.change{font-size:9px}
- .content-grid{grid-template-columns:1fr;gap:12px}.panel-title{font-size:13px}
- .metric{font-size:10px;padding:11px 0}.pill{font-size:8px}
- .ai-box p{font-size:10px}.ai-input input{padding:10px;font-size:10px;width:0}
- .ai-input button{font-size:10px;padding:0 9px}#reply{font-size:10px}
- .auth-grid{grid-template-columns:1fr}.auth-form input{font-size:11px;padding:10px}
- .bottom-note{font-size:8px;line-height:1.5}
-}
-</style>
-</head>
-<body>
-<div class="layout">
-<aside class="sidebar">
- <div class="logo">FlowMed <span>Nexus.</span></div>
- <div class="tagline">INTELLIGENT HEALTHCARE</div>
- <div class="nav-title">MAIN MENU</div>
- <nav class="nav">
-  <a class="active" href="#dashboard"><span class="nav-icon">◈</span>Dashboard</a>
-  <a href="#patients"><span class="nav-icon">♙</span>Patients</a>
-  <a href="#appointments"><span class="nav-icon">▦</span>Appointments</a>
-  <a href="#beds"><span class="nav-icon">▣</span>Bed Management</a>
-  <a href="#labs"><span class="nav-icon">⌁</span>Lab Reports</a>
-  <a href="#ai"><span class="nav-icon">✧</span>AI Assistant</a>
-  <a href="#account"><span class="nav-icon">◎</span>Account</a>
- </nav>
- <div class="profile">
-  <div class="profile-row"><div class="avatar">FN</div><div><strong>FlowMed Admin</strong><br><span style="color:#78877f">Demo workspace</span></div></div>
- </div>
-</aside>
-
-<main class="main" id="dashboard">
- <header class="topbar">
-  <div class="welcome"><h1>Healthcare Overview ✨</h1><p>Welcome to your intelligent healthcare command center.</p></div>
-  <div class="top-actions"><span class="status" id="systemStatus">● Starting...</span><div class="date" id="date"></div></div>
- </header>
-
- <section class="hero">
-  <div class="hero-content"><h2>Smarter healthcare starts with connected intelligence.</h2><p>Monitor patient flow, coordinate hospital resources and explore AI-powered healthcare workflows in one unified platform.</p></div>
-  <button onclick="document.getElementById('ai').scrollIntoView({behavior:'smooth'})">Explore AI ↗</button>
- </section>
-
- <div class="section-head"><h3>Platform Overview</h3><span>Demonstration data</span></div>
- <section class="stats">
-  <div class="card" id="patients"><div class="stat-top"><span class="icon i1">♙</span><span class="pill">Demo</span></div><div class="number">120</div><div class="stat-name">Total Patients</div><div class="change">● Sample records</div></div>
-  <div class="card" id="appointments"><div class="stat-top"><span class="icon i2">▦</span><span class="pill violet">Demo</span></div><div class="number">18</div><div class="stat-name">Appointments</div><div class="change">● Sample schedule</div></div>
-  <div class="card" id="beds"><div class="stat-top"><span class="icon i3">▣</span><span class="pill">Demo</span></div><div class="number">24</div><div class="stat-name">Available Beds</div><div class="change">● Sample availability</div></div>
-  <div class="card"><div class="stat-top"><span class="icon i4">✧</span><span class="pill orange">Preview</span></div><div class="number">AI</div><div class="stat-name">Intelligence Hub</div><div class="change">● Interface ready</div></div>
- </section>
-
- <div class="section-head"><h3>Smart Operations</h3><span>Platform modules</span></div>
- <section class="content-grid">
-  <div class="card">
-   <div class="panel-title">Hospital Resource Insights</div>
-   <div class="metric"><span>Patient flow monitoring</span><span class="pill">Available</span></div>
-   <div class="metric"><span>Bed availability tracking</span><strong>24 beds</strong></div>
-   <div class="progress"><div style="width:65%"></div></div>
-   <div class="metric"><span>Appointment coordination</span><span class="pill violet">18 scheduled</span></div>
-   <div class="metric"><span>Resource coordination</span><span class="pill">Demo mode</span></div>
-   <div class="metric" id="labs"><span>Lab report readiness</span><span class="pill orange">Preview</span></div>
-  </div>
-  <div class="card ai-box" id="ai">
-   <div class="panel-title">✧ FlowMed AI Assistant</div>
-   <p>Explore healthcare technology, hospital workflows and platform features. This demo assistant does not provide medical diagnosis or treatment advice.</p>
-   <div class="ai-input"><input id="question" placeholder="Ask about FlowMed Nexus..."><button onclick="askAI()">Ask ↗</button></div>
-   <div id="reply">AI interface ready. Gemini integration is a separate next step.</div>
-  </div>
- </section>
-
- <section class="card auth-card" id="account">
-  <div class="panel-title">◎ FlowMed Account</div>
-  <p style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:14px">Create a demo account or sign in using Firebase Authentication. Use a test email and password only.</p>
-  <div class="auth-grid">
-   <div class="auth-form">
-    <input id="email" type="email" autocomplete="email" placeholder="Email address">
-    <input id="password" type="password" autocomplete="current-password" placeholder="Password (at least 6 characters)">
-    <div class="auth-buttons">
-     <button class="primary-btn" onclick="createAccount()">Create account</button>
-     <button class="secondary-btn" onclick="signIn()">Sign in</button>
-    </div>
-   </div>
-   <div>
-    <div class="user-line" id="userStatus">Not signed in.</div>
-    <button class="secondary-btn" onclick="signOutUser()">Sign out</button>
-    <div id="authMessage" aria-live="polite">Firebase is initializing…</div>
-   </div>
-  </div>
- </section>
-
- <div class="bottom-note">FLOWMED NEXUS 2.0 · STUDENT INNOVATION PROJECT · DEMONSTRATION DATA ONLY</div>
-</main>
-</div>
-
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap');
+:root{--green:#087f5b;--green2:#12a879;--lime:#c8f36a;--ink:#1d332b;--muted:#7b8b82;--bg:#f5f8f5;--line:#e7eee8;--purple:#8c6be0;--white:#fff;--shadow:0 12px 35px #153d2610}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif}button,input,select{font:inherit}button{cursor:pointer}.shell{min-height:100vh}.sidebar{position:fixed;inset:0 auto 0 0;width:250px;background:#fff;border-right:1px solid var(--line);padding:25px 17px;display:flex;flex-direction:column;z-index:20}.brand{padding:2px 10px 27px}.brand-name{font:800 22px Manrope;color:var(--green);letter-spacing:-.8px}.brand-name span{color:#a5cf40}.brand small{display:block;color:#91a097;font-size:9px;letter-spacing:1.8px;margin-top:5px}.nav-label{font-size:9px;font-weight:800;letter-spacing:1.5px;color:#a5b0a9;margin:14px 10px}.nav{display:grid;gap:5px}.nav button{width:100%;display:flex;align-items:center;gap:12px;border:0;background:transparent;color:#74847b;text-align:left;padding:12px 13px;border-radius:12px;font-size:12px;font-weight:700;transition:.2s}.nav button:hover{background:#f1f8f2;color:var(--green)}.nav button.active{background:#e8f6ec;color:var(--green);box-shadow:inset 3px 0 var(--green)}.nav-icon{font-size:17px;width:22px;text-align:center}.sidebar-bottom{margin-top:auto}.secure-note{background:#f0f8f1;border:1px solid #e2f0e5;border-radius:14px;padding:13px;font-size:10px;color:#668071;line-height:1.6}.secure-note b{display:block;color:var(--green);font-size:11px;margin-bottom:3px}.main{margin-left:250px;padding:27px 34px 35px;max-width:1700px}.topbar{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:25px}.eyebrow{font-size:10px;color:var(--green);font-weight:800;letter-spacing:1.3px;text-transform:uppercase}.topbar h1{font:800 25px Manrope;margin:4px 0 0;letter-spacing:-.7px}.top-right{display:flex;align-items:center;gap:12px}.date{font-size:11px;color:var(--muted);background:#fff;padding:10px 13px;border:1px solid var(--line);border-radius:30px}.status{font-size:10px;color:var(--green);background:#e8f7ed;border-radius:30px;padding:10px 13px;font-weight:800}.page{display:none;animation:appear .25s ease}.page.active{display:block}@keyframes appear{from{opacity:.3;transform:translateY(5px)}to{opacity:1;transform:none}}.hero{background:linear-gradient(112deg,#086b50,#13a979);color:#fff;border-radius:23px;padding:29px 30px;display:flex;justify-content:space-between;align-items:center;gap:20px;overflow:hidden;position:relative;box-shadow:0 15px 35px #087f5b22}.hero:after{content:'';position:absolute;width:260px;height:260px;border:38px solid #ffffff13;border-radius:50%;right:9%;top:-150px}.hero-copy{position:relative;z-index:1}.hero h2{font:800 24px Manrope;margin:0;max-width:540px}.hero p{font-size:12px;line-height:1.8;color:#d7f4e6;max-width:560px;margin:10px 0 0}.hero-tag{background:#c8f36a;color:#23422d;border:0;border-radius:11px;padding:12px 16px;font-weight:800;font-size:11px;position:relative;z-index:1;white-space:nowrap}.section-head{display:flex;justify-content:space-between;align-items:end;margin:25px 0 13px;gap:12px}.section-head h2{font:800 16px Manrope;margin:0}.section-head p{font-size:11px;color:var(--muted);margin:5px 0 0}.section-head .hint{font-size:10px;color:#94a198}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.card{background:#fff;border:1px solid var(--line);border-radius:17px;padding:18px;box-shadow:var(--shadow);min-width:0}.stat-head{display:flex;justify-content:space-between;align-items:center}.stat-icon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:17px}.mint{background:#e7f7ed}.lav{background:#f1edff}.yellow{background:#f4f9df}.peach{background:#fff1e7}.stat-value{font:800 27px Manrope;margin-top:14px;letter-spacing:-1px}.stat-label{font-size:11px;color:var(--muted);margin-top:3px}.stat-foot{font-size:9px;color:var(--green);font-weight:800;margin-top:12px}.grid-two{display:grid;grid-template-columns:1.25fr .85fr;gap:14px;margin-top:15px}.panel-title{font:800 13px Manrope;margin-bottom:14px}.metric{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #edf2ed;font-size:11px}.metric:last-child{border:0}.metric strong{font-size:11px}.bar{height:7px;background:#edf2ed;border-radius:10px;margin-top:8px;overflow:hidden}.bar span{display:block;height:100%;border-radius:10px;background:linear-gradient(90deg,var(--green),#b6e75c)}.badge{font-size:9px;font-weight:800;padding:5px 8px;border-radius:30px;background:#e8f7ed;color:var(--green)}.badge.purple{background:#f1edff;color:#7959c9}.badge.orange{background:#fff1e7;color:#b36a32}.table-wrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}table{width:100%;border-collapse:collapse;min-width:560px}th,td{text-align:left;padding:14px 16px;border-bottom:1px solid #edf2ed;font-size:11px}th{font-size:9px;color:#91a097;letter-spacing:1px;text-transform:uppercase;background:#fbfdfb}tr:last-child td{border:0}.person{display:flex;align-items:center;gap:9px;font-weight:700}.avatar{width:29px;height:29px;display:grid;place-items:center;border-radius:10px;background:#e8f6ec;color:var(--green);font-size:10px;font-weight:800}.toolbar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin:14px 0}.field{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:11px;outline:none;color:var(--ink)}.field:focus{border-color:#8bc9a2;box-shadow:0 0 0 3px #e5f5e9}.search{min-width:210px;flex:1}.btn{border:0;border-radius:10px;padding:10px 14px;font-size:10px;font-weight:800}.btn-primary{background:var(--green);color:#fff}.btn-soft{background:#eaf6ed;color:var(--green)}.btn-purple{background:#8c6be0;color:#fff}.bed-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.bed-card{padding:17px}.bed-card h3{font:800 12px Manrope;margin:0}.bed-number{font:800 25px Manrope;margin:12px 0 3px}.bed-card p{font-size:10px;color:var(--muted);margin:0}.lab-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.lab-card h3{font:800 12px Manrope;margin:0 0 8px}.lab-card p{font-size:10px;color:var(--muted);line-height:1.6}.lab-card .badge{display:inline-block;margin-top:8px}.ai-panel{background:linear-gradient(140deg,#f1edff,#fbfaff);border:1px solid #e9e2ff;border-radius:18px;padding:23px}.ai-panel h3{font:800 17px Manrope;margin:0}.ai-panel p{font-size:11px;line-height:1.7;color:#756b8d}.ai-input{display:flex;gap:8px;margin-top:15px}.ai-input input{flex:1;min-width:0;border:1px solid #e3dcf5;border-radius:10px;padding:12px;font-size:11px}.ai-reply{font-size:11px;line-height:1.7;color:#5e5083;margin-top:13px;white-space:pre-wrap}.auth-layout{display:grid;grid-template-columns:1fr 1fr;gap:14px}.auth-card h3{font:800 13px Manrope;margin:0 0 8px}.auth-card p{font-size:10px;color:var(--muted);line-height:1.6}.auth-form{display:grid;gap:9px;margin-top:14px}.auth-form input{width:100%}.auth-actions{display:flex;gap:8px;flex-wrap:wrap}.message{font-size:10px;color:var(--green);margin-top:12px;line-height:1.6;overflow-wrap:anywhere}.footer{text-align:center;color:#a1ada5;font-size:9px;margin-top:28px}.empty-note{padding:25px;text-align:center;color:var(--muted);font-size:11px}
+@media(max-width:1000px){.sidebar{width:210px}.main{margin-left:210px;padding:23px 20px}.stats{grid-template-columns:repeat(2,1fr)}.bed-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:650px){.sidebar{width:124px;padding:16px 8px}.brand{padding:3px 4px 18px}.brand-name{font-size:16px}.brand small{font-size:7px;letter-spacing:1px}.nav-label{font-size:8px;margin:12px 5px}.nav button{gap:6px;padding:11px 7px;font-size:9px;border-radius:9px}.nav-icon{font-size:14px;width:17px}.secure-note{font-size:8px;padding:9px}.secure-note b{font-size:9px}.main{margin-left:124px;padding:17px 11px 25px}.topbar{align-items:flex-start;margin-bottom:17px}.topbar h1{font-size:18px}.eyebrow{font-size:8px}.top-right{display:grid;gap:5px;justify-items:end}.date,.status{font-size:8px;padding:7px 9px}.hero{padding:19px 16px;border-radius:17px;display:block}.hero h2{font-size:17px}.hero p{font-size:10px}.hero-tag{margin-top:13px;padding:10px 12px;font-size:9px}.stats{gap:8px}.card{padding:12px;border-radius:13px}.stat-icon{width:30px;height:30px;font-size:14px}.stat-value{font-size:21px;margin-top:10px}.stat-label{font-size:9px}.stat-foot{font-size:8px}.section-head{margin:19px 0 10px}.section-head h2{font-size:13px}.section-head p,.section-head .hint{font-size:9px}.grid-two,.auth-layout{grid-template-columns:1fr;gap:9px}.bed-grid{grid-template-columns:repeat(2,1fr);gap:8px}.lab-grid{grid-template-columns:1fr}.toolbar{gap:6px}.field{font-size:9px;padding:9px}.search{min-width:100%;}.btn{font-size:9px;padding:9px 10px}.ai-panel{padding:15px}.ai-panel h3{font-size:14px}.ai-panel p{font-size:10px}.ai-input{flex-direction:column}.ai-input button{padding:11px}.footer{font-size:8px}}
+</style></head><body><div class="shell">
+<aside class="sidebar"><div class="brand"><div class="brand-name">FlowMed <span>Nexus</span></div><small>SMART HEALTHCARE OPERATIONS</small></div>
+<div class="nav-label">WORKSPACE</div><nav class="nav" aria-label="Main navigation">
+<button class="active" data-page="dashboard"><span class="nav-icon">◫</span>Dashboard</button>
+<button data-page="patients"><span class="nav-icon">♙</span>Patients</button>
+<button data-page="appointments"><span class="nav-icon">▦</span>Appointments</button>
+<button data-page="beds"><span class="nav-icon">▤</span>Bed Management</button>
+<button data-page="labs"><span class="nav-icon">⚗</span>Lab Reports</button>
+<button data-page="assistant"><span class="nav-icon">✧</span>AI Assistant</button>
+<button data-page="account"><span class="nav-icon">◉</span>Account</button></nav>
+<div class="sidebar-bottom"><div class="secure-note"><b>✦ Demo environment</b>Use fictional sample data only. Not for real patient care or clinical decisions.</div></div></aside>
+<main class="main"><header class="topbar"><div><div class="eyebrow">FLOWMED NEXUS 2.0</div><h1 id="pageTitle">Dashboard overview</h1></div><div class="top-right"><span class="date" id="date"></span><span class="status" id="systemStatus">● Connecting</span></div></header>
+<!-- DASHBOARD -->
+<section class="page active" id="page-dashboard"><div class="hero"><div class="hero-copy"><h2>Healthcare operations, made clearer.</h2><p>A unified workspace concept for patient flow, appointments, bed capacity and laboratory updates. Explore each module from the left navigation.</p></div><button class="hero-tag" onclick="showPage('patients')">Explore workspace →</button></div>
+<div class="section-head"><div><h2>Today's snapshot</h2><p>Illustrative demo indicators across the hospital workspace</p></div><span class="hint">DEMO DATA</span></div>
+<div class="stats"><div class="card"><div class="stat-head"><span class="stat-icon mint">♙</span><span class="badge">+8.2%</span></div><div class="stat-value">120</div><div class="stat-label">Patient records</div><div class="stat-foot">↗ Sample total</div></div><div class="card"><div class="stat-head"><span class="stat-icon lav">▦</span><span class="badge purple">Today</span></div><div class="stat-value">18</div><div class="stat-label">Appointments</div><div class="stat-foot">↗ Scheduled demo count</div></div><div class="card"><div class="stat-head"><span class="stat-icon yellow">▤</span><span class="badge">75% free</span></div><div class="stat-value">24</div><div class="stat-label">Beds available</div><div class="stat-foot">↗ Sample capacity</div></div><div class="card"><div class="stat-head"><span class="stat-icon peach">⚗</span><span class="badge orange">6 pending</span></div><div class="stat-value">32</div><div class="stat-label">Lab reports</div><div class="stat-foot">↗ Sample reports</div></div></div>
+<div class="grid-two"><div class="card"><div class="panel-title">Operational overview</div><div class="metric"><span>Patient flow capacity</span><strong>78%</strong></div><div class="bar"><span style="width:78%"></span></div><div class="metric"><span>Bed occupancy</span><strong>25%</strong></div><div class="bar"><span style="width:25%"></span></div><div class="metric"><span>Lab report completion</span><strong>81%</strong></div><div class="bar"><span style="width:81%"></span></div></div><div class="card"><div class="panel-title">Quick navigation</div><div class="metric"><span>Patient directory</span><button class="btn btn-soft" onclick="showPage('patients')">Open →</button></div><div class="metric"><span>Today's appointments</span><button class="btn btn-soft" onclick="showPage('appointments')">Open →</button></div><div class="metric"><span>Bed availability</span><button class="btn btn-soft" onclick="showPage('beds')">Open →</button></div><div class="metric"><span>Laboratory reports</span><button class="btn btn-soft" onclick="showPage('labs')">Open →</button></div></div></div></section>
+<!-- PATIENTS -->
+<section class="page" id="page-patients"><div class="section-head"><div><h2>Patient directory</h2><p>Search and review fictional patient profiles for the prototype</p></div><span class="hint">SAMPLE RECORDS</span></div><div class="toolbar"><input id="patientSearch" class="field search" placeholder="Search by patient name or ID…" oninput="filterTable('patientSearch','patientRows')"><button class="btn btn-primary" onclick="alert('Patient creation form can be connected to Firestore in the next development step.')">＋ Add patient</button></div><div class="table-wrap"><table><thead><tr><th>Patient</th><th>Patient ID</th><th>Department</th><th>Visit status</th></tr></thead><tbody id="patientRows"><tr><td><div class="person"><span class="avatar">AR</span>Alex Rivera</div></td><td>FM-1001</td><td>Cardiology</td><td><span class="badge">Checked in</span></td></tr><tr><td><div class="person"><span class="avatar">SM</span>Sara Morgan</div></td><td>FM-1002</td><td>Neurology</td><td><span class="badge purple">Scheduled</span></td></tr><tr><td><div class="person"><span class="avatar">JK</span>Jordan Kim</div></td><td>FM-1003</td><td>General Medicine</td><td><span class="badge orange">Under review</span></td></tr><tr><td><div class="person"><span class="avatar">DP</span>Devi Patel</div></td><td>FM-1004</td><td>Orthopaedics</td><td><span class="badge">Completed</span></td></tr></tbody></table></div><p class="message">These are fictional demonstration records, not real patient information.</p></section>
+<!-- APPOINTMENTS -->
+<section class="page" id="page-appointments"><div class="section-head"><div><h2>Appointment schedule</h2><p>View the sample schedule and appointment status</p></div><span class="hint">TODAY · DEMO</span></div><div class="toolbar"><input id="appointmentSearch" class="field search" placeholder="Search appointments…" oninput="filterTable('appointmentSearch','appointmentRows')"><button class="btn btn-primary" onclick="alert('Appointment booking can be connected to Firestore next.')">＋ New appointment</button></div><div class="table-wrap"><table><thead><tr><th>Time</th><th>Patient</th><th>Department</th><th>Consultant</th><th>Status</th></tr></thead><tbody id="appointmentRows"><tr><td>09:00 AM</td><td>Alex Rivera</td><td>Cardiology</td><td>Dr. Wilson</td><td><span class="badge">Checked in</span></td></tr><tr><td>10:30 AM</td><td>Sara Morgan</td><td>Neurology</td><td>Dr. Chen</td><td><span class="badge purple">Upcoming</span></td></tr><tr><td>11:15 AM</td><td>Jordan Kim</td><td>General Medicine</td><td>Dr. Rao</td><td><span class="badge orange">Waiting</span></td></tr><tr><td>02:00 PM</td><td>Devi Patel</td><td>Orthopaedics</td><td>Dr. Thomas</td><td><span class="badge purple">Upcoming</span></td></tr></tbody></table></div></section>
+<!-- BEDS -->
+<section class="page" id="page-beds"><div class="section-head"><div><h2>Smart bed management</h2><p>Sample capacity by ward; live availability is not connected yet</p></div><span class="hint">CAPACITY VIEW</span></div><div class="bed-grid"><div class="card bed-card"><span class="stat-icon mint">▤</span><h3>General Ward</h3><div class="bed-number">12 / 16</div><p>Available beds</p><div class="bar"><span style="width:25%"></span></div></div><div class="card bed-card"><span class="stat-icon lav">▤</span><h3>ICU</h3><div class="bed-number">4 / 8</div><p>Available beds</p><div class="bar"><span style="width:50%"></span></div></div><div class="card bed-card"><span class="stat-icon yellow">▤</span><h3>Paediatrics</h3><div class="bed-number">5 / 6</div><p>Available beds</p><div class="bar"><span style="width:17%"></span></div></div><div class="card bed-card"><span class="stat-icon peach">▤</span><h3>Emergency</h3><div class="bed-number">3 / 6</div><p>Available beds</p><div class="bar"><span style="width:50%"></span></div></div></div><div class="card" style="margin-top:14px"><div class="panel-title">Capacity note</div><p style="font-size:11px;color:var(--muted);line-height:1.7;margin:0">The figures above are static prototype values to demonstrate the interface. Real-time bed updates require a secured Firestore data model and authorized staff access.</p></div></section>
+<!-- LABS -->
+<section class="page" id="page-labs"><div class="section-head"><div><h2>Laboratory reports</h2><p>Sample report workflow and readiness indicators</p></div><span class="hint">DEMO REPORTS</span></div><div class="lab-grid"><div class="card lab-card"><span class="stat-icon mint">⚗</span><h3>Blood Panel</h3><p>Sample record · LAB-2041<br>Requested: 08:30 AM</p><span class="badge">Completed</span></div><div class="card lab-card"><span class="stat-icon lav">⚗</span><h3>Thyroid Profile</h3><p>Sample record · LAB-2042<br>Requested: 09:10 AM</p><span class="badge orange">Processing</span></div><div class="card lab-card"><span class="stat-icon yellow">⚗</span><h3>Lipid Profile</h3><p>Sample record · LAB-2043<br>Requested: 10:00 AM</p><span class="badge purple">Awaiting review</span></div></div><div class="card" style="margin-top:14px"><div class="panel-title">Report handling</div><p style="font-size:11px;color:var(--muted);line-height:1.7;margin:0">This prototype displays workflow status only. It does not store, interpret or validate medical test results.</p></div></section>
+<!-- AI -->
+<section class="page" id="page-assistant"><div class="section-head"><div><h2>AI operations assistant</h2><p>Concept interface for operational questions—not clinical diagnosis</p></div><span class="hint">AI PREVIEW</span></div><div class="ai-panel"><h3>✧ How can I help with hospital operations?</h3><p>Ask a general workflow question, such as how to organize appointment queues or improve bed coordination. Gemini is not connected yet; this is a safe preview interface.</p><div class="ai-input"><input id="question" placeholder="Ask about workflow, scheduling or coordination…"><button class="btn btn-purple" onclick="askAI()">Send question ↗</button></div><div id="reply" class="ai-reply">Your response will appear here. This preview does not provide diagnosis or treatment recommendations.</div></div></section>
+<!-- ACCOUNT -->
+<section class="page" id="page-account"><div class="section-head"><div><h2>Account & security</h2><p>Firebase Authentication connection for the prototype</p></div><span class="hint">ACCOUNT SETTINGS</span></div><div class="auth-layout"><div class="card auth-card"><h3>Sign in or create an account</h3><p>Use your demo email and password. Passwords are handled by Firebase Authentication.</p><div class="auth-form"><input id="email" class="field" type="email" placeholder="Email address" autocomplete="email"><input id="password" class="field" type="password" placeholder="Password (minimum 6 characters)" autocomplete="current-password"><div class="auth-actions"><button class="btn btn-primary" onclick="createAccount()">Create account</button><button class="btn btn-soft" onclick="signIn()">Sign in</button><button class="btn btn-soft" onclick="signOutUser()">Sign out</button></div></div><div id="authMessage" class="message">Checking Firebase connection…</div></div><div class="card auth-card"><h3>Current session</h3><p>Authentication state for this browser session.</p><div class="metric"><span>Signed-in user</span><strong id="userStatus">Not signed in</strong></div><div class="metric"><span>Authentication</span><strong id="authState">Checking…</strong></div><div class="metric"><span>Database</span><strong id="dbState">Initializing…</strong></div><p class="message">Firestore is initialized, but patient, appointment, bed and lab data are still sample-only in this frontend.</p></div></div></section>
+<div class="footer">FLOWMED NEXUS 2.0 · STUDENT INNOVATION PROTOTYPE · FICTIONAL DEMO DATA ONLY</div></main></div>
+<script>
+const titles={dashboard:'Dashboard overview',patients:'Patient directory',appointments:'Appointment schedule',beds:'Bed management',labs:'Laboratory reports',assistant:'AI operations assistant',account:'Account & security'};
+function showPage(name){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+name));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===name));document.getElementById('pageTitle').textContent=titles[name]||'FlowMed Nexus';window.scrollTo({top:0,behavior:'smooth'});}
+document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
+function filterTable(inputId,rowsId){const q=document.getElementById(inputId).value.toLowerCase();document.querySelectorAll('#'+rowsId+' tr').forEach(row=>row.style.display=row.innerText.toLowerCase().includes(q)?'':'none');}
+function askAI(){const q=document.getElementById('question').value.trim();document.getElementById('reply').textContent=q?'Preview only: Your question has been received. Gemini AI is not connected yet. A secure backend is required before enabling AI responses. Do not enter personal or patient information.':'Please enter a question first.';}
+document.getElementById('date').textContent=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+</script>
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-import {
-  getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-  onAuthStateChanged, signOut
-} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
+import { getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
+import { getFirestore } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
 const firebaseConfig = {
   apiKey: "AIzaSyDaGqCp7gomqV5EsQhquoRjaWmcQSUIbLU",
   authDomain: "flowmednexus2.firebaseapp.com",
@@ -181,87 +57,16 @@ const firebaseConfig = {
   appId: "1:456773833637:web:29c714414814ddea7c8e4c",
   measurementId: "G-HTSJXJWJBN"
 };
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-// Expose initialized services for future app features.
-window.flowmedAuth = auth;
-window.flowmedDb = db;
-
-const message = document.getElementById("authMessage");
-const userStatus = document.getElementById("userStatus");
-const systemStatus = document.getElementById("systemStatus");
-
-document.getElementById("date").textContent =
-  new Date().toLocaleDateString("en-IN", {day:"numeric",month:"short",year:"numeric"});
-
-systemStatus.textContent = "● Firebase initialized";
-
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    userStatus.textContent = "Signed in as: " + user.email;
-    message.textContent = "Authentication is active. Firestore is initialized and ready for secured database features.";
-  } else {
-    userStatus.textContent = "Not signed in.";
-    message.textContent = "Firebase is ready. Create a demo account or sign in.";
-  }
-});
-
-function getCredentials() {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-  if (!email || !password) throw new Error("Enter both email and password.");
-  if (password.length < 6) throw new Error("Password must contain at least 6 characters.");
-  return {email, password};
-}
-
-window.createAccount = async function() {
-  try {
-    message.textContent = "Creating account…";
-    const {email,password} = getCredentials();
-    await createUserWithEmailAndPassword(auth,email,password);
-    message.textContent = "Account created successfully.";
-  } catch (error) {
-    message.textContent = error.message;
-  }
-};
-
-window.signIn = async function() {
-  try {
-    message.textContent = "Signing in…";
-    const {email,password} = getCredentials();
-    await signInWithEmailAndPassword(auth,email,password);
-    message.textContent = "Signed in successfully.";
-  } catch (error) {
-    message.textContent = error.message;
-  }
-};
-
-window.signOutUser = async function() {
-  try {
-    await signOut(auth);
-    message.textContent = "You have signed out.";
-  } catch (error) {
-    message.textContent = error.message;
-  }
-};
-
-window.askAI = function() {
-  const question = document.getElementById("question").value.trim();
-  const reply = document.getElementById("reply");
-  reply.textContent = question
-    ? "Demo mode: your question was entered. Gemini AI will be connected through a secure backend in a later step. Do not use this demo for diagnosis or treatment."
-    : "Please enter a question first.";
-};
-
-document.querySelectorAll(".nav a").forEach(link => {
-  link.addEventListener("click", () => {
-    document.querySelectorAll(".nav a").forEach(item => item.classList.remove("active"));
-    link.classList.add("active");
-  });
-});
-</script>
-</body>
-</html>
+try{
+ const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+ window.flowmedAuth=auth;window.flowmedDb=db;
+ document.getElementById('systemStatus').textContent='● Firebase connected';
+ document.getElementById('authState').textContent='Connected';document.getElementById('dbState').textContent='Initialized';
+ const msg=document.getElementById('authMessage');
+ onAuthStateChanged(auth,user=>{document.getElementById('userStatus').textContent=user?user.email:'Not signed in';msg.textContent=user?'Signed in successfully. Firestore is initialized; app data integration is the next step.':'Firebase is ready. Sign in with your demo account.';});
+ function credentials(){const email=document.getElementById('email').value.trim(),password=document.getElementById('password').value;if(!email||!password)throw new Error('Enter both email and password.');if(password.length<6)throw new Error('Password must be at least 6 characters.');return{email,password};}
+ window.createAccount=async()=>{try{msg.textContent='Creating account…';const{email,password}=credentials();await createUserWithEmailAndPassword(auth,email,password);msg.textContent='Account created successfully.';}catch(e){msg.textContent=e.message;}};
+ window.signIn=async()=>{try{msg.textContent='Signing in…';const{email,password}=credentials();await signInWithEmailAndPassword(auth,email,password);msg.textContent='Signed in successfully.';}catch(e){msg.textContent=e.message;}};
+ window.signOutUser=async()=>{try{await signOut(auth);msg.textContent='Signed out.';}catch(e){msg.textContent=e.message;}};
+}catch(error){document.getElementById('systemStatus').textContent='● Firebase error';document.getElementById('authMessage').textContent='Firebase setup error: '+error.message;document.getElementById('authState').textContent='Error';document.getElementById('dbState').textContent='Unavailable';}
+</script></body></html>
