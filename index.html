@@ -190,10 +190,10 @@ function showAuditWarning(message){
   $("auditRows").replaceChildren();
   const tr=document.createElement("tr"),td=safeText("td",message);td.colSpan=4;tr.appendChild(td);$("auditRows").appendChild(tr);
 }
-window.clearWardForm=()=>{
+window.clearWardForm=(keepMessage=false)=>{
   $("wardDocPath").value="";$("parentSopId").disabled=false;$("parentSopId").value="";
   $("wardName").value="";$("totalBeds").value="";$("availableBeds").value="";
-  $("wardStatus").value="Active";$("adminMessage").textContent="";
+  $("wardStatus").value="Active";if(!keepMessage)$("adminMessage").textContent="";
 };
 function editWard(path){
   const w=wardsCache.find(x=>x.path===path);if(!w)return;
@@ -212,13 +212,12 @@ window.saveWard=async()=>{
   const payload={ward_name:name,total_beds:total,available_beds:free,status};
   try{
     $("adminMessage").textContent="Saving ward…";
-    let savedRef;
     if(path){
       const existing=wardsCache.find(w=>w.path===path);
       if(!existing)throw new Error("Ward is not in the current loaded list. Refresh and try again.");
-      await updateDoc(existing.ref,payload);savedRef=existing.ref;
+      await updateDoc(existing.ref,payload);
     }else{
-      savedRef=await addDoc(collection(db,"sop_documents",parentId,"Wards"),payload);
+      await addDoc(collection(db,"sop_documents",parentId,"Wards"),payload);
     }
     $("adminMessage").textContent="Ward saved successfully. Writing audit entry…";
     try{
@@ -228,8 +227,8 @@ window.saveWard=async()=>{
       console.error("Ward saved, but audit log failed:",auditError);
       $("adminMessage").textContent="Ward was saved, but the audit log could not be written: "+auditError.message;
     }
-    window.clearWardForm();
-    $("adminMessage").textContent += " The live ward list will refresh automatically.";
+    window.clearWardForm(true);
+    $("adminMessage").textContent+=" The live ward list will refresh automatically.";
     if(isAdmin())await loadAuditLogs();
   }catch(error){
     console.error(error);
