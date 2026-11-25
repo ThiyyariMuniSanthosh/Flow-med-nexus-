@@ -6,7 +6,155 @@
 <meta name="theme-color" content="#065f46">
 <meta name="description" content="FlowMed Nexus 2.0 Autonomous Hospital Operations and AI Bed-Balancing Command Center">
 <title>FlowMed Nexus 2.0 | Autonomous Hospital Operations &amp; AI Command</title>
-<link rel="stylesheet" href="./styles.css">
+<style>
+:root{
+  --green:#065f46;--green-mid:#059669;--lime:#bef264;--ink:#0f2922;--muted:#475569;
+  --bg:#f3f7f5;--card:#ffffff;--line:#e2ebe6;--shadow:0 10px 30px rgba(6,95,70,0.06);
+  --amber:#d97706;--red:#dc2626;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit}
+button{cursor:pointer;transition:all .16s ease}
+button:active{transform:scale(.98)}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--green-mid);outline-offset:2px}
+
+.skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+.skip-link:focus{position:fixed;left:14px;top:14px;width:auto;height:auto;padding:10px 14px;background:#065f46;color:#fff;border-radius:10px;z-index:100;font-weight:800;text-decoration:none}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* Sidebar */
+.sidebar{position:fixed;inset:0 auto 0 0;width:250px;background:#fff;border-right:1px solid var(--line);padding:22px 16px;display:flex;flex-direction:column;z-index:10}
+.brand{padding:2px 10px 20px;border-bottom:1px solid var(--line)}
+.brand-row{display:flex;align-items:center;gap:9px}
+.brand-logo{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#065f46,#10b981);color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px}
+.brand-name{font:800 20px system-ui,-apple-system,sans-serif;color:var(--ink);letter-spacing:-.4px}
+.brand-name span{color:var(--green-mid)}
+.brand small{display:block;color:var(--muted);font-size:9px;font-weight:700;letter-spacing:1.4px;margin-top:6px}
+.nav-label{font-size:9px;font-weight:800;letter-spacing:1.5px;color:#475569;margin:16px 10px 8px}
+.nav{display:grid;gap:4px}
+.nav button{border:0;background:transparent;color:#334155;text-align:left;padding:11px 12px;border-radius:11px;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:space-between}
+.nav button.active,.nav button:hover{background:#ecfdf5;color:var(--green)}
+.nav-left{display:flex;align-items:center;gap:9px}
+.nav-pill{font-size:9px;padding:2px 7px;border-radius:20px;background:#d1fae5;color:#065f46;font-weight:800}
+.secure-note{margin-top:auto;background:linear-gradient(145deg,#ecfdf5,#f0fdf4);border:1px solid #bbf7d0;border-radius:14px;padding:12px;font-size:10px;color:#14532d;line-height:1.55}
+.secure-note b{display:block;font-size:11px;margin-bottom:2px}
+
+/* Main & Topbar */
+.main{margin-left:250px;padding:24px 30px;max-width:1680px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:22px}
+.eyebrow{font-size:10px;color:var(--green);font-weight:800;letter-spacing:1.4px;display:flex;align-items:center;gap:6px}
+.topbar h1{font:800 24px system-ui,-apple-system,sans-serif;margin:4px 0 0;letter-spacing:-.5px}
+.top-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pill{font-size:10px;padding:8px 13px;border-radius:30px;background:#fff;border:1px solid var(--line);font-weight:700;color:#334155}
+.pill-live{background:#ecfdf5;border-color:#a7f3d0;color:#065f46;display:flex;align-items:center;gap:6px}
+.pulse{width:7px;height:7px;border-radius:50%;background:#059669;box-shadow:0 0 0 3px rgba(16,185,129,.25)}
+
+/* Hero Banner */
+.page{display:none;animation:fadeIn .22s ease}.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.hero{background:linear-gradient(120deg,#042f2e 0%,#065f46 55%,#059669 100%);color:#fff;border-radius:22px;padding:28px;display:flex;justify-content:space-between;align-items:center;gap:20px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-40px;top:-40px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(190,242,100,.22),transparent 70%);pointer-events:none}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);padding:5px 10px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:.8px;margin-bottom:10px;color:#ecfdf5}
+.hero h2{font:800 24px system-ui,-apple-system,sans-serif;margin:0;letter-spacing:-.4px}
+.hero p{font-size:12px;line-height:1.65;color:#ecfdf5;max-width:620px;margin:8px 0 0}
+.hero-actions{display:flex;gap:9px;flex-wrap:wrap;z-index:1}
+.hero-cta{background:var(--lime);color:#052e16;border:0;border-radius:12px;padding:12px 16px;font-weight:800;font-size:11px;box-shadow:0 8px 20px rgba(0,0,0,.18)}
+.hero-ghost{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:12px;padding:12px 15px;font-weight:700;font-size:11px}
+
+/* Sections & Cards */
+.section-head{display:flex;justify-content:space-between;align-items:end;margin:24px 0 12px;gap:10px}
+.section-head h2{font:800 16px system-ui,-apple-system,sans-serif;margin:0}
+.section-head p{font-size:11px;color:#475569;margin:4px 0 0}
+.hint{font-size:9px;font-weight:800;color:#334155;background:#e2e8f0;padding:4px 8px;border-radius:6px;letter-spacing:.8px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--shadow);min-width:0}
+.stat-head,.metric{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.stat-icon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:16px}
+.mint{background:#dcfce7;color:#14532d}.lav{background:#ede9fe;color:#5b21b6}.yellow{background:#fef9c3;color:#854d0e}.peach{background:#ffedd5;color:#9a3412}
+.stat-value,.bed-number{font:800 28px system-ui,-apple-system,sans-serif;margin-top:12px;letter-spacing:-.5px}
+.stat-label{font-size:11px;color:#475569;margin-top:3px;font-weight:600}
+.stat-foot{font-size:10px;color:var(--green);font-weight:800;margin-top:6px}
+.badge{font-size:9px;font-weight:800;padding:4px 9px;border-radius:30px;background:#ecfdf5;color:#065f46}
+.badge-warn{background:#fef3c7;color:#92400e}
+.badge-crit{background:#fee2e2;color:#991b1b}
+
+/* AI Insight Strip */
+.ai-banner{margin-top:14px;background:linear-gradient(90deg,#f0fdf4,#ecfeff);border:1px solid #a7f3d0;border-radius:16px;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.ai-banner-text{font-size:11.5px;line-height:1.55;color:#0f2922}
+
+/* Grids & Bars */
+.grid-two{display:grid;grid-template-columns:1.25fr .85fr;gap:14px;margin-top:14px}
+.panel-title{font:800 13.5px system-ui,-apple-system,sans-serif;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.metric{padding:11px 0;border-bottom:1px solid #f1f5f9;font-size:11.5px}
+.metric:last-child{border:0}
+.bar{height:8px;background:#e2e8f0;border-radius:10px;margin-top:7px;overflow:hidden}
+.bar span{display:block;height:100%;background:linear-gradient(90deg,#059669,#84cc16);border-radius:10px;transition:width .3s ease}
+.bar span.warn{background:linear-gradient(90deg,#d97706,#fbbf24)}
+.bar span.crit{background:linear-gradient(90deg,#dc2626,#f87171)}
+.w-78{width:78%}.w-65{width:65%}.w-84{width:84%}
+
+/* Controls & Beds */
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:13px 0}
+.field{background:#fff;border:1px solid #cbd5e1;border-radius:11px;padding:10px 12px;font-size:11px;outline:none;color:var(--ink);min-width:0}
+.field:focus{border-color:var(--green-mid);box-shadow:0 0 0 3px rgba(5,150,105,.15)}
+.search{min-width:190px;flex:1}
+.btn{border:0;border-radius:10px;padding:9px 13px;font-size:10.5px;font-weight:800}
+.btn-primary{background:var(--green);color:#fff}
+.btn-primary:hover{background:#047857}
+.btn-soft{background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0}
+.btn-soft:hover{background:#d1fae5}
+.btn-danger{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
+.btn-xs{padding:6px 10px;font-size:10px;border-radius:8px}
+.ml-5{margin-left:5px}
+.mt-14{margin-top:14px}
+.flex-gap-6{display:flex;gap:6px}
+
+.bed-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+.bed-card{display:flex;flex-direction:column;justify-content:space-between}
+.bed-top{display:flex;justify-content:space-between;align-items:center}
+.bed-card h3{font:800 13px system-ui,-apple-system,sans-serif;margin:10px 0 0}
+.bed-card p{font-size:10.5px;color:#475569;margin:6px 0}
+.bed-controls{display:flex;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid #f1f5f9}
+.bed-controls button{flex:1}
+
+/* Tables & Forms */
+.table-wrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;min-width:540px}
+th,td{text-align:left;padding:12px 15px;border-bottom:1px solid #f1f5f9;font-size:11px}
+th{font-size:9.5px;color:#334155;text-transform:uppercase;letter-spacing:.7px;background:#f8fafc}
+tr:last-child td{border:0}
+.status-dot{display:inline-block;padding:3px 8px;border-radius:20px;font-size:9.5px;font-weight:800;background:#ecfdf5;color:#065f46}
+
+/* AI Assistant Box */
+.chip-row{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}
+.chip{background:#f1f5f9;border:1px solid #cbd5e1;color:#1e293b;border-radius:20px;padding:7px 12px;font-size:10.5px;font-weight:700}
+.chip:hover{background:#ecfdf5;border-color:#a7f3d0;color:#065f46}
+.ai-reply-box{margin-top:12px;background:#f8fafc;border:1px solid #cbd5e1;border-radius:14px;padding:15px;font-size:11.5px;line-height:1.65;color:#0f172a;white-space:pre-line}
+
+.auth-layout,.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.auth-form{display:grid;gap:10px;margin-top:12px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.form-grid .wide{grid-column:1/-1}
+.message{font-size:10.5px;color:var(--green);font-weight:700;margin-top:10px;line-height:1.5}
+.small{font-size:10.5px;color:#475569;line-height:1.6}
+.footer{text-align:center;color:#475569;font-size:10px;margin-top:28px;padding-bottom:12px}
+
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+@media(max-width:980px){
+  .sidebar{width:210px}.main{margin-left:210px;padding:20px}
+  .stats{grid-template-columns:repeat(2,1fr)}.bed-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:650px){
+  .sidebar{width:118px;padding:14px 7px}.brand{padding:2px 4px 14px}.brand-logo{width:24px;height:24px;font-size:12px}.brand-name{font-size:14px}.brand small{font-size:7px}
+  .nav-label{font-size:8px;margin:10px 4px 6px}.nav button{padding:9px 7px;font-size:9.5px}.nav-pill{display:none}.secure-note{font-size:8px;padding:8px}
+  .main{margin-left:118px;padding:14px 10px}.topbar{align-items:flex-start}.topbar h1{font-size:17px}.eyebrow{font-size:8px}.top-right{display:grid;justify-items:end}.pill{font-size:8.5px;padding:6px 9px}
+  .hero{display:block;padding:18px}.hero h2{font-size:18px}.hero p{font-size:10.5px}.hero-actions{margin-top:12px}.hero-cta,.hero-ghost{font-size:10px;padding:10px 12px}
+  .stats{gap:8px}.card{padding:12px;border-radius:14px}.stat-value,.bed-number{font-size:21px}.stat-label,.stat-foot{font-size:9px}
+  .grid-two,.auth-layout,.admin-grid,.bed-grid{grid-template-columns:1fr;gap:9px}
+  .section-head h2{font-size:14px}.field{font-size:10px;padding:9px}.search{min-width:100%}.form-grid{grid-template-columns:1fr}.form-grid .wide{grid-column:auto}
+}
+</style>
 </head>
 <body>
 <a href="#main-content" class="skip-link">Skip to main content</a>
@@ -192,6 +340,343 @@
 <footer class="footer">FlowMed Nexus 2.0 · PromptWars × AI Vibeathon 2026 Prototype · Fictional Demo Data</footer>
 </main>
 </div>
-<script src="./app.js" defer></script>
+
+<script>
+(() => {
+  "use strict";
+  const $ = id => document.getElementById(id);
+
+  const defaultWards = [
+    { id: "emergency", name: "Emergency & Trauma", total: 20, free: 6, status: "Active" },
+    { id: "general", name: "General Medicine", total: 50, free: 18, status: "Active" },
+    { id: "icu", name: "Intensive Care (ICU)", total: 15, free: 3, status: "Active" },
+    { id: "paediatrics", name: "Paediatrics Ward", total: 25, free: 11, status: "Active" }
+  ];
+
+  let wards = structuredClone(defaultWards);
+  let auditLogs = [
+    { time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), action: "SYSTEM_BOOT", ward: "4 Wards Online", actor: "ops.admin@flowmed-nexus.demo" }
+  ];
+
+  const titles = {
+    dashboard: "Dashboard overview",
+    patients: "Patient triage & directory",
+    appointments: "Appointment schedule",
+    beds: "Smart bed management",
+    labs: "Diagnostic lab pipeline",
+    assistant: "AI operations copilot",
+    account: "Workspace & access",
+    admin: "Admin control centre"
+  };
+
+  function sanitizeText(val) {
+    return String(val ?? "").replace(/[<>\"'`;]/g, "").trim();
+  }
+
+  function showPage(page) {
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    const target = $("page-" + page);
+    if (!target) return;
+    target.classList.add("active");
+    document.querySelectorAll(".nav button").forEach(b => {
+      const active = b.dataset.page === page;
+      b.classList.toggle("active", active);
+      if (active) b.setAttribute("aria-current", "page");
+      else b.removeAttribute("aria-current");
+    });
+    $("pageTitle").textContent = titles[page] || "FlowMed Nexus 2.0";
+  }
+
+  function filterTable(inputId, rowsId) {
+    const term = $(inputId).value.toLowerCase();
+    for (const row of $(rowsId).rows) {
+      row.style.display = row.innerText.toLowerCase().includes(term) ? "" : "none";
+    }
+  }
+
+  function computeCapacityMetrics(wardList) {
+    const total = wardList.reduce((s, w) => s + w.total, 0);
+    const free = wardList.reduce((s, w) => s + w.free, 0);
+    const occupancy = total ? Math.round((total - free) / total * 100) : 0;
+    const sorted = [...wardList].sort((a, b) => (a.free / a.total) - (b.free / b.total));
+    return { total, free, occupancy, busiest: sorted[0] || null, openest: sorted[sorted.length - 1] || null };
+  }
+
+  function askAI() {
+    const q = sanitizeText($("question").value);
+    const replyEl = $("reply");
+    if (!q) {
+      replyEl.textContent = "Enter an operational question above to run AI capacity analysis.";
+      return;
+    }
+
+    const lower = q.toLowerCase();
+    const { total, free, occupancy, busiest, openest } = computeCapacityMetrics(wards);
+    const busiestOcc = busiest ? Math.round((busiest.total - busiest.free) / busiest.total * 100) : 0;
+    const transferCount = busiest && openest ? Math.min(3, Math.floor(openest.free / 2)) : 0;
+
+    if (lower.includes("handoff") || lower.includes("shift")) {
+      replyEl.textContent = [
+        `✧ Shift Handoff Executive Summary (${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}):`,
+        `• Active Census: ${total - free} admitted patients across ${wards.length} wards (${occupancy}% load).`,
+        `• Critical Watchlist: ${busiest ? busiest.name : "ICU"} at ${busiestOcc}% occupancy—prioritize step-down evaluation.`,
+        `• Incoming Shift Action: Pre-allocate ${transferCount} buffer beds in ${openest ? openest.name : "General Medicine"} before next ward rounds.`
+      ].join("\n");
+      return;
+    }
+
+    if (lower.includes("surge") || lower.includes("reallocation")) {
+      replyEl.textContent = [
+        "⚡ Autonomous ER Surge Reallocation Plan:",
+        `• Immediate Buffer: ${free} total open beds detected across hospital network.`,
+        `• Step 1 (Triage Diversion): Route low-acuity Priority 2 cases directly to ${openest ? openest.name : "General Medicine"} (${openest ? openest.free : 0} beds free).`,
+        `• Step 2 (Step-Down Transfer): Transfer ${transferCount} stable patients out of ${busiest ? busiest.name : "ICU"} (${busiestOcc}% full) to unlock acute trauma slots.`
+      ].join("\n");
+      return;
+    }
+
+    replyEl.textContent = [
+      `✧ FlowMed AI Capacity Recommendation for "${q}":`,
+      `• Network Capacity: ${free} of ${total} total beds available (${occupancy}% hospital occupancy).`,
+      `• Primary Bottleneck: ${busiest ? busiest.name : "N/A"} is at ${busiestOcc}% occupancy (${busiest ? busiest.free : 0} beds left).`,
+      `• Actionable Routing: Route non-critical step-down patients to ${openest ? openest.name : "General Ward"} (${openest ? openest.free : 0} beds open) to preserve critical care buffer.`
+    ].join("\n");
+  }
+
+  function simulateSurge() {
+    let remaining = 6;
+    for (const w of wards) {
+      if (remaining > 0 && w.free > 0) {
+        const take = Math.min(w.free, remaining, 2);
+        w.free -= take;
+        remaining -= take;
+      }
+    }
+    addAudit("ER_SURGE_SIMULATED", "Multi-Ward (+6 Admissions)");
+    renderAll();
+    $("aiLiveBanner").textContent = "⚡ Surge Alert Active: 6 emergency admissions routed across wards. AI recommends preparing discharge-ready patients in General Medicine.";
+  }
+
+  function safeText(tag, value) {
+    const el = document.createElement(tag);
+    el.textContent = String(value ?? "");
+    return el;
+  }
+
+  function adjustBed(id, delta) {
+    const w = wards.find(x => x.id === id);
+    if (!w) return;
+    const nextFree = w.free + delta;
+    if (nextFree < 0 || nextFree > w.total) return;
+    w.free = nextFree;
+    addAudit(delta < 0 ? "PATIENT_ADMITTED" : "PATIENT_DISCHARGED", w.name);
+    renderAll();
+  }
+
+  function renderAll() {
+    const grid = $("wardGrid");
+    const adminBody = $("adminWardRows");
+    const gridFrag = document.createDocumentFragment();
+    const adminFrag = document.createDocumentFragment();
+    const colors = ["mint", "lav", "yellow", "peach"];
+
+    wards.forEach((w, index) => {
+      const occPct = w.total ? Math.round((w.total - w.free) / w.total * 100) : 0;
+
+      const card = document.createElement("article");
+      card.className = "card bed-card";
+      card.setAttribute("aria-label", `${w.name} bed status`);
+
+      const top = document.createElement("div");
+      top.className = "bed-top";
+      const icon = safeText("span", "▤");
+      icon.className = "stat-icon " + colors[index % colors.length];
+      icon.setAttribute("aria-hidden", "true");
+      const badge = safeText("span", occPct >= 85 ? "Critical" : occPct >= 70 ? "High" : "Optimal");
+      badge.className = "badge" + (occPct >= 85 ? " badge-crit" : occPct >= 70 ? " badge-warn" : "");
+      top.append(icon, badge);
+
+      const heading = safeText("h3", w.name);
+      const number = safeText("div", `${w.free} / ${w.total}`);
+      number.className = "bed-number";
+      const label = safeText("p", `Available beds (${occPct}% occupied)`);
+
+      const bar = document.createElement("div");
+      bar.className = "bar";
+      bar.setAttribute("role", "progressbar");
+      bar.setAttribute("aria-label", `${w.name} occupancy`);
+      bar.setAttribute("aria-valuenow", String(occPct));
+      bar.setAttribute("aria-valuemin", "0");
+      bar.setAttribute("aria-valuemax", "100");
+      const fill = document.createElement("span");
+      fill.style.width = occPct + "%";
+      if (occPct >= 85) fill.className = "crit";
+      else if (occPct >= 70) fill.className = "warn";
+      bar.appendChild(fill);
+
+      const controls = document.createElement("div");
+      controls.className = "bed-controls";
+      const admitBtn = safeText("button", "+ Admit");
+      admitBtn.type = "button";
+      admitBtn.className = "btn btn-soft btn-xs";
+      admitBtn.setAttribute("aria-label", `Admit patient to ${w.name}`);
+      admitBtn.disabled = w.free === 0;
+      admitBtn.addEventListener("click", () => adjustBed(w.id, -1));
+
+      const dischargeBtn = safeText("button", "- Discharge");
+      dischargeBtn.type = "button";
+      dischargeBtn.className = "btn btn-soft btn-xs";
+      dischargeBtn.setAttribute("aria-label", `Discharge patient from ${w.name}`);
+      dischargeBtn.disabled = w.free === w.total;
+      dischargeBtn.addEventListener("click", () => adjustBed(w.id, 1));
+
+      controls.append(admitBtn, dischargeBtn);
+      card.append(top, heading, number, label, bar, controls);
+      gridFrag.appendChild(card);
+
+      const tr = document.createElement("tr");
+      [w.name, w.total, w.free, w.status].forEach(v => tr.appendChild(safeText("td", v)));
+      const actions = document.createElement("td");
+      const edit = safeText("button", "Edit");
+      const del = safeText("button", "Delete");
+      edit.type = "button";
+      del.type = "button";
+      edit.className = "btn btn-soft btn-xs";
+      edit.setAttribute("aria-label", `Edit ${w.name}`);
+      del.className = "btn btn-danger btn-xs ml-5";
+      del.setAttribute("aria-label", `Delete ${w.name}`);
+      edit.addEventListener("click", () => editWard(w.id));
+      del.addEventListener("click", () => removeWard(w.id));
+      actions.append(edit, del);
+      tr.appendChild(actions);
+      adminFrag.appendChild(tr);
+    });
+
+    grid.replaceChildren(gridFrag);
+    adminBody.replaceChildren(adminFrag);
+
+    const { total, free, occupancy } = computeCapacityMetrics(wards);
+    $("dashboardBeds").textContent = String(free);
+    $("navBedPill").textContent = String(free);
+    $("bedAvailabilityBadge").textContent = total ? Math.round(free / total * 100) + "% free" : "No data";
+    $("dashboardBedFoot").textContent = total ? `${free} of ${total} beds open` : "No ward records";
+    $("dashboardOccupancy").textContent = total ? occupancy + "%" : "—";
+    $("dashboardOccupancyBar").style.width = occupancy + "%";
+    $("dashboardOccupancyRole").setAttribute("aria-valuenow", String(occupancy));
+    $("occStatusBadge").textContent = occupancy >= 80 ? "High Load" : "Balanced";
+    $("wardNote").textContent = `Live Telemetry: ${free} of ${total} beds available across ${wards.length} wards (${occupancy}% hospital-wide occupancy).`;
+
+    const auditFrag = document.createDocumentFragment();
+    for (const log of auditLogs) {
+      const tr = document.createElement("tr");
+      [log.time, log.action, log.ward, log.actor].forEach(v => tr.appendChild(safeText("td", v)));
+      auditFrag.appendChild(tr);
+    }
+    $("auditRows").replaceChildren(auditFrag);
+  }
+
+  function addAudit(action, wardName) {
+    const actor = $("userStatus").textContent || "ops.admin@flowmed-nexus.demo";
+    const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    auditLogs.unshift({ time, action, ward: wardName, actor });
+    if (auditLogs.length > 200) auditLogs.pop();
+  }
+
+  function clearWardForm(keepMessage = false) {
+    $("wardEditId").value = "";
+    $("wardName").value = "";
+    $("totalBeds").value = "";
+    $("availableBeds").value = "";
+    $("wardStatus").value = "Active";
+    if (!keepMessage) $("adminMessage").textContent = "";
+  }
+
+  function editWard(id) {
+    const w = wards.find(x => x.id === id);
+    if (!w) return;
+    $("wardEditId").value = w.id;
+    $("wardName").value = w.name;
+    $("totalBeds").value = w.total;
+    $("availableBeds").value = w.free;
+    $("wardStatus").value = w.status;
+    $("adminMessage").textContent = "Editing " + w.name;
+    showPage("admin");
+  }
+
+  function saveWard() {
+    const editId = $("wardEditId").value;
+    const name = sanitizeText($("wardName").value);
+    const totalText = $("totalBeds").value;
+    const freeText = $("availableBeds").value;
+    const total = Number(totalText);
+    const free = Number(freeText);
+    const status = $("wardStatus").value;
+
+    if (!name || totalText === "" || freeText === "" || !Number.isInteger(total) || !Number.isInteger(free) || total <= 0 || free < 0 || free > total) {
+      $("adminMessage").textContent = "Enter a ward name and valid whole-number bed counts (Available ≤ Total).";
+      return;
+    }
+
+    if (editId) {
+      const idx = wards.findIndex(w => w.id === editId);
+      if (idx !== -1) {
+        wards[idx] = { id: editId, name, total, free, status };
+        addAudit("UPDATED_WARD", name);
+        $("adminMessage").textContent = "Ward updated successfully.";
+      }
+    } else {
+      wards.push({ id: "ward-" + Date.now(), name, total, free, status });
+      addAudit("CREATED_WARD", name);
+      $("adminMessage").textContent = "New ward provisioned successfully.";
+    }
+
+    clearWardForm(true);
+    renderAll();
+  }
+
+  function removeWard(id) {
+    const w = wards.find(x => x.id === id);
+    if (!w) return;
+    wards = wards.filter(x => x.id !== id);
+    addAudit("REMOVED_WARD", w.name);
+    renderAll();
+  }
+
+  function updateSession() {
+    const mail = sanitizeText($("email").value) || "ops.admin@flowmed-nexus.demo";
+    $("userStatus").textContent = mail;
+    $("adminEmail").textContent = mail;
+    $("authMessage").textContent = "Operator switched to " + mail;
+  }
+
+  function resetDemo() {
+    wards = structuredClone(defaultWards);
+    addAudit("RESET_TELEMETRY", "All Wards");
+    renderAll();
+    $("authMessage").textContent = "Default hospital ward telemetry restored.";
+    $("aiLiveBanner").textContent = "✧ AI Copilot Insight: ICU capacity is at 80%. Recommend reserving 4 step-down beds in General Ward for incoming post-op transfers.";
+  }
+
+  document.querySelectorAll(".nav button[data-page]").forEach(b => b.addEventListener("click", () => showPage(b.dataset.page)));
+  document.querySelectorAll("[data-nav-target]").forEach(b => b.addEventListener("click", () => showPage(b.dataset.navTarget)));
+  $("heroSurgeBtn").addEventListener("click", simulateSurge);
+  $("bedSurgeBtn").addEventListener("click", simulateSurge);
+  $("bedResetBtn").addEventListener("click", resetDemo);
+  $("accountResetBtn").addEventListener("click", resetDemo);
+  $("patientSearch").addEventListener("input", () => filterTable("patientSearch", "patientRows"));
+  $("appointmentSearch").addEventListener("input", () => filterTable("appointmentSearch", "appointmentRows"));
+  document.querySelectorAll(".chip[data-prompt]").forEach(c => c.addEventListener("click", () => {
+    $("question").value = c.dataset.prompt;
+    askAI();
+  }));
+  $("askAiBtn").addEventListener("click", askAI);
+  $("updateSessionBtn").addEventListener("click", updateSession);
+  $("saveWardBtn").addEventListener("click", saveWard);
+  $("clearWardBtn").addEventListener("click", () => clearWardForm(false));
+
+  $("date").textContent = new Date().toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short", year: "numeric" });
+  renderAll();
+})();
+</script>
 </body>
 </html>
